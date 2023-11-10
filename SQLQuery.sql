@@ -27,6 +27,9 @@ CREATE TABLE Product (
   Unit_Price DECIMAL(10,2) NOT NULL CHECK (Unit_Price >= 0),
   Quantity_In_Stock INT NOT NULL CHECK (Quantity_In_Stock >= 0), 
   Description VARCHAR(200),
+  Manufacture_Date DATE NOT NULL,
+  Expiry_Date DATE NOT NULL,
+  Entry_Date DATE NOT NULL,
   FOREIGN KEY (Category_ID) REFERENCES Category (Category_ID)
 );
 
@@ -56,4 +59,14 @@ CREATE TABLE Contain (
   PRIMARY KEY (Invoice_ID, Product_ID), 
   FOREIGN KEY (Invoice_ID) REFERENCES Invoice (Invoice_ID), 
   FOREIGN KEY (Product_ID) REFERENCES Product (Product_ID) 
+);
+
+CREATE TABLE Refund (
+  Refund_ID INT PRIMARY KEY,
+  Invoice_ID INT,
+  Product_ID INT,
+  Refund_Quantity INT NOT NULL CHECK (Refund_Quantity > 0),
+  Refund_Date DATE NOT NULL,
+  FOREIGN KEY (Invoice_ID) REFERENCES Invoice (Invoice_ID),
+  FOREIGN KEY (Product_ID) REFERENCES Product (Product_ID)
 );
