@@ -18,32 +18,32 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jLabel41" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel40" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jTextField14" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jPasswordField4" alignment="0" pref="200" max="32767" attributes="0"/>
+                  <Component id="productName" alignment="0" min="-2" pref="200" max="-2" attributes="0"/>
+                  <Component id="des" min="-2" pref="200" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="jLabel42" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel43" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jDateChooser4" alignment="0" pref="199" max="32767" attributes="0"/>
-                  <Component id="jComboBox1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="entryDate" alignment="0" pref="199" max="32767" attributes="0"/>
+                  <Component id="cateCb" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jLabel44" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel45" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jDateChooser5" alignment="0" min="-2" pref="199" max="-2" attributes="0"/>
-                  <Component id="jTextField15" alignment="0" min="-2" pref="200" max="-2" attributes="0"/>
+                  <Component id="nsx" alignment="0" min="-2" pref="199" max="-2" attributes="0"/>
+                  <Component id="unitPrice" alignment="0" min="-2" pref="200" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jLabel46" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jTextField16" alignment="0" min="-2" pref="200" max="-2" attributes="0"/>
+                  <Component id="qtyInStock" alignment="0" min="-2" pref="200" max="-2" attributes="0"/>
                   <Component id="jLabel49" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jDateChooser6" alignment="0" min="-2" pref="199" max="-2" attributes="0"/>
+                  <Component id="hsd" alignment="0" min="-2" pref="199" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
           </Group>
@@ -68,7 +68,7 @@
                       <EmptySpace min="-2" pref="151" max="-2" attributes="0"/>
                       <Component id="editButton3" min="-2" pref="120" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
-                      <Component id="addButton3" min="-2" pref="120" max="-2" attributes="0"/>
+                      <Component id="addProduct" min="-2" pref="120" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
                       <Component id="deleteButton3" min="-2" pref="120" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
@@ -94,16 +94,16 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jTextField14" alignment="0" pref="35" max="32767" attributes="0"/>
-                          <Component id="jComboBox1" alignment="0" max="32767" attributes="0"/>
+                          <Component id="productName" alignment="0" pref="35" max="32767" attributes="0"/>
+                          <Component id="cateCb" alignment="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel46" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jTextField16" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                          <Component id="jTextField15" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                          <Component id="qtyInStock" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                          <Component id="unitPrice" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -117,26 +117,24 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jDateChooser5" alignment="0" max="32767" attributes="0"/>
+                          <Component id="nsx" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jPasswordField4" alignment="0" min="-2" pref="35" max="-2" attributes="0"/>
-                                  <Component id="jDateChooser4" alignment="0" min="-2" pref="35" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="entryDate" min="-2" pref="35" max="-2" attributes="0"/>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
+                          <Component id="des" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel49" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jDateChooser6" max="32767" attributes="0"/>
+                      <Component id="hsd" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="editButton3" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="addButton3" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                  <Component id="addProduct" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                   <Component id="deleteButton3" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                   <Component id="detailButton" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
@@ -155,7 +153,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JTextField" name="jTextField14">
+    <Component class="javax.swing.JTextField" name="productName">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel40">
       <Properties>
@@ -179,8 +177,6 @@
         <Property name="text" type="java.lang.String" value="Mi&#xea;u t&#x1ea3;"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JPasswordField" name="jPasswordField4">
-    </Component>
     <Component class="javax.swing.JLabel" name="jLabel42">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -192,7 +188,7 @@
         <Property name="text" type="java.lang.String" value="Ph&#xe2;n lo&#x1ea1;i"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextField15">
+    <Component class="javax.swing.JTextField" name="unitPrice">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel44">
       <Properties>
@@ -216,7 +212,7 @@
         <Property name="text" type="java.lang.String" value="Ng&#xe0;y nh&#x1ead;p"/>
       </Properties>
     </Component>
-    <Component class="com.toedter.calendar.JDateChooser" name="jDateChooser4">
+    <Component class="com.toedter.calendar.JDateChooser" name="entryDate">
       <Properties>
         <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="true" type="code"/>
@@ -245,7 +241,7 @@
         <Property name="text" type="java.lang.String" value="S&#x1ed1; l&#x1b0;&#x1ee3;ng trong kho"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextField16">
+    <Component class="javax.swing.JTextField" name="qtyInStock">
     </Component>
     <Component class="javax.swing.JButton" name="editButton3">
       <Properties>
@@ -264,7 +260,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="addButton3">
+    <Component class="javax.swing.JButton" name="addProduct">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="6c" green="95" red="4c" type="rgb"/>
@@ -280,6 +276,9 @@
           <Border info="null"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addProductMouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="deleteButton3">
       <Properties>
@@ -325,11 +324,9 @@
     <Component class="javax.swing.JComboBox" name="jComboBox12">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="M&#xe3; NV"/>
-            <StringItem index="1" value="T&#xea;n"/>
-            <StringItem index="2" value="Ng&#xe0;y sinh"/>
-            <StringItem index="3" value="L&#x1b0;&#x1a1;ng"/>
+          <StringArray count="2">
+            <StringItem index="0" value="M&#xe3; SP"/>
+            <StringItem index="1" value="T&#xea;n SP"/>
           </StringArray>
         </Property>
       </Properties>
@@ -360,7 +357,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="com.toedter.calendar.JDateChooser" name="jDateChooser5">
+    <Component class="com.toedter.calendar.JDateChooser" name="nsx">
       <Properties>
         <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="true" type="code"/>
@@ -378,22 +375,17 @@
         <Property name="text" type="java.lang.String" value="HSD"/>
       </Properties>
     </Component>
-    <Component class="com.toedter.calendar.JDateChooser" name="jDateChooser6">
+    <Component class="com.toedter.calendar.JDateChooser" name="hsd">
       <Properties>
         <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="true" type="code"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox1">
+    <Component class="javax.swing.JComboBox" name="cateCb">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
-          </StringArray>
+          <StringArray count="0"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -419,6 +411,8 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="detailButtonActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="des">
     </Component>
   </SubComponents>
 </Form>

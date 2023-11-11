@@ -4,11 +4,11 @@
  */
 package app.storemanagement.view;
 
-import app.storemanagement.controller.CategoryCtl;
+import app.storemanagement.controller.CategoryCtrl;
+import app.storemanagement.model.CategoryModel;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -290,18 +290,23 @@ public class Category extends javax.swing.JPanel {
 
     private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
         int id = Util.getNextID("Category_ID", "Category");
-        if (categoryName.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Thông tin không hợp lệ");
+        String name = categoryName.getText();
+
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
         } else {
+            CategoryModel category = new CategoryModel(id, name);
+            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
             int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm danh mục này?", "Alert",
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (response == JOptionPane.YES_OPTION) {
-                boolean success = CategoryCtl.addCategory(id, categoryName.getText());
+                boolean success = tmp.add(category);
                 if (success) {
                     JOptionPane.showMessageDialog(null, "Đã thêm danh mục");
                 }
             }
         }
+        isRowSelected = false; //Phòng ngừa trường hợp bấm vào để chỉnh nhưng không chỉnh sửa mà thêm mới
         clearTextField();
         displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
     }//GEN-LAST:event_addButtonMouseClicked
@@ -318,16 +323,19 @@ public class Category extends javax.swing.JPanel {
     }//GEN-LAST:event_categoryTableMouseClicked
 
     private void editButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editButtonMouseClicked
-        if (categoryName.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Thông tin không hợp lệ");
+        String name = categoryName.getText();
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
         } else {
             if (isRowSelected == false) {
-                JOptionPane.showMessageDialog(this, "Chọn một danh mục để sửa!");
+                JOptionPane.showMessageDialog(null, "Chọn một danh mục để sửa!");
             } else {
+                CategoryModel category = new CategoryModel(key, name);
+                CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
                 int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật danh mục này?", "Alert",
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION) {
-                    boolean success = CategoryCtl.updateCategory(key, categoryName.getText());
+                    boolean success = tmp.update(category);
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Đã cập nhật danh mục");
                     }
@@ -341,12 +349,14 @@ public class Category extends javax.swing.JPanel {
 
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
         if (isRowSelected == false) {
-            JOptionPane.showMessageDialog(this, "Chọn một danh mục để xóa!");
+            JOptionPane.showMessageDialog(null, "Chọn một danh mục để xóa!");
         } else {
+            CategoryModel category = new CategoryModel(key);
+            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
             int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa danh mục này?", "Alert",
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (response == JOptionPane.YES_OPTION) {
-                boolean success = CategoryCtl.deleteCategory(key);
+                boolean success = tmp.delete(category);
                 if (success) {
                     JOptionPane.showMessageDialog(null, "Đã xóa danh mục");
                 }

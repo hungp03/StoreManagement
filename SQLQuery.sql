@@ -17,7 +17,7 @@ CREATE TABLE Employee (
 
 CREATE TABLE Category (
   Category_ID INT PRIMARY KEY,
-  Category_Name NVARCHAR(50) NOT NULL
+  Category_Name NVARCHAR(50) UNIQUE NOT NULL
 );
 
 CREATE TABLE Product (

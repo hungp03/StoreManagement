@@ -4,6 +4,20 @@
  */
 package app.storemanagement.view;
 
+import app.storemanagement.controller.ProductCtrl;
+import app.storemanagement.model.CategoryItem;
+import app.storemanagement.model.Connection.DBConnection;
+import app.storemanagement.model.ProductModel;
+import app.storemanagement.utils.Util;
+import java.awt.HeadlessException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Hung Pham
@@ -15,6 +29,7 @@ public class Product extends javax.swing.JPanel {
      */
     public Product() {
         initComponents();
+        getCategories();
     }
 
     /**
@@ -26,20 +41,19 @@ public class Product extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField14 = new javax.swing.JTextField();
+        productName = new javax.swing.JTextField();
         jLabel40 = new javax.swing.JLabel();
         jLabel41 = new javax.swing.JLabel();
-        jPasswordField4 = new javax.swing.JPasswordField();
         jLabel42 = new javax.swing.JLabel();
-        jTextField15 = new javax.swing.JTextField();
+        unitPrice = new javax.swing.JTextField();
         jLabel44 = new javax.swing.JLabel();
         jLabel43 = new javax.swing.JLabel();
-        jDateChooser4 = new com.toedter.calendar.JDateChooser();
+        entryDate = new com.toedter.calendar.JDateChooser();
         jLabel45 = new javax.swing.JLabel();
         jLabel46 = new javax.swing.JLabel();
-        jTextField16 = new javax.swing.JTextField();
+        qtyInStock = new javax.swing.JTextField();
         editButton3 = new javax.swing.JButton();
-        addButton3 = new javax.swing.JButton();
+        addProduct = new javax.swing.JButton();
         deleteButton3 = new javax.swing.JButton();
         jLabel47 = new javax.swing.JLabel();
         jTextField17 = new javax.swing.JTextField();
@@ -47,11 +61,12 @@ public class Product extends javax.swing.JPanel {
         jComboBox12 = new javax.swing.JComboBox<>();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTable4 = new javax.swing.JTable();
-        jDateChooser5 = new com.toedter.calendar.JDateChooser();
+        nsx = new com.toedter.calendar.JDateChooser();
         jLabel49 = new javax.swing.JLabel();
-        jDateChooser6 = new com.toedter.calendar.JDateChooser();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        hsd = new com.toedter.calendar.JDateChooser();
+        cateCb = new javax.swing.JComboBox<>();
         detailButton = new javax.swing.JButton();
+        des = new javax.swing.JTextField();
 
         jLabel40.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel40.setForeground(new java.awt.Color(76, 149, 108));
@@ -73,7 +88,7 @@ public class Product extends javax.swing.JPanel {
         jLabel43.setForeground(new java.awt.Color(76, 149, 108));
         jLabel43.setText("Ngày nhập");
 
-        jDateChooser4.setEnabled(true);
+        entryDate.setEnabled(true);
 
         jLabel45.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel45.setForeground(new java.awt.Color(76, 149, 108));
@@ -89,11 +104,16 @@ public class Product extends javax.swing.JPanel {
         editButton3.setText("Sửa");
         editButton3.setBorder(null);
 
-        addButton3.setBackground(new java.awt.Color(76, 149, 108));
-        addButton3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        addButton3.setForeground(new java.awt.Color(255, 255, 255));
-        addButton3.setText("Thêm");
-        addButton3.setBorder(null);
+        addProduct.setBackground(new java.awt.Color(76, 149, 108));
+        addProduct.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        addProduct.setForeground(new java.awt.Color(255, 255, 255));
+        addProduct.setText("Thêm");
+        addProduct.setBorder(null);
+        addProduct.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addProductMouseClicked(evt);
+            }
+        });
 
         deleteButton3.setBackground(new java.awt.Color(76, 149, 108));
         deleteButton3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -109,7 +129,7 @@ public class Product extends javax.swing.JPanel {
         jLabel48.setForeground(new java.awt.Color(76, 149, 108));
         jLabel48.setText("Sắp xếp");
 
-        jComboBox12.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã NV", "Tên", "Ngày sinh", "Lương" }));
+        jComboBox12.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã SP", "Tên SP" }));
 
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -129,15 +149,13 @@ public class Product extends javax.swing.JPanel {
         });
         jScrollPane4.setViewportView(jTable4);
 
-        jDateChooser5.setEnabled(true);
+        nsx.setEnabled(true);
 
         jLabel49.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel49.setForeground(new java.awt.Color(76, 149, 108));
         jLabel49.setText("HSD");
 
-        jDateChooser6.setEnabled(true);
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        hsd.setEnabled(true);
 
         detailButton.setBackground(new java.awt.Color(76, 149, 108));
         detailButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -156,29 +174,29 @@ public class Product extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(53, 53, 53)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel41)
                     .addComponent(jLabel40)
-                    .addComponent(jTextField14)
-                    .addComponent(jPasswordField4, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
+                    .addComponent(productName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(des, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel42)
                     .addComponent(jLabel43)
-                    .addComponent(jDateChooser4, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(entryDate, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+                    .addComponent(cateCb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel44)
                     .addComponent(jLabel45)
-                    .addComponent(jDateChooser5, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nsx, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(unitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel46)
-                    .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(qtyInStock, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel49)
-                    .addComponent(jDateChooser6, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(hsd, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(85, 85, 85))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,7 +216,7 @@ public class Product extends javax.swing.JPanel {
                         .addGap(151, 151, 151)
                         .addComponent(editButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(65, 65, 65)
-                        .addComponent(addButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(addProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(77, 77, 77)
                         .addComponent(deleteButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(77, 77, 77)
@@ -218,14 +236,14 @@ public class Product extends javax.swing.JPanel {
                                 .addComponent(jLabel45)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField14, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                            .addComponent(jComboBox1)))
+                            .addComponent(productName, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                            .addComponent(cateCb)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel46)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(qtyInStock, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(unitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -235,20 +253,19 @@ public class Product extends javax.swing.JPanel {
                             .addComponent(jLabel44))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jDateChooser5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(nsx, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jPasswordField4, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jDateChooser4, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                                .addComponent(entryDate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(des)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel49)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDateChooser6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(hsd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deleteButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(detailButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
@@ -262,22 +279,77 @@ public class Product extends javax.swing.JPanel {
                 .addGap(58, 58, 58))
         );
     }// </editor-fold>//GEN-END:initComponents
+   private void getCategories() {
+        try {
+            Connection conn = DBConnection.getConnection();
+            Statement St = conn.createStatement();
+            ResultSet Rs = St.executeQuery("SELECT * FROM Category");
+
+            // Tạo một DefaultComboBoxModel để lưu trữ các mục category
+            DefaultComboBoxModel model = new DefaultComboBoxModel();
+
+            while (Rs.next()) {
+                int id = Rs.getInt("Category_ID");
+                String name = Rs.getString("Category_Name");
+
+                // Tạo một đối tượng CategoryItem và thêm nó vào model
+                model.addElement(new CategoryItem(id, name));
+            }
+
+            // Đặt model cho ComboBox
+            cateCb.setModel(model);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
 
     private void detailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_detailButtonActionPerformed
 
+    private void addProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addProductMouseClicked
+        try {
+            int id = Util.getNextID("Product_ID", "Product");
+            String name = productName.getText();
+            CategoryItem categoryItem = (CategoryItem) cateCb.getSelectedItem();
+            int categoryId = categoryItem.getId();
+            double unitP = Double.parseDouble(unitPrice.getText());
+            int quantityInStock = Integer.parseInt(qtyInStock.getText());
+            String description = des.getText();
+            Date manufactureDate = nsx.getDate();
+            Date expiryDate = hsd.getDate();
+            Date entry = entryDate.getDate();
+            if (name.isEmpty() || quantityInStock < 0 || unitP < 0 || manufactureDate == null || expiryDate == null || entry == null) {
+                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+            } else {
+                ProductModel product = new ProductModel(id, name, categoryId, unitP, quantityInStock, description, manufactureDate, expiryDate, entry);
+                ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm sản phẩm này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.add(product);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã thêm sản phẩm");
+                    }
+                }
+            }
+        } catch (HeadlessException | NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }//GEN-LAST:event_addProductMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addButton3;
+    private javax.swing.JButton addProduct;
+    private javax.swing.JComboBox<String> cateCb;
     private javax.swing.JButton deleteButton3;
+    private javax.swing.JTextField des;
     private javax.swing.JButton detailButton;
     private javax.swing.JButton editButton3;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private com.toedter.calendar.JDateChooser entryDate;
+    private com.toedter.calendar.JDateChooser hsd;
     private javax.swing.JComboBox<String> jComboBox12;
-    private com.toedter.calendar.JDateChooser jDateChooser4;
-    private com.toedter.calendar.JDateChooser jDateChooser5;
-    private com.toedter.calendar.JDateChooser jDateChooser6;
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel42;
@@ -288,12 +360,12 @@ public class Product extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel47;
     private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel49;
-    private javax.swing.JPasswordField jPasswordField4;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTable jTable4;
-    private javax.swing.JTextField jTextField14;
-    private javax.swing.JTextField jTextField15;
-    private javax.swing.JTextField jTextField16;
     private javax.swing.JTextField jTextField17;
+    private com.toedter.calendar.JDateChooser nsx;
+    private javax.swing.JTextField productName;
+    private javax.swing.JTextField qtyInStock;
+    private javax.swing.JTextField unitPrice;
     // End of variables declaration//GEN-END:variables
 }
