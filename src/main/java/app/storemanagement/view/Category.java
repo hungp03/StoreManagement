@@ -4,6 +4,10 @@
  */
 package app.storemanagement.view;
 
+import app.storemanagement.controller.CategoryCtl;
+import app.storemanagement.utils.Util;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Hung Pham
@@ -26,10 +30,10 @@ public class Category extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
+        categoryID = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        categoryName = new javax.swing.JTextField();
         editButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
@@ -41,6 +45,9 @@ public class Category extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
+        categoryID.setEditable(false);
+        categoryID.setFocusable(false);
+
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(76, 149, 108));
         jLabel13.setText("ID");
@@ -49,9 +56,9 @@ public class Category extends javax.swing.JPanel {
         jLabel15.setForeground(new java.awt.Color(76, 149, 108));
         jLabel15.setText("Phân loại");
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        categoryName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                categoryNameActionPerformed(evt);
             }
         });
 
@@ -66,6 +73,11 @@ public class Category extends javax.swing.JPanel {
         addButton.setForeground(new java.awt.Color(255, 255, 255));
         addButton.setText("Thêm");
         addButton.setBorder(null);
+        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addButtonMouseClicked(evt);
+            }
+        });
 
         deleteButton.setBackground(new java.awt.Color(76, 149, 108));
         deleteButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -124,11 +136,11 @@ public class Category extends javax.swing.JPanel {
                         .addGap(163, 163, 163)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel13)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(categoryID, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(88, 88, 88)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(categoryName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(65, 65, 65)
                                 .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel15)))
@@ -155,8 +167,8 @@ public class Category extends javax.swing.JPanel {
                     .addComponent(jLabel15))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(categoryID, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(categoryName, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -175,13 +187,28 @@ public class Category extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void categoryNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryNameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_categoryNameActionPerformed
+
+    private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
+        int id = Util.getNextID("Category_ID", "Category");
+        String name = categoryName.getText();
+        int response = JOptionPane.showConfirmDialog(null, "Do you want to add category?", "Alert",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (response == JOptionPane.YES_OPTION) {
+            boolean success = CategoryCtl.addCategory(id, name);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Category Added");
+            }
+        }
+    }//GEN-LAST:event_addButtonMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
+    private javax.swing.JTextField categoryID;
+    private javax.swing.JTextField categoryName;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
     private javax.swing.JComboBox<String> jComboBox3;
@@ -191,8 +218,6 @@ public class Category extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JButton saveButton;
     // End of variables declaration//GEN-END:variables
