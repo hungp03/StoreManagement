@@ -4,12 +4,14 @@ app\storemanagement\model\Connection\DBConnection.class
 app\storemanagement\Login$3.class
 app\storemanagement\view\Category$1.class
 app\storemanagement\Dashboard$7.class
+app\storemanagement\view\Category$9.class
 app\storemanagement\view\Category.class
 app\storemanagement\Dashboard$5.class
 app\storemanagement\view\Category$2.class
 app\storemanagement\view\Employee.class
 app\storemanagement\view\Product$1.class
 app\storemanagement\view\Employee$1.class
+app\storemanagement\view\Category$8.class
 app\storemanagement\view\Product.class
 app\storemanagement\view\Category$5.class
 app\storemanagement\Dashboard.class
@@ -26,6 +28,7 @@ app\storemanagement\Dashboard$2.class
 app\storemanagement\Login.class
 app\storemanagement\view\Category$4.class
 app\storemanagement\utils\Util.class
+app\storemanagement\view\Category$7.class
 app\storemanagement\Dashboard$3.class
 app\storemanagement\Login$4.class
 app\storemanagement\Login$1.class

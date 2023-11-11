@@ -7,11 +7,18 @@ package app.storemanagement.view;
 import app.storemanagement.controller.CategoryCtl;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.utils.Util;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -28,7 +35,7 @@ public class Category extends javax.swing.JPanel {
      */
     public Category() {
         initComponents();
-        displayCategory();
+        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị dữ liệu với phương thức sắp xếp được chọn
     }
 
     private void clearTextField() {
@@ -50,9 +57,9 @@ public class Category extends javax.swing.JPanel {
         addButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         jLabel20 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        searchTextField = new javax.swing.JTextField();
         jLabel21 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox<>();
+        categorySort = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         categoryTable = new javax.swing.JTable();
 
@@ -103,11 +110,22 @@ public class Category extends javax.swing.JPanel {
         jLabel20.setForeground(new java.awt.Color(76, 149, 108));
         jLabel20.setText("Tìm kiếm");
 
+        searchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                searchTextFieldKeyTyped(evt);
+            }
+        });
+
         jLabel21.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel21.setForeground(new java.awt.Color(76, 149, 108));
         jLabel21.setText("Sắp xếp");
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã phân loại", "Tên phân loại" }));
+        categorySort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã phân loại", "Tên phân loại" }));
+        categorySort.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                categorySortItemStateChanged(evt);
+            }
+        });
 
         categoryTable.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         categoryTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -156,11 +174,11 @@ public class Category extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel21)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(categorySort, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel20)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(387, 387, 387)
                         .addComponent(categoryName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -183,20 +201,26 @@ public class Category extends javax.swing.JPanel {
                     .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel20)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(categorySort, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel21))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(35, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-    private void displayCategory() {
+    private void displayCategory(String sortMethod) {
         try {
             Connection conn = DBConnection.getConnection();
             Statement St = conn.createStatement();
-            ResultSet Rs = St.executeQuery("select * from Category");
+            String query = "select * from Category";
+            if (sortMethod.equals("Mã phân loại")) {
+                query += " ORDER BY Category_ID";
+            } else if (sortMethod.equals("Tên phân loại")) {
+                query += " ORDER BY Category_Name";
+            }
+            ResultSet Rs = St.executeQuery(query);
             DefaultTableModel tableModel = new DefaultTableModel();
             int columnCount = Rs.getMetaData().getColumnCount();
             for (int i = 1; i <= columnCount; i++) {
@@ -223,6 +247,43 @@ public class Category extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
+
+    private void searchCategory(String keyword) {
+        try {
+            Connection conn = DBConnection.getConnection();
+            String query = "SELECT * FROM Category WHERE Category_Name LIKE ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, "%" + keyword + "%");
+            ResultSet Rs = pstmt.executeQuery();
+
+            DefaultTableModel tableModel = new DefaultTableModel();
+            int columnCount = Rs.getMetaData().getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
+            }
+
+            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
+            while (Rs.next()) {
+                Object[] row = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    row[i - 1] = Rs.getObject(i);
+                }
+                tableModel.addRow(row);
+            }
+
+            // Đặt tên cột theo thiết kế
+            String[] columnNames = {"Mã phân loại", "Tên phân loại"};
+            tableModel.setColumnIdentifiers(columnNames);
+
+            categoryTable.setModel(tableModel);
+            Rs.close();
+            pstmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
     private void categoryNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryNameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_categoryNameActionPerformed
@@ -237,12 +298,12 @@ public class Category extends javax.swing.JPanel {
             if (response == JOptionPane.YES_OPTION) {
                 boolean success = CategoryCtl.addCategory(id, categoryName.getText());
                 if (success) {
-                    JOptionPane.showMessageDialog(this, "Đã thêm danh mục");
+                    JOptionPane.showMessageDialog(null, "Đã thêm danh mục");
                 }
             }
         }
         clearTextField();
-        displayCategory();
+        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
     }//GEN-LAST:event_addButtonMouseClicked
 
     private void categoryTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categoryTableMouseClicked
@@ -275,8 +336,7 @@ public class Category extends javax.swing.JPanel {
         }
         isRowSelected = false; // Đặt lại trạng thái
         clearTextField();
-        displayCategory();
-
+        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
     }//GEN-LAST:event_editButtonMouseClicked
 
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
@@ -288,27 +348,74 @@ public class Category extends javax.swing.JPanel {
             if (response == JOptionPane.YES_OPTION) {
                 boolean success = CategoryCtl.deleteCategory(key);
                 if (success) {
-                    JOptionPane.showMessageDialog(this, "Đã xóa danh mục");
+                    JOptionPane.showMessageDialog(null, "Đã xóa danh mục");
                 }
             }
         }
         isRowSelected = false; // Đặt lại trạng thái sau khi xóa
-        displayCategory();
+        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
         clearTextField();
     }//GEN-LAST:event_deleteButtonMouseClicked
+
+    private void categorySortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_categorySortItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
+            displayCategory(selectedMethod); // Gọi hàm displayCategory với phương thức sắp xếp được chọn
+        }
+    }//GEN-LAST:event_categorySortItemStateChanged
+
+    private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
+        Timer timer = new Timer(500, (ActionEvent e) -> {
+            String keyword = searchTextField.getText();
+            if (keyword.trim().isEmpty()) {
+                // Nếu textField rỗng, hiển thị toàn bộ danh sách
+                displayCategory((String) categorySort.getSelectedItem());
+            } else {
+                // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
+                searchCategory(keyword);
+            }
+        });
+        timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
+
+        // Thêm DocumentListener vào searchTextField
+        searchTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            public void restartTimer() {
+                if (timer.isRunning()) {
+                    timer.restart();
+                } else {
+                    timer.start();
+                }
+            }
+        });
+    }//GEN-LAST:event_searchTextFieldKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JTextField categoryName;
+    private javax.swing.JComboBox<String> categorySort;
     private javax.swing.JTable categoryTable;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
-    private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField searchTextField;
     // End of variables declaration//GEN-END:variables
 }
