@@ -57,6 +57,7 @@ public class Dashboard extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1280, 720));
+        setResizable(false);
 
         jPanel1.setPreferredSize(new java.awt.Dimension(1024, 720));
         jPanel1.setLayout(new java.awt.CardLayout());

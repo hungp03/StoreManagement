@@ -17,16 +17,16 @@ CREATE TABLE Employee (
 
 CREATE TABLE Category (
   Category_ID INT PRIMARY KEY,
-  Category_Name VARCHAR(50) NOT NULL
+  Category_Name NVARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Product (
   Product_ID INT PRIMARY KEY, 
-  Product_Name VARCHAR(50) NOT NULL, 
+  Product_Name NVARCHAR(100) NOT NULL, 
   Category_ID INT,
   Unit_Price DECIMAL(10,2) NOT NULL CHECK (Unit_Price >= 0),
   Quantity_In_Stock INT NOT NULL CHECK (Quantity_In_Stock >= 0), 
-  Description VARCHAR(200),
+  Description NVARCHAR(200),
   Manufacture_Date DATE NOT NULL,
   Expiry_Date DATE NOT NULL,
   Entry_Date DATE NOT NULL,
@@ -35,8 +35,8 @@ CREATE TABLE Product (
 
 CREATE TABLE Customer ( 
   Customer_ID INT PRIMARY KEY, 
-  Full_Name VARCHAR(50) NOT NULL, 
-  Address VARCHAR(100) NOT NULL, 
+  Full_Name NVARCHAR(50) NOT NULL, 
+  Address NVARCHAR(100) NOT NULL, 
   Phone VARCHAR(15) NOT NULL, 
   Email VARCHAR(50)
 );
@@ -45,7 +45,7 @@ CREATE TABLE Invoice (
   Invoice_ID INT PRIMARY KEY, 
   Date DATE NOT NULL, 
   Total_Amount DECIMAL(10,2) NOT NULL CHECK (Total_Amount >= 0),
-  Payment_Method VARCHAR(20) CHECK (Payment_Method IN ('Tiền mặt', 'Thẻ', 'Chuyển khoản')),
+  Payment_Method NVARCHAR(20) CHECK (Payment_Method IN ('Tiền mặt', 'Thẻ', 'Chuyển khoản')),
   Employee_ID INT,
   Customer_ID INT,
   FOREIGN KEY (Employee_ID) REFERENCES Employee (Employee_ID),
