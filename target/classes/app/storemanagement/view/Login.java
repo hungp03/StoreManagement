@@ -1,5 +1,5 @@
 
-package app.storemanagement;
+package app.storemanagement.view;
 
 /**
  *
