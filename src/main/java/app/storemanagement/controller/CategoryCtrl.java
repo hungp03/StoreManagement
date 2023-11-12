@@ -52,8 +52,29 @@ public class CategoryCtrl implements BaseController<CategoryModel>{
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            if (e.getSQLState().equals("23000")){
+                JOptionPane.showMessageDialog(null, "Không thể xóa danh mục do đã có sản phẩm liên kết đến danh mục này" , "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
             return false;
         }
     }
+    
+    public static String display(String sortMethod) {
+        String query = "select * from Category";
+        if (sortMethod.equals("Mã phân loại")) {
+            query += " ORDER BY Category_ID";
+        } else if (sortMethod.equals("Tên phân loại")) {
+            query += " ORDER BY Category_Name";
+        }
+        return query;
+    }
+    
+    public static String search(String keyword) {
+        String query = "SELECT * FROM Category WHERE Category_Name LIKE N'%" + keyword + "%' COLLATE Vietnamese_CI_AI";
+        return query;
+    }
+    
 }

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package app.storemanagement.view;
 
 import app.storemanagement.controller.CategoryCtrl;
@@ -11,7 +7,6 @@ import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -66,12 +61,6 @@ public class Category extends javax.swing.JPanel {
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel15.setForeground(new java.awt.Color(76, 149, 108));
         jLabel15.setText("Phân loại");
-
-        categoryName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                categoryNameActionPerformed(evt);
-            }
-        });
 
         editButton.setBackground(new java.awt.Color(76, 149, 108));
         editButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -211,16 +200,18 @@ public class Category extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     private void displayCategory(String sortMethod) {
+        displayCategoryTable(CategoryCtrl.display(sortMethod));
+    }
+
+    private void searchCategory(String keyword) {
+        displayCategoryTable(CategoryCtrl.search(keyword));
+    }
+
+    private void displayCategoryTable(String sql) {
         try {
             Connection conn = DBConnection.getConnection();
             Statement St = conn.createStatement();
-            String query = "select * from Category";
-            if (sortMethod.equals("Mã phân loại")) {
-                query += " ORDER BY Category_ID";
-            } else if (sortMethod.equals("Tên phân loại")) {
-                query += " ORDER BY Category_Name";
-            }
-            ResultSet Rs = St.executeQuery(query);
+            ResultSet Rs = St.executeQuery(sql);
             DefaultTableModel tableModel = new DefaultTableModel();
             int columnCount = Rs.getMetaData().getColumnCount();
             for (int i = 1; i <= columnCount; i++) {
@@ -243,50 +234,11 @@ public class Category extends javax.swing.JPanel {
             Rs.close();
             St.close();
             conn.close();
+            
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
-
-    private void searchCategory(String keyword) {
-        try {
-            Connection conn = DBConnection.getConnection();
-            String query = "SELECT * FROM Category WHERE Category_Name LIKE ?";
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, "%" + keyword + "%");
-            ResultSet Rs = pstmt.executeQuery();
-
-            DefaultTableModel tableModel = new DefaultTableModel();
-            int columnCount = Rs.getMetaData().getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
-            }
-
-            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
-            while (Rs.next()) {
-                Object[] row = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    row[i - 1] = Rs.getObject(i);
-                }
-                tableModel.addRow(row);
-            }
-
-            // Đặt tên cột theo thiết kế
-            String[] columnNames = {"Mã phân loại", "Tên phân loại"};
-            tableModel.setColumnIdentifiers(columnNames);
-
-            categoryTable.setModel(tableModel);
-            Rs.close();
-            pstmt.close();
-            conn.close();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-    }
-
-    private void categoryNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_categoryNameActionPerformed
 
     private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
         int id = Util.getNextID("Category_ID", "Category");

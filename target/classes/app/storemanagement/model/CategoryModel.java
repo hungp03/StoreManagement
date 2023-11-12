@@ -1,11 +1,13 @@
-
 package app.storemanagement.model;
+
+import java.util.Objects;
 
 /**
  *
  * @author Hung Pham
  */
-public class CategoryModel extends BaseEntity{
+public class CategoryModel extends BaseEntity {
+
     private String categoryName;
 
     public CategoryModel(int id) {
@@ -34,5 +36,22 @@ public class CategoryModel extends BaseEntity{
     public void setId(int id) {
         this.id = id;
     }
-    
+
+    // ComboBox sẽ sử dụng phương thức này để hiển thị tên của mỗi mục
+    @Override
+    public String toString() {
+        return categoryName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        CategoryModel that = (CategoryModel) obj;
+        return id == that.id && Objects.equals(categoryName, that.categoryName);
+    }
 }

@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
@@ -30,5 +32,33 @@ public class Util {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
         return nextID;
+    }
+    public static boolean checkDate(Date manufactureDate, Date expiryDate,Date entry){
+        Date today = new Date();
+        if (manufactureDate.after(entry)){
+            JOptionPane.showMessageDialog(null, "NSX không được sau ngày nhập");
+            return false;
+        }
+        else if (manufactureDate.after(entry)){
+            JOptionPane.showMessageDialog(null, "NSX không được sau HSD");
+            return false;
+        }
+        else if (entry.after(expiryDate)){
+            JOptionPane.showMessageDialog(null, "Ngày nhập không được sau HSD");
+            return false;
+        }
+        else if (manufactureDate.after(today)){
+            JOptionPane.showMessageDialog(null, "NSX không được sau hôm nay");
+            return false;
+        }
+        else if (entry.after(today)){
+            JOptionPane.showMessageDialog(null, "Ngày nhập không được sau hôm nay");
+            return false;
+        }
+        else if (today.after(expiryDate)){
+            JOptionPane.showMessageDialog(null, "Sản phẩm đã hết HSD");
+            return false;
+        }
+        return true;
     }
 }

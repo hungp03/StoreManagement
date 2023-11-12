@@ -41,11 +41,36 @@ public class ProductCtrl implements BaseController<ProductModel> {
 
     @Override
     public boolean update(ProductModel product) {
-        return true;
+        String sql = "UPDATE Product SET Product_Name = ?, Category_ID = ?, Unit_Price = ?, Quantity_In_Stock = ?, Description = ?, Manufacture_Date = ?, Expiry_Date = ?, Entry_Date = ?"
+                + "WHERE Product_ID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(9, product.getId());
+            stmt.setString(1, product.getName());
+            stmt.setInt(2, product.getCategoryId());
+            stmt.setDouble(3, product.getUnitPrice());
+            stmt.setInt(4, product.getQuantityInStock());
+            stmt.setString(5, product.getDescription());
+            stmt.setDate(6, new java.sql.Date(product.getManufactureDate().getTime()));
+            stmt.setDate(7, new java.sql.Date(product.getExpiryDate().getTime()));
+            stmt.setDate(8, new java.sql.Date(product.getEntryDate().getTime()));
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
     @Override
     public boolean delete(ProductModel product) {
-        return true;
+        String sql = "delete from Product where Product_ID=?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, product.getId());
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 }

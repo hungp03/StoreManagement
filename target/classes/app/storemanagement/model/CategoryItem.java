@@ -8,16 +8,16 @@ package app.storemanagement.model;
  *
  * @author Hung Pham
  */
-public class CategoryItem {
+public class CategoryItem extends BaseEntity{
 
-    private int id;
     private String name;
 
     public CategoryItem(int id, String name) {
-        this.id = id;
+        super(id);
         this.name = name;
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -25,7 +25,7 @@ public class CategoryItem {
     public String getName() {
         return name;
     }
-
+    
     // ComboBox sẽ sử dụng phương thức này để hiển thị tên của mỗi mục
     @Override
     public String toString() {
