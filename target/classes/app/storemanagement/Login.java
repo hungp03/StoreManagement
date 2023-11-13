@@ -1,5 +1,6 @@
-
 package app.storemanagement;
+
+import java.awt.event.ItemEvent;
 
 /**
  *
@@ -23,6 +24,7 @@ public class Login extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        checkRole = new javax.swing.ButtonGroup();
         jPanel9 = new javax.swing.JPanel();
         jLabel33 = new javax.swing.JLabel();
         jLabel34 = new javax.swing.JLabel();
@@ -31,13 +33,13 @@ public class Login extends javax.swing.JFrame {
         jLabel37 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
         jLabel38 = new javax.swing.JLabel();
-        jPasswordField2 = new javax.swing.JPasswordField();
+        passwordField = new javax.swing.JPasswordField();
         jLabel39 = new javax.swing.JLabel();
         jRadioButton4 = new javax.swing.JRadioButton();
         jRadioButton5 = new javax.swing.JRadioButton();
         jRadioButton6 = new javax.swing.JRadioButton();
         jButton2 = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        showPW = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -97,12 +99,13 @@ public class Login extends javax.swing.JFrame {
         jLabel38.setForeground(new java.awt.Color(76, 149, 108));
         jLabel38.setText("Mật khẩu");
 
-        jPasswordField2.setBackground(new java.awt.Color(248, 248, 248));
+        passwordField.setBackground(new java.awt.Color(248, 248, 248));
 
         jLabel39.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel39.setForeground(new java.awt.Color(76, 149, 108));
         jLabel39.setText("Đăng nhập với tư cách");
 
+        checkRole.add(jRadioButton4);
         jRadioButton4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jRadioButton4.setText("NV bán hàng");
         jRadioButton4.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -116,6 +119,7 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        checkRole.add(jRadioButton5);
         jRadioButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jRadioButton5.setText("Quản trị viên");
         jRadioButton5.addActionListener(new java.awt.event.ActionListener() {
@@ -124,6 +128,7 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        checkRole.add(jRadioButton6);
         jRadioButton6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jRadioButton6.setText("NV kho");
         jRadioButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -139,8 +144,13 @@ public class Login extends javax.swing.JFrame {
         jButton2.setBorder(null);
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        jCheckBox1.setForeground(new java.awt.Color(76, 149, 108));
-        jCheckBox1.setText("Hiện mật khẩu");
+        showPW.setForeground(new java.awt.Color(76, 149, 108));
+        showPW.setText("Hiện mật khẩu");
+        showPW.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                showPWItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -164,7 +174,7 @@ public class Login extends javax.swing.JFrame {
                                 .addGap(129, 129, 129)
                                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jCheckBox1)
+                                .addComponent(showPW)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                         .addComponent(jRadioButton4)
@@ -172,7 +182,7 @@ public class Login extends javax.swing.JFrame {
                                         .addComponent(jRadioButton6)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jRadioButton5))
-                                    .addComponent(jPasswordField2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(passwordField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addContainerGap(55, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -188,9 +198,9 @@ public class Login extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel38)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheckBox1)
+                .addComponent(showPW)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addComponent(jLabel39)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -203,28 +213,42 @@ public class Login extends javax.swing.JFrame {
                 .addGap(34, 34, 34))
         );
 
+        jRadioButton4.getAccessibleContext().setAccessibleParent(null);
+        jRadioButton5.getAccessibleContext().setAccessibleParent(null);
+        jRadioButton6.getAccessibleContext().setAccessibleParent(null);
+
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
-        jRadioButton4.setSelected(false);
-        jRadioButton6.setSelected(false);
+//        jRadioButton4.setSelected(false);
+//        jRadioButton6.setSelected(false);
     }//GEN-LAST:event_jRadioButton5ActionPerformed
 
     private void jRadioButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton6ActionPerformed
-        jRadioButton4.setSelected(false);
-        jRadioButton5.setSelected(false);
+//        jRadioButton4.setSelected(false);
+//        jRadioButton5.setSelected(false);
     }//GEN-LAST:event_jRadioButton6ActionPerformed
 
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
-       jRadioButton5.setSelected(false);
-       jRadioButton6.setSelected(false);
+//       jRadioButton5.setSelected(false);
+//       jRadioButton6.setSelected(false);
     }//GEN-LAST:event_jRadioButton4ActionPerformed
 
     private void jRadioButton4StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jRadioButton4StateChanged
-        
+
     }//GEN-LAST:event_jRadioButton4StateChanged
+
+    private void showPWItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_showPWItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            // Hiển thị mật khẩu
+            passwordField.setEchoChar((char) 0);
+        } else {
+            // Che mật khẩu
+            passwordField.setEchoChar('\u2022'); // Ký tự Unicode '•'
+        }
+    }//GEN-LAST:event_showPWItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -240,10 +264,13 @@ public class Login extends javax.swing.JFrame {
                 if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-                }
+
+}
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class  
+
+.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         
@@ -256,8 +283,8 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup checkRole;
     private javax.swing.JButton jButton2;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
@@ -266,10 +293,11 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JPasswordField jPasswordField2;
     private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JRadioButton jRadioButton5;
     private javax.swing.JRadioButton jRadioButton6;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JPasswordField passwordField;
+    private javax.swing.JCheckBox showPW;
     // End of variables declaration//GEN-END:variables
 }

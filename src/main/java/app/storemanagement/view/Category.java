@@ -35,6 +35,7 @@ public class Category extends javax.swing.JPanel {
 
     private void clearTextField() {
         categoryName.setText("");
+        searchTextField.setText("");
     }
 
     /**
@@ -199,11 +200,11 @@ public class Category extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     private void displayCategory(String sortMethod) {
-        displayCategoryTable(CategoryCtrl.display(sortMethod));
+        displayCategoryTable(CategoryCtrl.displayQuery(sortMethod));
     }
 
     private void searchCategory(String keyword) {
-        displayCategoryTable(CategoryCtrl.search(keyword));
+        displayCategoryTable(CategoryCtrl.searchQuery(keyword, (String) categorySort.getSelectedItem()));
     }
 
     private void displayCategoryTable(String sql) {
@@ -233,7 +234,7 @@ public class Category extends javax.swing.JPanel {
             Rs.close();
             St.close();
             conn.close();
-            
+
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
@@ -319,13 +320,21 @@ public class Category extends javax.swing.JPanel {
     }//GEN-LAST:event_deleteButtonMouseClicked
 
     private void categorySortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_categorySortItemStateChanged
+        searchTextField.setText("");
+        clearTextField();
+        isRowSelected = false;
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
             displayCategory(selectedMethod); // Gọi hàm displayCategory với phương thức sắp xếp được chọn
         }
+
     }//GEN-LAST:event_categorySortItemStateChanged
 
     private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
+        clearTextField();
+        if (isRowSelected = true) {
+            isRowSelected = false;
+        }
         Timer timer = new Timer(500, (ActionEvent e) -> {
             String keyword = searchTextField.getText();
             if (keyword.trim().isEmpty()) {

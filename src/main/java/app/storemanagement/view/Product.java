@@ -1,20 +1,22 @@
 package app.storemanagement.view;
 
 import app.storemanagement.controller.ProductCtrl;
-import app.storemanagement.model.CategoryModel;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
 import app.storemanagement.utils.Util;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -31,8 +33,8 @@ public class Product extends javax.swing.JPanel {
      */
     public Product() {
         initComponents();
-        getCategories();
-        displayProductTable("SELECT Product_ID, Product_Name, Category.Category_Name FROM Product INNER JOIN Category ON Product.Category_ID = Category.Category_ID");
+        dp();
+        displayProduct((String) productSort.getSelectedItem());
     }
 
     /**
@@ -44,73 +46,19 @@ public class Product extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        productName = new javax.swing.JTextField();
-        jLabel40 = new javax.swing.JLabel();
-        jLabel41 = new javax.swing.JLabel();
-        jLabel42 = new javax.swing.JLabel();
-        unitPrice = new javax.swing.JTextField();
-        jLabel44 = new javax.swing.JLabel();
-        jLabel43 = new javax.swing.JLabel();
-        entryDate = new com.toedter.calendar.JDateChooser();
-        jLabel45 = new javax.swing.JLabel();
-        jLabel46 = new javax.swing.JLabel();
-        qtyInStock = new javax.swing.JTextField();
-        editProduct = new javax.swing.JButton();
         addProduct = new javax.swing.JButton();
         deleteProduct = new javax.swing.JButton();
         jLabel47 = new javax.swing.JLabel();
-        jTextField17 = new javax.swing.JTextField();
+        searchTextField = new javax.swing.JTextField();
         jLabel48 = new javax.swing.JLabel();
-        jComboBox12 = new javax.swing.JComboBox<>();
+        productSort = new javax.swing.JComboBox<>();
         jScrollPane4 = new javax.swing.JScrollPane();
         productTable = new javax.swing.JTable();
-        nsx = new com.toedter.calendar.JDateChooser();
-        jLabel49 = new javax.swing.JLabel();
-        hsd = new com.toedter.calendar.JDateChooser();
-        cateCb = new javax.swing.JComboBox<>();
         detailButton = new javax.swing.JButton();
-        des = new javax.swing.JTextField();
-
-        jLabel40.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel40.setForeground(new java.awt.Color(76, 149, 108));
-        jLabel40.setText("Tên SP");
-
-        jLabel41.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel41.setForeground(new java.awt.Color(76, 149, 108));
-        jLabel41.setText("Miêu tả");
-
-        jLabel42.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel42.setForeground(new java.awt.Color(76, 149, 108));
-        jLabel42.setText("Phân loại");
-
-        jLabel44.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel44.setForeground(new java.awt.Color(76, 149, 108));
-        jLabel44.setText("NSX");
-
-        jLabel43.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel43.setForeground(new java.awt.Color(76, 149, 108));
-        jLabel43.setText("Ngày nhập");
-
-        entryDate.setEnabled(true);
-
-        jLabel45.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel45.setForeground(new java.awt.Color(76, 149, 108));
-        jLabel45.setText("Đơn giá");
-
-        jLabel46.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel46.setForeground(new java.awt.Color(76, 149, 108));
-        jLabel46.setText("Số lượng trong kho");
-
-        editProduct.setBackground(new java.awt.Color(76, 149, 108));
-        editProduct.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        editProduct.setForeground(new java.awt.Color(255, 255, 255));
-        editProduct.setText("Sửa");
-        editProduct.setBorder(null);
-        editProduct.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                editProductMouseClicked(evt);
-            }
-        });
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         addProduct.setBackground(new java.awt.Color(76, 149, 108));
         addProduct.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -138,22 +86,33 @@ public class Product extends javax.swing.JPanel {
         jLabel47.setForeground(new java.awt.Color(76, 149, 108));
         jLabel47.setText("Tìm kiếm");
 
+        searchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                searchTextFieldKeyTyped(evt);
+            }
+        });
+
         jLabel48.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel48.setForeground(new java.awt.Color(76, 149, 108));
         jLabel48.setText("Sắp xếp");
 
-        jComboBox12.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã SP", "Tên SP" }));
+        productSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã SP", "Tên SP", "Ngày nhập hàng" }));
+        productSort.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                productSortItemStateChanged(evt);
+            }
+        });
 
         productTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Mã SP", "Tên SP", "Phân loại"
+                "Mã SP", "Tên SP", "Phân loại", "Ngày nhập hàng"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -170,57 +129,47 @@ public class Product extends javax.swing.JPanel {
         });
         jScrollPane4.setViewportView(productTable);
 
-        nsx.setEnabled(true);
-
-        jLabel49.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel49.setForeground(new java.awt.Color(76, 149, 108));
-        jLabel49.setText("HSD");
-
-        hsd.setEnabled(true);
-
-        cateCb.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-        detailButton.setBackground(new java.awt.Color(76, 149, 108));
         detailButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         detailButton.setForeground(new java.awt.Color(255, 255, 255));
         detailButton.setText("Xem chi tiết");
         detailButton.setBorder(null);
+        detailButton.setEnabled(false);
+        detailButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                detailButtonMouseClicked(evt);
+            }
+        });
         detailButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 detailButtonActionPerformed(evt);
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/products.png"))); // NOI18N
+        jLabel1.setText("Tổng số sản phẩm");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/products.png"))); // NOI18N
+        jLabel5.setText("Số sản phẩm đã bán");
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel6.setText("0");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel41)
-                    .addComponent(jLabel40)
-                    .addComponent(productName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(des, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel42)
-                    .addComponent(jLabel43)
-                    .addComponent(entryDate, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-                    .addComponent(cateCb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel44)
-                    .addComponent(jLabel45)
-                    .addComponent(nsx, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(unitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel46)
-                    .addComponent(qtyInStock, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel49)
-                    .addComponent(hsd, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(85, 85, 85))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(addProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(77, 77, 77)
+                .addComponent(deleteProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(77, 77, 77)
+                .addComponent(detailButton, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(252, 252, 252))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -230,111 +179,87 @@ public class Product extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel48)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jComboBox12, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(productSort, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(335, 335, 335)
                                 .addComponent(jLabel47)
                                 .addGap(18, 18, 18)
-                                .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(151, 151, 151)
-                        .addComponent(editProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(65, 65, 65)
-                        .addComponent(addProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(77, 77, 77)
-                        .addComponent(deleteProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(77, 77, 77)
-                        .addComponent(detailButton, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(88, 88, 88)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(38, 38, 38)
+                                .addComponent(jLabel2)))
+                        .addGap(271, 271, 271)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(38, 38, 38)
+                                .addComponent(jLabel6)))))
                 .addContainerGap(44, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel40, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel42)
-                                .addComponent(jLabel45)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(productName, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                            .addComponent(cateCb)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel46)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(qtyInStock, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(unitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(49, 49, 49)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel41)
-                            .addComponent(jLabel43)
-                            .addComponent(jLabel44))
+                        .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(nsx, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(entryDate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(des)))
+                        .addComponent(jLabel6))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel49)
+                        .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(hsd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
+                        .addComponent(jLabel2)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(editProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deleteProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(detailButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel47)
-                    .addComponent(jComboBox12, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(productSort, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel48))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
     }// </editor-fold>//GEN-END:initComponents
-   private void getCategories() {
-        try {
-            Connection conn = DBConnection.getConnection();
-            Statement St = conn.createStatement();
-            ResultSet Rs = St.executeQuery("SELECT * FROM Category");
 
-            // Tạo một DefaultComboBoxModel để lưu trữ các mục category
-            DefaultComboBoxModel<CategoryModel> model = new DefaultComboBoxModel<>();
 
-            while (Rs.next()) {
-                int id = Rs.getInt("Category_ID");
-                String name = Rs.getString("Category_Name");
-
-                // Tạo một đối tượng CategoryItem và thêm nó vào model
-                model.addElement(new CategoryModel(id, name));
-            }
-
-            // Đặt model cho ComboBox
-            cateCb.setModel(model);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
+    private void displayProduct(String sortMethod) {
+        displayProductTable(ProductCtrl.displayQuery(sortMethod));
+        handleSelected();
     }
 
-    private void clearTextField() {
-        productName.setText("");
-        cateCb.setSelectedIndex(0);
-        unitPrice.setText("");
-        qtyInStock.setText("");
-        des.setText("");
-        nsx.setDate(null);
-        hsd.setDate(null);
-        entryDate.setDate(null);
+    private void searchProduct(String keyword) {
+        displayProductTable(ProductCtrl.searchQuery(keyword, (String) productSort.getSelectedItem()));
+        handleSelected();
+    }
+
+    private void dp(){
+        try{
+            Connection conn = DBConnection.getConnection();
+            Statement st = conn.createStatement();
+            ResultSet Rs = st.executeQuery("select count(Product_ID) as Total_Product from Product");
+            if (Rs.next()){
+                int countProduct = Rs.getInt("Total_Product");
+                jLabel2.setText(countProduct + " sản phẩm");
+            }
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+    private void handleSelected() {
+        if (isRowSelected == true) {
+            isRowSelected = false;
+            detailButton.setEnabled(false);
+            detailButton.setBackground(Color.white);
+        }
     }
 
     private void displayProductTable(String sql) {
@@ -357,7 +282,7 @@ public class Product extends javax.swing.JPanel {
                 tableModel.addRow(row);
             }
             // Đặt tên cột theo thiết kế
-            String[] columnNames = {"Mã SP", "Tên SP", "Phân loại"};
+            String[] columnNames = {"Mã SP", "Tên SP", "Phân loại", "Ngày nhập hàng"};
             tableModel.setColumnIdentifiers(columnNames);
 
             productTable.setModel(tableModel);
@@ -365,7 +290,7 @@ public class Product extends javax.swing.JPanel {
             St.close();
             conn.close();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
     private void detailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailButtonActionPerformed
@@ -373,115 +298,27 @@ public class Product extends javax.swing.JPanel {
     }//GEN-LAST:event_detailButtonActionPerformed
 
     private void addProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addProductMouseClicked
-        try {
-            int id = Util.getNextID("Product_ID", "Product");
-            String name = productName.getText();
-            CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
-            int categoryId = categoryItem.getId();
-            double unitP = Double.parseDouble(unitPrice.getText());
-            int quantityInStock = Integer.parseInt(qtyInStock.getText());
-            String description = des.getText();
-            Date manufactureDate = nsx.getDate();
-            Date expiryDate = hsd.getDate();
-            Date entry = entryDate.getDate();
-            if (name.isEmpty() || quantityInStock < 0 || unitP < 0 || manufactureDate == null || expiryDate == null || entry == null) {
-                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-            } else {
-                if (Util.checkDate(manufactureDate, expiryDate, entry) == true) {
-                    ProductModel product = new ProductModel(id, name, categoryId, unitP, quantityInStock, description, manufactureDate, expiryDate, entry);
-                    ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
-                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm sản phẩm này?", "Alert",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (response == JOptionPane.YES_OPTION) {
-                        boolean success = tmp.add(product);
-                        if (success) {
-                            JOptionPane.showMessageDialog(null, "Đã thêm sản phẩm");
-                        }
-                    }
-                }
+        AddProduct detail = new AddProduct();
+        detail.setVisible(true);
+        detail.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
+                displayProduct((String) productSort.getSelectedItem());
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        isRowSelected = false;
-        clearTextField();
-        displayProductTable("SELECT Product_ID, Product_Name, Category.Category_Name FROM Product INNER JOIN Category ON Product.Category_ID = Category.Category_ID");
+        });
     }//GEN-LAST:event_addProductMouseClicked
-
-    private void editProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editProductMouseClicked
-        try {
-            String name = productName.getText();
-            CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
-            int categoryId = categoryItem.getId();
-            double unitP = Double.parseDouble(unitPrice.getText());
-            int quantityInStock = Integer.parseInt(qtyInStock.getText());
-            String description = des.getText();
-            Date manufactureDate = nsx.getDate();
-            Date expiryDate = hsd.getDate();
-            Date entry = entryDate.getDate();
-            if (name.isEmpty() || quantityInStock < 0 || unitP < 0 || manufactureDate == null || expiryDate == null || entry == null) {
-                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-            } else {
-                if (Util.checkDate(manufactureDate, expiryDate, entry) == true) {
-                    ProductModel product = new ProductModel(key, name, categoryId, unitP, quantityInStock, description, manufactureDate, expiryDate, entry);
-                    ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
-                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật sản phẩm này?", "Alert",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (response == JOptionPane.YES_OPTION) {
-                        boolean success = tmp.update(product);
-                        if (success) {
-                            JOptionPane.showMessageDialog(null, "Đã cập nhật sản phẩm");
-                        }
-                    }
-                }
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        isRowSelected = false;
-        clearTextField();
-        displayProductTable("SELECT Product_ID, Product_Name, Category.Category_Name FROM Product INNER JOIN Category ON Product.Category_ID = Category.Category_ID");
- 
-    }//GEN-LAST:event_editProductMouseClicked
 
     private void productTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_productTableMouseClicked
         DefaultTableModel model = (DefaultTableModel) productTable.getModel();
         int my_idx = productTable.getSelectedRow();
         if (my_idx != -1) {
             // Lấy ID từ hàng được chọn
+            isRowSelected = true;
+            detailButton.setEnabled(true);
+            detailButton.setBackground(Color.decode("#4C956C"));
             key = Integer.parseInt(model.getValueAt(my_idx, 0).toString());
-            try {
-                // Thực hiện truy vấn SQL để lấy tất cả các thông tin của sản phẩm
-                String query = "SELECT * FROM Product WHERE Product_ID = ?";
-                Connection conn = DBConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query);
-                stmt.setInt(1, key);
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next()) {
-                    int categoryId = rs.getInt("Category_ID");
-                    double unitP = rs.getDouble("Unit_Price");
-                    int quantityInStock = rs.getInt("Quantity_In_Stock");
-                    String description = rs.getString("Description");
-                    Date manufactureDate = rs.getDate("Manufacture_Date");
-                    Date expiryDate = rs.getDate("Expiry_Date");
-                    Date entry = rs.getDate("Entry_Date");
-                    productName.setText(model.getValueAt(my_idx, 1).toString());
-                    DefaultComboBoxModel comboBoxModel = (DefaultComboBoxModel) cateCb.getModel();
-                    String cateName = model.getValueAt(my_idx, 2).toString();
-                    cateCb.setSelectedIndex(comboBoxModel.getIndexOf(new CategoryModel(categoryId, cateName)));
-                    unitPrice.setText(String.valueOf(unitP));
-                    qtyInStock.setText(String.valueOf(quantityInStock));
-                    des.setText(description);
-                    nsx.setDate(manufactureDate);
-                    hsd.setDate(expiryDate);
-                    entryDate.setDate(entry);
-                }
-                isRowSelected = true;
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage());
-            } catch (SQLException ex) {
-                Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
-            }
+
         }
     }//GEN-LAST:event_productTableMouseClicked
 
@@ -500,38 +337,90 @@ public class Product extends javax.swing.JPanel {
                 }
             }
         }
-        isRowSelected = false; // Đặt lại trạng thái sau khi xóa
-        clearTextField();
-        displayProductTable("SELECT Product_ID, Product_Name, Category.Category_Name FROM Product INNER JOIN Category ON Product.Category_ID = Category.Category_ID");
+        handleSelected();
+        displayProduct((String) productSort.getSelectedItem());
+        
     }//GEN-LAST:event_deleteProductMouseClicked
+
+    private void productSortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_productSortItemStateChanged
+        searchTextField.setText("");
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
+            displayProduct(selectedMethod); // Gọi hàm displayCategory với phương thức sắp xếp được chọn
+        }
+
+    }//GEN-LAST:event_productSortItemStateChanged
+
+    private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
+        Timer timer = new Timer(500, (ActionEvent e) -> {
+            String keyword = searchTextField.getText();
+            if (keyword.trim().isEmpty()) {
+                // Nếu textField rỗng, hiển thị toàn bộ danh sách
+                displayProduct((String) productSort.getSelectedItem());
+            } else {
+                // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
+                searchProduct(keyword);
+            }
+        });
+        timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
+
+        // Thêm DocumentListener vào searchTextField
+        searchTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            public void restartTimer() {
+                if (timer.isRunning()) {
+                    timer.restart();
+                } else {
+                    timer.start();
+                }
+            }
+        });
+    }//GEN-LAST:event_searchTextFieldKeyTyped
+
+    private void detailButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_detailButtonMouseClicked
+        //System.out.print(key);
+        if (detailButton.isEnabled() == true) {
+            Util.tmpID = String.valueOf(key);
+            ProductDetail pd = new ProductDetail();
+            pd.setVisible(true);
+            pd.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
+                displayProduct((String) productSort.getSelectedItem());
+            }
+        });
+        }
+    }//GEN-LAST:event_detailButtonMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addProduct;
-    private javax.swing.JComboBox<CategoryModel> cateCb;
     private javax.swing.JButton deleteProduct;
-    private javax.swing.JTextField des;
     private javax.swing.JButton detailButton;
-    private javax.swing.JButton editProduct;
-    private com.toedter.calendar.JDateChooser entryDate;
-    private com.toedter.calendar.JDateChooser hsd;
-    private javax.swing.JComboBox<String> jComboBox12;
-    private javax.swing.JLabel jLabel40;
-    private javax.swing.JLabel jLabel41;
-    private javax.swing.JLabel jLabel42;
-    private javax.swing.JLabel jLabel43;
-    private javax.swing.JLabel jLabel44;
-    private javax.swing.JLabel jLabel45;
-    private javax.swing.JLabel jLabel46;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel47;
     private javax.swing.JLabel jLabel48;
-    private javax.swing.JLabel jLabel49;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTextField jTextField17;
-    private com.toedter.calendar.JDateChooser nsx;
-    private javax.swing.JTextField productName;
+    private javax.swing.JComboBox<String> productSort;
     private javax.swing.JTable productTable;
-    private javax.swing.JTextField qtyInStock;
-    private javax.swing.JTextField unitPrice;
+    private javax.swing.JTextField searchTextField;
     // End of variables declaration//GEN-END:variables
 }

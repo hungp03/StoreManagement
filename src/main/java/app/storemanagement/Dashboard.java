@@ -1,5 +1,6 @@
 package app.storemanagement;
 
+import app.storemanagement.utils.Util;
 import app.storemanagement.view.Category;
 import app.storemanagement.view.Customer;
 import app.storemanagement.view.Overview;
@@ -7,6 +8,8 @@ import app.storemanagement.view.Product;
 import app.storemanagement.view.Employee;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  *
@@ -30,6 +33,12 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel1.add(categoryPanel, "category");
         cardLayout.show(jPanel1, "overview");
         overviewLabel.setForeground(Color.YELLOW);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Util.confirmClose();
+            }
+        });
     }
 
     CardLayout cardLayout = new CardLayout();
@@ -56,6 +65,7 @@ public class Dashboard extends javax.swing.JFrame {
         logoutLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Quản lý cửa hàng");
         setPreferredSize(new java.awt.Dimension(1280, 720));
         setResizable(false);
 
