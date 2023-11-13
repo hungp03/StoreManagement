@@ -5,6 +5,7 @@ import app.storemanagement.model.CategoryModel;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
 import app.storemanagement.utils.Util;
+import java.awt.Color;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -138,7 +139,7 @@ public class ProductDetail extends javax.swing.JFrame {
             }
         });
 
-        saveBtn.setBackground(new java.awt.Color(76, 149, 108));
+        saveBtn.setBackground(new java.awt.Color(242, 242, 242));
         saveBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         saveBtn.setForeground(new java.awt.Color(255, 255, 255));
         saveBtn.setText("Lưu");
@@ -290,6 +291,7 @@ public class ProductDetail extends javax.swing.JFrame {
         entryDate.setEnabled(true);
         cateCb.setEnabled(true);
         saveBtn.setEnabled(true);
+        saveBtn.setBackground(Color.decode("#4C956C"));
     }//GEN-LAST:event_editBtnMouseClicked
 
     private void saveBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveBtnMouseClicked
