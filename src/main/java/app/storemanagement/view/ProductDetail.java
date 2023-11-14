@@ -6,6 +6,7 @@ import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
 import app.storemanagement.utils.Util;
 import java.awt.Color;
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -295,36 +296,40 @@ public class ProductDetail extends javax.swing.JFrame {
     }//GEN-LAST:event_editBtnMouseClicked
 
     private void saveBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveBtnMouseClicked
-       try {
-                String name = productName.getText();
-                CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
-                int categoryId = categoryItem.getId();
-                double unitP = Double.parseDouble(unitPrice.getText());
-                int quantityInStock = Integer.parseInt(qtyInStock.getText());
-                String description = des.getText();
-                Date manufactureDate = nsx.getDate();
-                Date expiryDate = hsd.getDate();
-                Date entry = entryDate.getDate();
-                if (name.isEmpty() || quantityInStock < 0 || unitP < 0 || manufactureDate == null || expiryDate == null || entry == null) {
-                    JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-                } else {
-                    if (Util.checkDate(manufactureDate, expiryDate, entry) == true) {
-                        ProductModel product = new ProductModel(id, name, categoryId, unitP, quantityInStock, description, manufactureDate, expiryDate, entry);
-                        ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
-                        int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật sản phẩm này?", "Alert",
-                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        if (response == JOptionPane.YES_OPTION) {
-                            boolean success = tmp.update(product);
-                            if (success) {
-                                JOptionPane.showMessageDialog(null, "Đã cập nhật sản phẩm");
-                            }
-                        }
-                    }
-                    this.dispose();
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        String name = productName.getText().trim();
+        CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
+        int categoryId = categoryItem.getId();
+        Date manufactureDate = nsx.getDate();
+        Date expiryDate = hsd.getDate();
+        Date entry = entryDate.getDate();
+        if (name.isEmpty() || manufactureDate == null || expiryDate == null || entry == null) {
+            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+            return;
+        }
+        try {
+            double unitP = Double.parseDouble(unitPrice.getText().trim());
+            int quantityInStock = Integer.parseInt(qtyInStock.getText().trim());
+            String description = des.getText().trim();
+            if (unitP < 0 || quantityInStock < 0) {
+                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+                return;
             }
+            if (Util.checkDate(manufactureDate, expiryDate, entry) == true) {
+                ProductModel product = new ProductModel(id, name, categoryId, unitP, quantityInStock, description, manufactureDate, expiryDate, entry);
+                ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật sản phẩm này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.update(product);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã cập nhật sản phẩm");
+                    }
+                }
+                this.dispose();
+            }
+        } catch (HeadlessException | NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_saveBtnMouseClicked
     private void getCategories() {
         try {

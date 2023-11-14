@@ -121,7 +121,6 @@
                       <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="qtyInStock" min="-2" pref="35" max="-2" attributes="0"/>
                   <Component id="des" min="-2" pref="35" max="-2" attributes="0"/>

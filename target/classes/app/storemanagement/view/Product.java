@@ -129,6 +129,7 @@ public class Product extends javax.swing.JPanel {
         });
         jScrollPane4.setViewportView(productTable);
 
+        detailButton.setBackground(new java.awt.Color(242, 242, 242));
         detailButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         detailButton.setForeground(new java.awt.Color(255, 255, 255));
         detailButton.setText("Xem chi tiết");
@@ -250,7 +251,7 @@ public class Product extends javax.swing.JPanel {
                 jLabel2.setText(countProduct + " sản phẩm");
             }
         }
-        catch(Exception e){
+        catch(SQLException e){
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
@@ -258,7 +259,7 @@ public class Product extends javax.swing.JPanel {
         if (isRowSelected == true) {
             isRowSelected = false;
             detailButton.setEnabled(false);
-            detailButton.setBackground(Color.white);
+            detailButton.setBackground(Color.decode("#F2F2F2"));
         }
     }
 

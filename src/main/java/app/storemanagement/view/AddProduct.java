@@ -9,8 +9,6 @@ import app.storemanagement.model.CategoryModel;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
 import app.storemanagement.utils.Util;
-import com.toedter.calendar.JDateChooser;
-import java.awt.Color;
 import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -18,9 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 
 /**
  *
@@ -236,16 +232,6 @@ public class AddProduct extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-    private void clearTextField() {
-        productName.setText("");
-        cateCb.setSelectedIndex(0);
-        unitPrice.setText("");
-        qtyInStock.setText("");
-        des.setText("");
-        nsx.setDate(null);
-        hsd.setDate(null);
-        entryDate.setDate(null);
-    }
 
     private void getCategories() {
         try {
@@ -275,35 +261,39 @@ public class AddProduct extends javax.swing.JFrame {
     }//GEN-LAST:event_qtyInStockActionPerformed
 
     private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
+        int id = Util.getNextID("Product_ID", "Product");
+        String name = productName.getText().trim();
+        CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
+        int categoryId = categoryItem.getId();
+        Date manufactureDate = nsx.getDate();
+        Date expiryDate = hsd.getDate();
+        Date entry = entryDate.getDate();
+        if (name.isEmpty() || manufactureDate == null || expiryDate == null || entry == null) {
+            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+            return;
+        }
         try {
-            int id = Util.getNextID("Product_ID", "Product");
-            String name = productName.getText();
-            CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
-            int categoryId = categoryItem.getId();
-            double unitP = Double.parseDouble(unitPrice.getText());
-            int quantityInStock = Integer.parseInt(qtyInStock.getText());
-            String description = des.getText();
-            Date manufactureDate = nsx.getDate();
-            Date expiryDate = hsd.getDate();
-            Date entry = entryDate.getDate();
-            if (name.isEmpty() || quantityInStock < 0 || unitP < 0 || manufactureDate == null || expiryDate == null || entry == null) {
+            double unitP = Double.parseDouble(unitPrice.getText().trim());
+            int quantityInStock = Integer.parseInt(qtyInStock.getText().trim());
+            String description = des.getText().trim();
+            if (unitP < 0 || quantityInStock < 0) {
                 JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-            } else {
-                if (Util.checkDate(manufactureDate, expiryDate, entry) == true) {
-                    ProductModel product = new ProductModel(id, name, categoryId, unitP, quantityInStock, description, manufactureDate, expiryDate, entry);
-                    ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
-                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm sản phẩm này?", "Alert",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (response == JOptionPane.YES_OPTION) {
-                        boolean success = tmp.add(product);
-                        if (success) {
-                            JOptionPane.showMessageDialog(null, "Đã thêm sản phẩm");
-                        }
-                    }
-                     this.dispose();
-                }
+                return;
             }
-        } catch (NumberFormatException e) {
+            if (Util.checkDate(manufactureDate, expiryDate, entry) == true) {
+                ProductModel product = new ProductModel(id, name, categoryId, unitP, quantityInStock, description, manufactureDate, expiryDate, entry);
+                ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm sản phẩm này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.add(product);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã thêm sản phẩm");
+                    }
+                }
+                this.dispose();
+            }
+        } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_addButtonMouseClicked
