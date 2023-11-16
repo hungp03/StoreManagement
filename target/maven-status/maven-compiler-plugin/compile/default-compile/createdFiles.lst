@@ -1,4 +1,5 @@
 app\storemanagement\controller\BaseController.class
+app\storemanagement\controller\EmployeeCtrl.class
 app\storemanagement\view\Product$3.class
 app\storemanagement\model\Connection\DBConnection.class
 app\storemanagement\controller\ProductCtrl.class
@@ -14,6 +15,7 @@ app\storemanagement\view\Category$5.class
 app\storemanagement\Dashboard.class
 app\storemanagement\view\Category$3.class
 app\storemanagement\view\Customer.class
+app\storemanagement\model\EmployeeModel.class
 app\storemanagement\view\Product$8.class
 app\storemanagement\view\ProductDetail$2.class
 app\storemanagement\Login$2.class
