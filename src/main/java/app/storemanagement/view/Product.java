@@ -71,11 +71,12 @@ public class Product extends javax.swing.JPanel {
             }
         });
 
-        deleteProduct.setBackground(new java.awt.Color(76, 149, 108));
+        deleteProduct.setBackground(new java.awt.Color(242, 242, 242));
         deleteProduct.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         deleteProduct.setForeground(new java.awt.Color(255, 255, 255));
         deleteProduct.setText("Xóa");
         deleteProduct.setBorder(null);
+        deleteProduct.setEnabled(false);
         deleteProduct.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 deleteProductMouseClicked(evt);
@@ -230,7 +231,6 @@ public class Product extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-
     private void displayProduct(String sortMethod) {
         displayProductTable(ProductCtrl.displayQuery(sortMethod));
         handleSelected();
@@ -241,25 +241,27 @@ public class Product extends javax.swing.JPanel {
         handleSelected();
     }
 
-    private void dp(){
-        try{
+    private void dp() {
+        try {
             Connection conn = DBConnection.getConnection();
             Statement st = conn.createStatement();
             ResultSet Rs = st.executeQuery("select count(Product_ID) as Total_Product from Product");
-            if (Rs.next()){
+            if (Rs.next()) {
                 int countProduct = Rs.getInt("Total_Product");
                 jLabel2.setText(countProduct + " sản phẩm");
             }
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
+
     private void handleSelected() {
         if (isRowSelected == true) {
             isRowSelected = false;
+            deleteProduct.setEnabled(false);
             detailButton.setEnabled(false);
             detailButton.setBackground(Color.decode("#F2F2F2"));
+            deleteProduct.setBackground(Color.decode("#F2F2F2"));
         }
     }
 
@@ -317,30 +319,32 @@ public class Product extends javax.swing.JPanel {
             // Lấy ID từ hàng được chọn
             isRowSelected = true;
             detailButton.setEnabled(true);
+            deleteProduct.setEnabled(true);
             detailButton.setBackground(Color.decode("#4C956C"));
+            deleteProduct.setBackground(Color.decode("#4C956C"));
             key = Integer.parseInt(model.getValueAt(my_idx, 0).toString());
-
         }
     }//GEN-LAST:event_productTableMouseClicked
 
     private void deleteProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteProductMouseClicked
-        if (isRowSelected == false) {
-            JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xóa!");
-        } else {
-            ProductModel product = new ProductModel(key);
-            ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa sản phẩm này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = tmp.delete(product);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã xóa sản phẩm");
+        if (deleteProduct.isEnabled() == true) {
+            if (isRowSelected == false) {
+                JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xóa!");
+            } else {
+                ProductModel product = new ProductModel(key);
+                ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa sản phẩm này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.delete(product);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã xóa sản phẩm");
+                    }
                 }
             }
+            handleSelected();
+            displayProduct((String) productSort.getSelectedItem());
         }
-        handleSelected();
-        displayProduct((String) productSort.getSelectedItem());
-        
     }//GEN-LAST:event_deleteProductMouseClicked
 
     private void productSortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_productSortItemStateChanged
@@ -399,12 +403,12 @@ public class Product extends javax.swing.JPanel {
             ProductDetail pd = new ProductDetail();
             pd.setVisible(true);
             pd.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
-                displayProduct((String) productSort.getSelectedItem());
-            }
-        });
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
+                    displayProduct((String) productSort.getSelectedItem());
+                }
+            });
         }
     }//GEN-LAST:event_detailButtonMouseClicked
 

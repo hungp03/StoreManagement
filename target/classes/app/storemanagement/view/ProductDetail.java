@@ -5,8 +5,11 @@ import app.storemanagement.model.CategoryModel;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
 import app.storemanagement.utils.Util;
+import com.toedter.calendar.JTextFieldDateEditor;
 import java.awt.Color;
 import java.awt.HeadlessException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +26,9 @@ import javax.swing.JOptionPane;
  * @author Hung Pham
  */
 public class ProductDetail extends javax.swing.JFrame {
+
     private int id = Integer.parseInt(Util.tmpID);
+
     /**
      * Creates new form ProductDetail
      */
@@ -32,6 +37,7 @@ public class ProductDetail extends javax.swing.JFrame {
         getCategories();
         productID.setText(Util.tmpID);
         initShowPage();
+        //preventChangeDateField();
     }
 
     /**
@@ -78,6 +84,22 @@ public class ProductDetail extends javax.swing.JFrame {
         jLabel46.setText("Số lượng trong kho");
 
         hsd.setEnabled(false);
+        JTextFieldDateEditor _hsd = ((JTextFieldDateEditor) hsd.getDateEditor());
+        _hsd.setEnabled(true);
+        _hsd.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                e.consume(); // Chặn sự kiện phím
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
+                    e.consume(); // Chặn sự kiện phím
+                }
+            }
+        });
 
         jLabel40.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel40.setForeground(new java.awt.Color(76, 149, 108));
@@ -94,8 +116,40 @@ public class ProductDetail extends javax.swing.JFrame {
         jLabel47.setText("ID");
 
         entryDate.setEnabled(false);
+        JTextFieldDateEditor _entry = ((JTextFieldDateEditor) entryDate.getDateEditor());
+        _entry.setEnabled(true);
+        _entry.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                e.consume(); // Chặn sự kiện phím
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
+                    e.consume(); // Chặn sự kiện phím
+                }
+            }
+        });
 
         nsx.setEnabled(false);
+        JTextFieldDateEditor _nsx = ((JTextFieldDateEditor) nsx.getDateEditor());
+        _nsx.setEnabled(true);
+        _nsx.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                e.consume(); // Chặn sự kiện phím
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
+                    e.consume(); // Chặn sự kiện phím
+                }
+            }
+        });
 
         jLabel49.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel49.setForeground(new java.awt.Color(76, 149, 108));
@@ -276,23 +330,14 @@ public class ProductDetail extends javax.swing.JFrame {
                 nsx.setDate(manufactureDate);
                 hsd.setDate(expiryDate);
                 entryDate.setDate(entry);
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     private void editBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editBtnMouseClicked
-        topLabel.setText("Cập nhật thông tin");
-        productName.setEditable(true);
-        unitPrice.setEditable(true);
-        des.setEditable(true);
-        qtyInStock.setEditable(true);
-        nsx.setEnabled(true);
-        hsd.setEnabled(true);
-        entryDate.setEnabled(true);
-        cateCb.setEnabled(true);
-        saveBtn.setEnabled(true);
-        saveBtn.setBackground(Color.decode("#4C956C"));
+        setProperties("Cập nhật thông tin", true, "#4C956C");
     }//GEN-LAST:event_editBtnMouseClicked
 
     private void saveBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveBtnMouseClicked
@@ -325,12 +370,27 @@ public class ProductDetail extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, "Đã cập nhật sản phẩm");
                     }
                 }
-                this.dispose();
+                setProperties("Thông tin sản phẩm", false, "#F2F2F2");
             }
         } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_saveBtnMouseClicked
+    private void setProperties(String topLbText, boolean b, String colorCode) {
+        topLabel.setText(topLbText);
+        productName.setEditable(b);
+        unitPrice.setEditable(b);
+        des.setEditable(b);
+        qtyInStock.setEditable(b);
+        nsx.getCalendarButton().setEnabled(b);
+        hsd.getCalendarButton().setEnabled(b);
+        entryDate.getCalendarButton().setEnabled(b);
+        cateCb.setEnabled(b);
+        saveBtn.setEnabled(b);
+        saveBtn.setBackground(Color.decode(colorCode));
+        
+    }
+
     private void getCategories() {
         try {
             Connection conn = DBConnection.getConnection();
@@ -341,10 +401,10 @@ public class ProductDetail extends javax.swing.JFrame {
             DefaultComboBoxModel<CategoryModel> model = new DefaultComboBoxModel<>();
 
             while (Rs.next()) {
-                int id = Rs.getInt("Category_ID");
+                int cateId = Rs.getInt("Category_ID");
                 String name = Rs.getString("Category_Name");
                 // Tạo một đối tượng CategoryItem và thêm nó vào model
-                model.addElement(new CategoryModel(id, name));
+                model.addElement(new CategoryModel(cateId, name));
             }
 
             // Đặt model cho ComboBox

@@ -12,6 +12,7 @@ app\storemanagement\Dashboard$8.class
 app\storemanagement\view\Category$8.class
 app\storemanagement\view\Category$5.class
 app\storemanagement\Dashboard.class
+app\storemanagement\view\ProductDetail$3.class
 app\storemanagement\view\Category$3.class
 app\storemanagement\view\Customer.class
 app\storemanagement\view\Product$8.class
@@ -24,6 +25,7 @@ app\storemanagement\view\Product$9.class
 app\storemanagement\view\AddProduct$2.class
 app\storemanagement\Dashboard$3.class
 app\storemanagement\Login$1.class
+app\storemanagement\view\ProductDetail$4.class
 app\storemanagement\Dashboard$1.class
 app\storemanagement\Dashboard$4.class
 app\storemanagement\view\ProductDetail$1.class
@@ -48,10 +50,10 @@ app\storemanagement\view\Product$10.class
 app\storemanagement\view\Category$6.class
 app\storemanagement\view\Product$5.class
 app\storemanagement\Login$5.class
+app\storemanagement\view\ProductDetail$5.class
 app\storemanagement\Login.class
 app\storemanagement\view\ProductDetail.class
 app\storemanagement\utils\Util.class
 app\storemanagement\view\Category$7.class
-app\storemanagement\view\Product$6.class
 app\storemanagement\view\Product$11.class
 app\storemanagement\Login$4.class

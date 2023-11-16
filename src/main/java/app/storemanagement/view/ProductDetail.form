@@ -168,6 +168,9 @@
           <Connection code="false" type="code"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="JTextFieldDateEditor _hsd = ((JTextFieldDateEditor) hsd.getDateEditor());&#xa;_hsd.setEnabled(true);&#xa;_hsd.addKeyListener(new KeyAdapter() {&#xa;    @Override&#xa;    public void keyTyped(KeyEvent e) {&#xa;        e.consume(); // Ch&#x1eb7;n s&#x1ef1; ki&#x1ec7;n ph&#xed;m&#xa;    }&#xa;&#xa;    @Override&#xa;    public void keyPressed(KeyEvent e) {&#xa;        int keyCode = e.getKeyCode();&#xa;        if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {&#xa;            e.consume(); // Ch&#x1eb7;n s&#x1ef1; ki&#x1ec7;n ph&#xed;m&#xa;        }&#xa;    }&#xa;});"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel40">
       <Properties>
@@ -212,6 +215,9 @@
           <Connection code="false" type="code"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="JTextFieldDateEditor _entry = ((JTextFieldDateEditor) entryDate.getDateEditor());&#xa;_entry.setEnabled(true);&#xa;_entry.addKeyListener(new KeyAdapter() {&#xa;    @Override&#xa;    public void keyTyped(KeyEvent e) {&#xa;        e.consume(); // Ch&#x1eb7;n s&#x1ef1; ki&#x1ec7;n ph&#xed;m&#xa;    }&#xa;&#xa;    @Override&#xa;    public void keyPressed(KeyEvent e) {&#xa;        int keyCode = e.getKeyCode();&#xa;        if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {&#xa;            e.consume(); // Ch&#x1eb7;n s&#x1ef1; ki&#x1ec7;n ph&#xed;m&#xa;        }&#xa;    }&#xa;});"/>
+      </AuxValues>
     </Component>
     <Component class="com.toedter.calendar.JDateChooser" name="nsx">
       <Properties>
@@ -219,6 +225,9 @@
           <Connection code="false" type="code"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="JTextFieldDateEditor _nsx = ((JTextFieldDateEditor) nsx.getDateEditor());&#xa;_nsx.setEnabled(true);&#xa;_nsx.addKeyListener(new KeyAdapter() {&#xa;    @Override&#xa;    public void keyTyped(KeyEvent e) {&#xa;        e.consume(); // Ch&#x1eb7;n s&#x1ef1; ki&#x1ec7;n ph&#xed;m&#xa;    }&#xa;&#xa;    @Override&#xa;    public void keyPressed(KeyEvent e) {&#xa;        int keyCode = e.getKeyCode();&#xa;        if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {&#xa;            e.consume(); // Ch&#x1eb7;n s&#x1ef1; ki&#x1ec7;n ph&#xed;m&#xa;        }&#xa;    }&#xa;});"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel49">
       <Properties>
