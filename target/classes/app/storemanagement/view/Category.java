@@ -116,7 +116,6 @@ public class Category extends javax.swing.JPanel {
             }
         });
 
-        categoryTable.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         categoryTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
