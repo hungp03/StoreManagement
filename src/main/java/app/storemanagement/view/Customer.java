@@ -1,8 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package app.storemanagement.view;
+
+import app.storemanagement.controller.CustomerCtrl;
+import app.storemanagement.model.Connection.DBConnection;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import app.storemanagement.model.CustomerModel;
+import app.storemanagement.utils.Util;
+import java.awt.event.ItemEvent;
+import java.sql.PreparedStatement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -10,11 +21,15 @@ package app.storemanagement.view;
  */
 public class Customer extends javax.swing.JPanel {
 
+    private int key = 0;
+    private boolean isRowSelected = false;
+
     /**
      * Creates new form Customer
      */
     public Customer() {
         initComponents();
+        displayCustomers("SELECT * FROM Customer");
     }
 
     /**
@@ -26,23 +41,25 @@ public class Customer extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField5 = new javax.swing.JTextField();
+        fullName = new javax.swing.JTextField();
         jLabel22 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        address = new javax.swing.JTextField();
         jLabel27 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
+        email = new javax.swing.JTextField();
         editButton1 = new javax.swing.JButton();
         addButton1 = new javax.swing.JButton();
         deleteButton1 = new javax.swing.JButton();
         jLabel29 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
+        searchInput = new javax.swing.JTextField();
         jLabel30 = new javax.swing.JLabel();
-        jComboBox6 = new javax.swing.JComboBox<>();
+        sortCb = new javax.swing.JComboBox<>();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        jTextField13 = new javax.swing.JTextField();
+        customerTable = new javax.swing.JTable();
+        phone = new javax.swing.JTextField();
+        CbSearch = new javax.swing.JComboBox<>();
+        SearchBtn = new javax.swing.JButton();
 
         jLabel22.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel22.setForeground(new java.awt.Color(76, 149, 108));
@@ -65,18 +82,33 @@ public class Customer extends javax.swing.JPanel {
         editButton1.setForeground(new java.awt.Color(255, 255, 255));
         editButton1.setText("Sửa");
         editButton1.setBorder(null);
+        editButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                editButton1MouseClicked(evt);
+            }
+        });
 
         addButton1.setBackground(new java.awt.Color(76, 149, 108));
         addButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         addButton1.setForeground(new java.awt.Color(255, 255, 255));
         addButton1.setText("Thêm");
         addButton1.setBorder(null);
+        addButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addButton1MouseClicked(evt);
+            }
+        });
 
         deleteButton1.setBackground(new java.awt.Color(76, 149, 108));
         deleteButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         deleteButton1.setForeground(new java.awt.Color(255, 255, 255));
         deleteButton1.setText("Xóa");
         deleteButton1.setBorder(null);
+        deleteButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                deleteButton1MouseClicked(evt);
+            }
+        });
 
         jLabel29.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel29.setForeground(new java.awt.Color(76, 149, 108));
@@ -86,9 +118,14 @@ public class Customer extends javax.swing.JPanel {
         jLabel30.setForeground(new java.awt.Color(76, 149, 108));
         jLabel30.setText("Sắp xếp");
 
-        jComboBox6.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã KH", "Tên KH" }));
+        sortCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã KH", "Tên KH" }));
+        sortCb.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                sortCbItemStateChanged(evt);
+            }
+        });
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        customerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -104,7 +141,25 @@ public class Customer extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        customerTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                customerTableMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(customerTable);
+
+        CbSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã KH", "Tên KH", "Số điện thoại", " " }));
+
+        SearchBtn.setBackground(new java.awt.Color(76, 149, 108));
+        SearchBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        SearchBtn.setForeground(new java.awt.Color(255, 255, 255));
+        SearchBtn.setText("SEARCH");
+        SearchBtn.setToolTipText("");
+        SearchBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SearchBtnMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -114,18 +169,18 @@ public class Customer extends javax.swing.JPanel {
                 .addGap(53, 53, 53)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel22)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fullName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel24)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(address, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28)
-                        .addComponent(jTextField13, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(phone, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel28)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(85, 85, 85))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -138,15 +193,20 @@ public class Customer extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(335, 335, 335)
-                                        .addComponent(jLabel29)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
                                         .addGap(85, 85, 85)
-                                        .addComponent(editButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(92, 92, 92)
+                                        .addComponent(editButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(sortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(92, 92, 92)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel29)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(CbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(SearchBtn))
+                                    .addGroup(layout.createSequentialGroup()
                                         .addComponent(addButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(108, 108, 108)
                                         .addComponent(deleteButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))))
@@ -164,42 +224,242 @@ public class Customer extends javax.swing.JPanel {
                         .addComponent(jLabel28)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField7)
-                            .addComponent(jTextField13)))
+                            .addComponent(email, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                            .addComponent(phone)))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel22)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(fullName, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel24)
                                 .addComponent(jLabel27))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(address, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deleteButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(60, 60, 60)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel29)
-                    .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel30))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(56, 56, 56)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(SearchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel29)
+                        .addComponent(sortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel30))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(CbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(15, 15, 15)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
+    private void addButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButton1MouseClicked
+        // TODO add your handling code here:
+        try {
+            int id = Util.getNextID("Customer_ID", "Customer");
+            String customerName = fullName.getText();
+            String customerAddress = address.getText();
+            String customerPhone = phone.getText();
+            String customerEmail = email.getText();
+
+            if (customerName.isEmpty() || customerAddress.isEmpty() || customerPhone.isEmpty() || customerEmail.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+            } else {
+                if (Util.checkEmail(customerEmail)) {
+                    CustomerModel customer = new CustomerModel(id, customerName, customerAddress, customerPhone, customerEmail);
+                    CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
+                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm khác hàng này?", "Alert",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (response == JOptionPane.YES_OPTION) {
+                        boolean success = tmp.add(customer);
+                        if (success) {
+                            JOptionPane.showMessageDialog(null, "Đã thêm khách hàng!");
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Email không hợp lệ!", "LỖI", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        isRowSelected = false;
+        clearTextField();
+        displayCustomers("SELECT * FROM Customer");
+    }//GEN-LAST:event_addButton1MouseClicked
+
+    private void editButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editButton1MouseClicked
+        // TODO add your handling code here:
+        try {
+            String customerName = fullName.getText();
+            String customerAddress = address.getText();
+            String customerPhone = phone.getText();
+            String customerEmail = email.getText();
+
+            if (customerName.isEmpty() || customerAddress.isEmpty() || customerPhone.isEmpty() || customerEmail.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Thông tin không được bỏ trống");
+            } else {
+                if (Util.checkEmail(customerEmail)) {
+                    CustomerModel customer = new CustomerModel(key, customerName, customerAddress, customerPhone, customerEmail);
+                    CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
+                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật khác hàng này?", "Alert",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (response == JOptionPane.YES_OPTION) {
+                        boolean success = tmp.add(customer);
+                        if (success) {
+                            JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Email không hợp lệ!", "LỖI", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        isRowSelected = false;
+        clearTextField();
+        displayCustomers("SELECT * FROM Customer");
+    }//GEN-LAST:event_editButton1MouseClicked
+
+    private void deleteButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButton1MouseClicked
+        // TODO add your handling code here:
+        if (isRowSelected == false) {
+            JOptionPane.showMessageDialog(null, "Chọn một khách hàng để xóa!");
+        } else {
+            CustomerModel product = new CustomerModel(key);
+            CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
+            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa khách hàng này?", "Alert",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (response == JOptionPane.YES_OPTION) {
+                boolean success = tmp.delete(product);
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
+                }
+            }
+        }
+        isRowSelected = false;
+        clearTextField();
+        displayCustomers("SELECT * FROM Customer");
+    }//GEN-LAST:event_deleteButton1MouseClicked
+
+    private void customerTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_customerTableMouseClicked
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) customerTable.getModel();
+        int my_idx = customerTable.getSelectedRow();
+        if (my_idx != -1) {
+            key = Integer.parseInt(model.getValueAt(my_idx, 0).toString());
+            try {
+                String query = "SELECT * FROM Customer WHERE Customer_ID=?";
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setInt(1, key);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+//                    String fullName1 = rs.getString("Full_Name");
+//                    String address1 = rs.getString("Address");
+//                    String phone1 = rs.getString("Phone");
+//                    String email1 = rs.getString("Email");
+                    fullName.setText(model.getValueAt(my_idx, 1).toString());
+                    address.setText(model.getValueAt(my_idx, 2).toString());
+                    phone.setText(model.getValueAt(my_idx, 3).toString());
+                    email.setText(model.getValueAt(my_idx, 4).toString());
+                }
+                isRowSelected = true;
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage());
+            } catch (SQLException ex) {
+                Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_customerTableMouseClicked
+
+    private void sortCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_sortCbItemStateChanged
+        // TODO add your handling code here:
+        String sortByCol = sortCb.getSelectedItem().toString();
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            if (sortByCol.equals("Mã KH")) {
+                String query1 = "SELECT * FROM Customer ORDER BY Customer_ID";
+                displayCustomers(query1);
+            } else if (sortByCol.equals("Tên KH")) {
+                String query2 = "SELECT * FROM Customer ORDER BY Full_Name";
+                displayCustomers(query2);
+            }
+        }
+
+    }//GEN-LAST:event_sortCbItemStateChanged
+
+    private void SearchBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SearchBtnMouseClicked
+        // TODO add your handling code here:
+        String selectedValue = CbSearch.getSelectedItem().toString();
+        String inputValue = searchInput.getText();
+        if (selectedValue.equals("Mã KH")) {
+            String sql = "SELECT * FROM Customer WHERE Customer_ID=" + inputValue;
+            displayCustomers(sql);
+        } else if (selectedValue.equals("Tên KH")) {
+            String sql = "SELECT * FROM Customer WHERE Full_Name=" + inputValue;
+            displayCustomers(sql);
+        } else if (selectedValue.equals("Số điện thoại")) {
+            String sql = "SELECT * FROM Customer WHERE Phone=" + inputValue;
+            displayCustomers(sql);
+        }
+    }//GEN-LAST:event_SearchBtnMouseClicked
+
+    private void displayCustomers(String sql) {
+        try {
+            Connection conn = DBConnection.getConnection();
+            Statement St = conn.createStatement();
+            ResultSet Rs = St.executeQuery(sql);
+            DefaultTableModel tableModel = new DefaultTableModel();
+            int columnCount = Rs.getMetaData().getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
+            }
+
+            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
+            while (Rs.next()) {
+                Object[] row = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    row[i - 1] = Rs.getObject(i);
+                }
+                tableModel.addRow(row);
+            }
+            String[] columnNames = {"Mã KH", "Tên KH", "Địa chỉ", "Số điện thoại", "Email"};
+            tableModel.setColumnIdentifiers(columnNames);
+
+            customerTable.setModel(tableModel);
+            Rs.close();
+            St.close();
+            conn.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
+    private void clearTextField() {
+        fullName.setText("");
+        address.setText("");
+        phone.setText("");
+        email.setText("");
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> CbSearch;
+    private javax.swing.JButton SearchBtn;
     private javax.swing.JButton addButton1;
+    private javax.swing.JTextField address;
+    private javax.swing.JTable customerTable;
     private javax.swing.JButton deleteButton1;
     private javax.swing.JButton editButton1;
-    private javax.swing.JComboBox<String> jComboBox6;
+    private javax.swing.JTextField email;
+    private javax.swing.JTextField fullName;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel27;
@@ -207,11 +467,8 @@ public class Customer extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTextField jTextField13;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
+    private javax.swing.JTextField phone;
+    private javax.swing.JTextField searchInput;
+    private javax.swing.JComboBox<String> sortCb;
     // End of variables declaration//GEN-END:variables
 }
