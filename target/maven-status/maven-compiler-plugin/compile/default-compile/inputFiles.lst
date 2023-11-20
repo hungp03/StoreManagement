@@ -3,12 +3,17 @@ C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\controller\BaseController.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\utils\Util.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\model\Connection\DBConnection.java
+C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\view\ProductDetail.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\controller\ProductCtrl.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\view\Customer.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\model\BaseEntity.java
+C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\model\CustomerModel.java
+C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\Main.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\view\Product.java
+C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\view\AddProduct.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\view\Employee.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\view\Overview.java
+C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\controller\CustomerCtrl.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\Login.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\model\ProductModel.java
 C:\Users\AnTran\Downloads\Java\StoreManagement\src\main\java\app\storemanagement\controller\CategoryCtrl.java

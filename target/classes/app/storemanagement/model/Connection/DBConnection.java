@@ -13,6 +13,9 @@ public class DBConnection {
 
     public static Connection getConnection() {
         try {
+            if(USERNAME == null || PASSWORD == null) {
+                throw new IllegalArgumentException("Database username or password is null.");
+            }
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             return DriverManager.getConnection(URL + ";user=" + USERNAME + ";password=" + PASSWORD + ";integratedSecurity=true;encrypt=true;trustServerCertificate=true");
         } catch (ClassNotFoundException | SQLException e) {

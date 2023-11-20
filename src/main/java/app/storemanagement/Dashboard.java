@@ -1,5 +1,6 @@
 package app.storemanagement;
 
+import app.storemanagement.utils.Util;
 import app.storemanagement.view.Category;
 import app.storemanagement.view.Customer;
 import app.storemanagement.view.Overview;
@@ -7,6 +8,8 @@ import app.storemanagement.view.Product;
 import app.storemanagement.view.Employee;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  *
@@ -30,6 +33,12 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel1.add(categoryPanel, "category");
         cardLayout.show(jPanel1, "overview");
         overviewLabel.setForeground(Color.YELLOW);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Util.confirmClose();
+            }
+        });
     }
 
     CardLayout cardLayout = new CardLayout();
@@ -56,6 +65,7 @@ public class Dashboard extends javax.swing.JFrame {
         logoutLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Quản lý cửa hàng");
         setPreferredSize(new java.awt.Dimension(1280, 720));
         setResizable(false);
 
@@ -262,15 +272,7 @@ public class Dashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_refundLabelMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+    /*public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Windows".equals(info.getName())) {
@@ -281,13 +283,11 @@ public class Dashboard extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             new Dashboard().setVisible(true);
         });
-    }
+    }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel categoryLabel;

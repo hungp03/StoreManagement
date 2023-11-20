@@ -1,6 +1,7 @@
 package app.storemanagement.controller;
 
 import app.storemanagement.model.ProductModel;
+import app.storemanagement.view.AddProduct;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -72,5 +73,45 @@ public class ProductCtrl implements BaseController<ProductModel> {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+    }
+
+    public static String displayQuery(String sortMethod) {
+        String query = """
+                       select Product_ID, Product_Name, Category.Category_Name, Entry_Date
+                       from Product inner join Category on Product.Category_ID = Category.Category_ID""";
+        switch (sortMethod) {
+            case "Mã SP" ->
+                query += " ORDER BY Product_ID";
+            case "Tên SP" ->
+                query += " ORDER BY Product_Name";
+            case "Ngày nhập hàng" ->
+                query += " ORDER BY Entry_Date";
+            default -> {
+            }
+        }
+        return query;
+    }
+
+    public static String searchQuery(String keyword, String sortMethod) {
+        String tmp = "";
+        switch (sortMethod) {
+            case "Mã SP" ->
+                tmp += "Product_ID";
+            case "Tên SP" ->
+                tmp += "Product_Name";
+            case "Ngày nhập hàng" ->
+                tmp += "Entry_Date";
+            default -> {
+            }
+        }
+        String query = "select Product_ID, Product_Name, Category.Category_Name, Entry_Date "
+                + "FROM Product inner join Category on Product.Category_ID = Category.Category_ID "
+                + "WHERE Product_Name LIKE N'%" + keyword + "%' OR Product_ID like N'%" + keyword + "%' "
+                + "OR Category.Category_Name like N'%" + keyword + "%' COLLATE Vietnamese_CI_AI "
+                + "ORDER BY " + tmp;
+        return query;
+    }
+    public static int getTmpID(int key){
+        return key;
     }
 }

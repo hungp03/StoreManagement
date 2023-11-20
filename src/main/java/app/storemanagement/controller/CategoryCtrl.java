@@ -62,7 +62,7 @@ public class CategoryCtrl implements BaseController<CategoryModel>{
         }
     }
     
-    public static String display(String sortMethod) {
+    public static String displayQuery(String sortMethod) {
         String query = "select * from Category";
         if (sortMethod.equals("Mã phân loại")) {
             query += " ORDER BY Category_ID";
@@ -72,8 +72,15 @@ public class CategoryCtrl implements BaseController<CategoryModel>{
         return query;
     }
     
-    public static String search(String keyword) {
-        String query = "SELECT * FROM Category WHERE Category_Name LIKE N'%" + keyword + "%' COLLATE Vietnamese_CI_AI";
+    public static String searchQuery(String keyword, String sortMethod) {
+        String tmp = "";
+        switch (sortMethod) {
+            case "Mã phân loại" -> tmp += "Category_ID";
+            case "Tên phân loại" -> tmp += "Category_Name";
+            default -> {
+            }
+        }
+        String query = "SELECT * FROM Category WHERE Category_Name LIKE N'%" + keyword + "%' COLLATE Vietnamese_CI_AI ORDER BY " + tmp;
         return query;
     }
     
