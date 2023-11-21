@@ -62,13 +62,4 @@ public class Util {
         }
         return true;
     }
-    public static void confirmClose() {
-        int option;
-        option = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn đóng cửa sổ chứ\nMột số dữ liệu có thể không được lưu?", "Confirm Close", JOptionPane.YES_NO_OPTION);
-        if (option == JOptionPane.YES_OPTION) {
-            // Thực hiện các hành động khi người dùng đồng ý đóng cửa sổ
-            // Ví dụ: Lưu dữ liệu, đóng kết nối, ...
-            System.exit(0);
-        }
-    }
 }

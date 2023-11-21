@@ -55,5 +55,6 @@ app\storemanagement\Login.class
 app\storemanagement\view\ProductDetail.class
 app\storemanagement\utils\Util.class
 app\storemanagement\view\Category$7.class
+app\storemanagement\view\Product$6.class
 app\storemanagement\view\Product$11.class
 app\storemanagement\Login$4.class
