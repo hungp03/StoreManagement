@@ -12,6 +12,7 @@ app\storemanagement\view\Category$2.class
 app\storemanagement\view\Employee.class
 app\storemanagement\view\AddProduct$3.class
 app\storemanagement\Dashboard$8.class
+app\storemanagement\view\Customer$8.class
 app\storemanagement\view\Category$8.class
 app\storemanagement\view\Category$5.class
 app\storemanagement\Dashboard.class
@@ -22,6 +23,7 @@ app\storemanagement\view\Product$8.class
 app\storemanagement\view\ProductDetail$2.class
 app\storemanagement\model\CustomerModel.class
 app\storemanagement\Login$2.class
+app\storemanagement\view\Customer$9.class
 app\storemanagement\view\Product$2.class
 app\storemanagement\Dashboard$2.class
 app\storemanagement\view\Customer$4.class
