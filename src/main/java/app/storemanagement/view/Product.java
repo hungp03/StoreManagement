@@ -59,6 +59,7 @@ public class Product extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        refresh = new javax.swing.JLabel();
 
         addProduct.setBackground(new java.awt.Color(76, 149, 108));
         addProduct.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -141,11 +142,6 @@ public class Product extends javax.swing.JPanel {
                 detailButtonMouseClicked(evt);
             }
         });
-        detailButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                detailButtonActionPerformed(evt);
-            }
-        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/products.png"))); // NOI18N
@@ -159,6 +155,13 @@ public class Product extends javax.swing.JPanel {
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel6.setText("0");
+
+        refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
+        refresh.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                refreshMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -182,7 +185,9 @@ public class Product extends javax.swing.JPanel {
                                 .addComponent(jLabel48)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(productSort, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(335, 335, 335)
+                                .addGap(18, 18, 18)
+                                .addComponent(refresh)
+                                .addGap(280, 280, 280)
                                 .addComponent(jLabel47)
                                 .addGap(18, 18, 18)
                                 .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -224,7 +229,8 @@ public class Product extends javax.swing.JPanel {
                     .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel47)
                     .addComponent(productSort, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel48))
+                    .addComponent(jLabel48)
+                    .addComponent(refresh))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
@@ -296,10 +302,6 @@ public class Product extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
-    private void detailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_detailButtonActionPerformed
-
     private void addProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addProductMouseClicked
         AddProduct detail = new AddProduct();
         detail.setVisible(true);
@@ -412,6 +414,16 @@ public class Product extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_detailButtonMouseClicked
 
+    private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
+        displayProductTable("""
+                            select Product_ID, Product_Name, Category.Category_Name, Entry_Date
+                            from Product inner join Category on Product.Category_ID = Category.Category_ID""");
+        handleSelected();
+        searchTextField.setText("");
+        productSort.setSelectedIndex(0);
+        isRowSelected = false;
+    }//GEN-LAST:event_refreshMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addProduct;
@@ -426,6 +438,7 @@ public class Product extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JComboBox<String> productSort;
     private javax.swing.JTable productTable;
+    private javax.swing.JLabel refresh;
     private javax.swing.JTextField searchTextField;
     // End of variables declaration//GEN-END:variables
 }
