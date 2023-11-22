@@ -345,10 +345,6 @@ public class Category extends javax.swing.JPanel {
     }//GEN-LAST:event_categorySortItemStateChanged
 
     private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
-        clearTextField();
-        if (isRowSelected = true) {
-            isRowSelected = false;
-        }
         Timer timer = new Timer(500, (ActionEvent e) -> {
             String keyword = searchTextField.getText();
             if (keyword.trim().isEmpty()) {
