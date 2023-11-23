@@ -26,7 +26,6 @@ import javax.swing.table.DefaultTableModel;
 public class Product extends javax.swing.JPanel {
 
     private int key = 0;
-    private boolean isRowSelected = false;
 
     /**
      * Creates new form Product
@@ -72,12 +71,11 @@ public class Product extends javax.swing.JPanel {
             }
         });
 
-        deleteProduct.setBackground(new java.awt.Color(242, 242, 242));
+        deleteProduct.setBackground(new java.awt.Color(76, 149, 108));
         deleteProduct.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         deleteProduct.setForeground(new java.awt.Color(255, 255, 255));
         deleteProduct.setText("Xóa");
         deleteProduct.setBorder(null);
-        deleteProduct.setEnabled(false);
         deleteProduct.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 deleteProductMouseClicked(evt);
@@ -131,12 +129,11 @@ public class Product extends javax.swing.JPanel {
         });
         jScrollPane4.setViewportView(productTable);
 
-        detailButton.setBackground(new java.awt.Color(242, 242, 242));
+        detailButton.setBackground(new java.awt.Color(76, 149, 108));
         detailButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         detailButton.setForeground(new java.awt.Color(255, 255, 255));
         detailButton.setText("Xem chi tiết");
         detailButton.setBorder(null);
-        detailButton.setEnabled(false);
         detailButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 detailButtonMouseClicked(evt);
@@ -225,12 +222,13 @@ public class Product extends javax.swing.JPanel {
                     .addComponent(deleteProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(detailButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel47)
-                    .addComponent(productSort, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel48)
-                    .addComponent(refresh))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(refresh)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel47)
+                        .addComponent(productSort, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel48)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
@@ -238,13 +236,11 @@ public class Product extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void displayProduct(String sortMethod) {
-        displayProductTable(ProductCtrl.displayQuery(sortMethod));
-        handleSelected();
+        displayProductTable(ProductCtrl.displayQuery(sortMethod, searchTextField.getText()));
     }
 
     private void searchProduct(String keyword) {
-        displayProductTable(ProductCtrl.searchQuery(keyword, (String) productSort.getSelectedItem()));
-        handleSelected();
+        displayProductTable(ProductCtrl.displayQuery((String) productSort.getSelectedItem(), keyword));
     }
 
     private void dp() {
@@ -258,16 +254,6 @@ public class Product extends javax.swing.JPanel {
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
-        }
-    }
-
-    private void handleSelected() {
-        if (isRowSelected == true) {
-            isRowSelected = false;
-            deleteProduct.setEnabled(false);
-            detailButton.setEnabled(false);
-            detailButton.setBackground(Color.decode("#F2F2F2"));
-            deleteProduct.setBackground(Color.decode("#F2F2F2"));
         }
     }
 
@@ -310,6 +296,8 @@ public class Product extends javax.swing.JPanel {
             public void windowClosed(WindowEvent e) {
                 // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
                 displayProduct((String) productSort.getSelectedItem());
+                searchTextField.setText("");
+                dp();
             }
         });
     }//GEN-LAST:event_addProductMouseClicked
@@ -319,7 +307,6 @@ public class Product extends javax.swing.JPanel {
         int my_idx = productTable.getSelectedRow();
         if (my_idx != -1) {
             // Lấy ID từ hàng được chọn
-            isRowSelected = true;
             detailButton.setEnabled(true);
             deleteProduct.setEnabled(true);
             detailButton.setBackground(Color.decode("#4C956C"));
@@ -330,7 +317,7 @@ public class Product extends javax.swing.JPanel {
 
     private void deleteProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteProductMouseClicked
         if (deleteProduct.isEnabled() == true) {
-            if (isRowSelected == false) {
+            if (productTable.getSelectedRow() < 0) {
                 JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xóa!");
             } else {
                 ProductModel product = new ProductModel(key);
@@ -344,13 +331,12 @@ public class Product extends javax.swing.JPanel {
                     }
                 }
             }
-            handleSelected();
             displayProduct((String) productSort.getSelectedItem());
+            dp();
         }
     }//GEN-LAST:event_deleteProductMouseClicked
 
     private void productSortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_productSortItemStateChanged
-        searchTextField.setText("");
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
             displayProduct(selectedMethod); // Gọi hàm displayCategory với phương thức sắp xếp được chọn
@@ -401,16 +387,21 @@ public class Product extends javax.swing.JPanel {
     private void detailButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_detailButtonMouseClicked
         //System.out.print(key);
         if (detailButton.isEnabled() == true) {
-            Util.tmpID = String.valueOf(key);
-            ProductDetail pd = new ProductDetail();
-            pd.setVisible(true);
-            pd.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
-                    displayProduct((String) productSort.getSelectedItem());
-                }
-            });
+            if (productTable.getSelectedRow() > 0) {
+                Util.tmpID = String.valueOf(key);
+                ProductDetail pd = new ProductDetail();
+                pd.setVisible(true);
+                pd.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
+                        displayProduct((String) productSort.getSelectedItem());
+                    }
+                });
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xem!");
+            }
         }
     }//GEN-LAST:event_detailButtonMouseClicked
 
@@ -418,10 +409,8 @@ public class Product extends javax.swing.JPanel {
         displayProductTable("""
                             select Product_ID, Product_Name, Category.Category_Name, Entry_Date
                             from Product inner join Category on Product.Category_ID = Category.Category_ID""");
-        handleSelected();
         searchTextField.setText("");
         productSort.setSelectedIndex(0);
-        isRowSelected = false;
     }//GEN-LAST:event_refreshMouseClicked
 
 
