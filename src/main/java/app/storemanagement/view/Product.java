@@ -59,6 +59,7 @@ public class Product extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         refresh = new javax.swing.JLabel();
+        searchCb = new javax.swing.JComboBox<>();
 
         addProduct.setBackground(new java.awt.Color(76, 149, 108));
         addProduct.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -160,6 +161,8 @@ public class Product extends javax.swing.JPanel {
             }
         });
 
+        searchCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã", "Tên", "Phân loại" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -184,9 +187,11 @@ public class Product extends javax.swing.JPanel {
                                 .addComponent(productSort, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(refresh)
-                                .addGap(280, 280, 280)
+                                .addGap(174, 174, 174)
                                 .addComponent(jLabel47)
                                 .addGap(18, 18, 18)
+                                .addComponent(searchCb, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(88, 88, 88)
@@ -216,7 +221,7 @@ public class Product extends javax.swing.JPanel {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addGap(70, 70, 70)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deleteProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -228,7 +233,8 @@ public class Product extends javax.swing.JPanel {
                         .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel47)
                         .addComponent(productSort, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel48)))
+                        .addComponent(jLabel48)
+                        .addComponent(searchCb)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
@@ -236,11 +242,11 @@ public class Product extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void displayProduct(String sortMethod) {
-        displayProductTable(ProductCtrl.displayQuery(sortMethod, searchTextField.getText()));
+        displayProductTable(ProductCtrl.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
     }
 
     private void searchProduct(String keyword) {
-        displayProductTable(ProductCtrl.displayQuery((String) productSort.getSelectedItem(), keyword));
+        displayProductTable(ProductCtrl.displayQuery((String) productSort.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
     }
 
     private void dp() {
@@ -398,8 +404,7 @@ public class Product extends javax.swing.JPanel {
                         displayProduct((String) productSort.getSelectedItem());
                     }
                 });
-            }
-            else{
+            } else {
                 JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xem!");
             }
         }
@@ -411,6 +416,7 @@ public class Product extends javax.swing.JPanel {
                             from Product inner join Category on Product.Category_ID = Category.Category_ID""");
         searchTextField.setText("");
         productSort.setSelectedIndex(0);
+        searchCb.setSelectedIndex(0);
     }//GEN-LAST:event_refreshMouseClicked
 
 
@@ -428,6 +434,7 @@ public class Product extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> productSort;
     private javax.swing.JTable productTable;
     private javax.swing.JLabel refresh;
+    private javax.swing.JComboBox<String> searchCb;
     private javax.swing.JTextField searchTextField;
     // End of variables declaration//GEN-END:variables
 }
