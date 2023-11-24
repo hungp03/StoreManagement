@@ -77,19 +77,20 @@ public class ProductCtrl implements BaseController<ProductModel> {
 
     public static String displayQuery(String sortMethod, String keyword, String searchMethod) {
         String tmp = "";
-        switch (searchMethod) {
-            case "Mã" ->
-                tmp = " WHERE Product_ID LIKE N'%" + keyword.trim() + "%'";
-            case "Tên" ->
-                tmp = " WHERE Product_Name LIKE N'%" + keyword.trim() + "%'";
-            case "Phân loại" ->
-                tmp = " WHERE Category_Name LIKE N'%" + keyword.trim() + "%'";
-            default -> {
+        if (keyword.trim().isEmpty() == false) {
+            switch (searchMethod) {
+                case "Mã" ->
+                    tmp = " WHERE Product_ID LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                case "Tên" ->
+                    tmp = " WHERE Product_Name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                case "Phân loại" ->
+                    tmp = " WHERE Category_Name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                default -> {
+                }
             }
         }
-        
         String query = "select Product_ID, Product_Name, Category.Category_Name, Entry_Date from Product inner join Category on Product.Category_ID = Category.Category_ID"
-                + tmp + " COLLATE Vietnamese_CI_AI ";
+                + tmp;
         switch (sortMethod) {
             case "Mã SP" ->
                 query += " ORDER BY Product_ID";

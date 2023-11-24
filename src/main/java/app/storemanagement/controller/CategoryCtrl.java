@@ -63,7 +63,11 @@ public class CategoryCtrl implements BaseController<CategoryModel>{
     }
     
     public static String displayQuery(String sortMethod, String keyword) {
-        String query = "select * from Category where Category_Name like N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI";
+        String tmp = "";
+        if (keyword.trim().isEmpty() == false){
+            tmp = "where Category_Name like N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI";
+        }
+        String query = "select * from Category " + tmp;
         if (sortMethod.equals("Mã phân loại")) {
             query += " ORDER BY Category_ID";
         } else if (sortMethod.equals("Tên phân loại")) {

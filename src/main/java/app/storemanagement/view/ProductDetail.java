@@ -70,6 +70,9 @@ public class ProductDetail extends javax.swing.JFrame {
         topLabel = new javax.swing.JLabel();
         editBtn = new javax.swing.JButton();
         saveBtn = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        productCondition = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thông tin sản phẩm");
@@ -188,9 +191,9 @@ public class ProductDetail extends javax.swing.JFrame {
         editBtn.setForeground(new java.awt.Color(255, 255, 255));
         editBtn.setText("Sửa");
         editBtn.setBorder(null);
-        editBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                editBtnMouseClicked(evt);
+        editBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editBtnActionPerformed(evt);
             }
         });
 
@@ -200,11 +203,18 @@ public class ProductDetail extends javax.swing.JFrame {
         saveBtn.setText("Lưu");
         saveBtn.setBorder(null);
         saveBtn.setEnabled(false);
-        saveBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                saveBtnMouseClicked(evt);
+        saveBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveBtnActionPerformed(evt);
             }
         });
+
+        jLabel1.setText("Thời gian tạo: ");
+
+        jLabel2.setText("Cập nhật lần cuối: ");
+
+        productCondition.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        productCondition.setText("Tình trạng sản phẩm: ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -219,13 +229,8 @@ public class ProductDetail extends javax.swing.JFrame {
                             .addComponent(productID, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(unitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel45))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(92, 92, 92)
-                                .addComponent(topLabel))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(56, 56, 56)
-                                .addComponent(jLabel44))))
+                        .addGap(56, 56, 56)
+                        .addComponent(jLabel44))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(entryDate, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -247,18 +252,38 @@ public class ProductDetail extends javax.swing.JFrame {
                             .addComponent(qtyInStock, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(26, 26, 26))
             .addGroup(layout.createSequentialGroup()
-                .addGap(210, 210, 210)
-                .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(152, 152, 152)
-                .addComponent(saveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(210, 210, 210)
+                        .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(152, 152, 152)
+                        .addComponent(saveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(321, 321, 321)
+                        .addComponent(topLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(productCondition)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(47, 47, 47)
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(productCondition)
+                .addGap(10, 10, 10)
                 .addComponent(topLabel)
-                .addGap(47, 47, 47)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel40)
                     .addComponent(jLabel42)
@@ -276,7 +301,7 @@ public class ProductDetail extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(hsd, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                        .addComponent(hsd, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
                         .addGap(26, 26, 26)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel46)
@@ -292,7 +317,7 @@ public class ProductDetail extends javax.swing.JFrame {
                     .addComponent(qtyInStock, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(des, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(entryDate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(saveBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -303,7 +328,6 @@ public class ProductDetail extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
     private void initShowPage() {
-        Date today = new Date();
         try {
             // Thực hiện truy vấn SQL để lấy tất cả các thông tin của sản phẩm
             String query = "SELECT * FROM Product inner join Category ON Category.Category_ID = Product.Category_ID WHERE Product_ID = ?";
@@ -330,17 +354,34 @@ public class ProductDetail extends javax.swing.JFrame {
                 nsx.setDate(manufactureDate);
                 hsd.setDate(expiryDate);
                 entryDate.setDate(entry);
-
+                checkHSD(expiryDate, quantityInStock);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    private void editBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editBtnMouseClicked
-        setProperties("Cập nhật thông tin", true, "#4C956C");
-    }//GEN-LAST:event_editBtnMouseClicked
 
-    private void saveBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveBtnMouseClicked
+    private void checkHSD(Date hsd, int qty) {
+        Date today = new Date();
+        if (hsd.before(today)) {
+            productCondition.setText("Tình trạng: Hết HSD");
+            productCondition.setForeground(Color.red);
+        } else {
+            if (qty > 0) {
+                productCondition.setText("Tình trạng: Còn hàng");
+                productCondition.setForeground(Color.decode("#4C956C"));
+            }
+            else{
+                productCondition.setText("Tình trạng: Hết hàng");
+                productCondition.setForeground(Color.red);
+            }
+        }
+    }
+    private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
+        setProperties("Cập nhật thông tin", true, "#4C956C");
+    }//GEN-LAST:event_editBtnActionPerformed
+
+    private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
         String name = productName.getText().trim();
         CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
         int categoryId = categoryItem.getId();
@@ -371,11 +412,12 @@ public class ProductDetail extends javax.swing.JFrame {
                     }
                 }
                 setProperties("Thông tin sản phẩm", false, "#F2F2F2");
+                checkHSD(expiryDate, quantityInStock);
             }
         } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_saveBtnMouseClicked
+    }//GEN-LAST:event_saveBtnActionPerformed
     private void setProperties(String topLbText, boolean b, String colorCode) {
         topLabel.setText(topLbText);
         productName.setEditable(b);
@@ -388,7 +430,7 @@ public class ProductDetail extends javax.swing.JFrame {
         cateCb.setEnabled(b);
         saveBtn.setEnabled(b);
         saveBtn.setBackground(Color.decode(colorCode));
-        
+
     }
 
     private void getCategories() {
@@ -419,6 +461,8 @@ public class ProductDetail extends javax.swing.JFrame {
     private javax.swing.JButton editBtn;
     private com.toedter.calendar.JDateChooser entryDate;
     private com.toedter.calendar.JDateChooser hsd;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel42;
@@ -429,6 +473,7 @@ public class ProductDetail extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel47;
     private javax.swing.JLabel jLabel49;
     private com.toedter.calendar.JDateChooser nsx;
+    private javax.swing.JLabel productCondition;
     private javax.swing.JTextField productID;
     private javax.swing.JTextField productName;
     private javax.swing.JTextField qtyInStock;

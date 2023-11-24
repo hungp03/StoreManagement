@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.Date;
 import javax.swing.JOptionPane;
 
@@ -54,10 +53,6 @@ public class Util {
         }
         else if (entry.after(today)){
             JOptionPane.showMessageDialog(null, "Ngày nhập không được sau hôm nay");
-            return false;
-        }
-        else if (today.after(expiryDate)){
-            JOptionPane.showMessageDialog(null, "Sản phẩm đã hết HSD");
             return false;
         }
         return true;

@@ -66,9 +66,9 @@ public class Product extends javax.swing.JPanel {
         addProduct.setForeground(new java.awt.Color(255, 255, 255));
         addProduct.setText("Thêm");
         addProduct.setBorder(null);
-        addProduct.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addProductMouseClicked(evt);
+        addProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addProductActionPerformed(evt);
             }
         });
 
@@ -77,9 +77,9 @@ public class Product extends javax.swing.JPanel {
         deleteProduct.setForeground(new java.awt.Color(255, 255, 255));
         deleteProduct.setText("Xóa");
         deleteProduct.setBorder(null);
-        deleteProduct.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                deleteProductMouseClicked(evt);
+        deleteProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteProductActionPerformed(evt);
             }
         });
 
@@ -135,9 +135,9 @@ public class Product extends javax.swing.JPanel {
         detailButton.setForeground(new java.awt.Color(255, 255, 255));
         detailButton.setText("Xem chi tiết");
         detailButton.setBorder(null);
-        detailButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                detailButtonMouseClicked(evt);
+        detailButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                detailButtonActionPerformed(evt);
             }
         });
 
@@ -229,12 +229,12 @@ public class Product extends javax.swing.JPanel {
                 .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(refresh)
+                    .addComponent(searchCb)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel47)
                         .addComponent(productSort, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel48)
-                        .addComponent(searchCb)))
+                        .addComponent(jLabel48)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
@@ -294,20 +294,6 @@ public class Product extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
-    private void addProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addProductMouseClicked
-        AddProduct detail = new AddProduct();
-        detail.setVisible(true);
-        detail.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
-                displayProduct((String) productSort.getSelectedItem());
-                searchTextField.setText("");
-                dp();
-            }
-        });
-    }//GEN-LAST:event_addProductMouseClicked
-
     private void productTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_productTableMouseClicked
         DefaultTableModel model = (DefaultTableModel) productTable.getModel();
         int my_idx = productTable.getSelectedRow();
@@ -320,27 +306,6 @@ public class Product extends javax.swing.JPanel {
             key = Integer.parseInt(model.getValueAt(my_idx, 0).toString());
         }
     }//GEN-LAST:event_productTableMouseClicked
-
-    private void deleteProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteProductMouseClicked
-        if (deleteProduct.isEnabled() == true) {
-            if (productTable.getSelectedRow() < 0) {
-                JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xóa!");
-            } else {
-                ProductModel product = new ProductModel(key);
-                ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
-                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa sản phẩm này?", "Alert",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION) {
-                    boolean success = tmp.delete(product);
-                    if (success) {
-                        JOptionPane.showMessageDialog(null, "Đã xóa sản phẩm");
-                    }
-                }
-            }
-            displayProduct((String) productSort.getSelectedItem());
-            dp();
-        }
-    }//GEN-LAST:event_deleteProductMouseClicked
 
     private void productSortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_productSortItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -390,10 +355,54 @@ public class Product extends javax.swing.JPanel {
         });
     }//GEN-LAST:event_searchTextFieldKeyTyped
 
-    private void detailButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_detailButtonMouseClicked
+    private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
+        displayProductTable("""
+                            select Product_ID, Product_Name, Category.Category_Name, Entry_Date
+                            from Product inner join Category on Product.Category_ID = Category.Category_ID""");
+        searchTextField.setText("");
+        productSort.setSelectedIndex(0);
+        searchCb.setSelectedIndex(0);
+    }//GEN-LAST:event_refreshMouseClicked
+
+    private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed
+        AddProduct detail = new AddProduct();
+        detail.setVisible(true);
+        detail.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
+                displayProduct((String) productSort.getSelectedItem());
+                searchTextField.setText("");
+                dp();
+            }
+        });
+    }//GEN-LAST:event_addProductActionPerformed
+
+    private void deleteProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteProductActionPerformed
+        if (deleteProduct.isEnabled() == true) {
+            if (productTable.getSelectedRow() < 0) {
+                JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xóa!");
+            } else {
+                ProductModel product = new ProductModel(key);
+                ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa sản phẩm này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.delete(product);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã xóa sản phẩm");
+                    }
+                }
+            }
+            displayProduct((String) productSort.getSelectedItem());
+            dp();
+        }
+    }//GEN-LAST:event_deleteProductActionPerformed
+
+    private void detailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailButtonActionPerformed
         //System.out.print(key);
         if (detailButton.isEnabled() == true) {
-            if (productTable.getSelectedRow() > 0) {
+            if (productTable.getSelectedRow() >= 0) {
                 Util.tmpID = String.valueOf(key);
                 ProductDetail pd = new ProductDetail();
                 pd.setVisible(true);
@@ -408,16 +417,7 @@ public class Product extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xem!");
             }
         }
-    }//GEN-LAST:event_detailButtonMouseClicked
-
-    private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
-        displayProductTable("""
-                            select Product_ID, Product_Name, Category.Category_Name, Entry_Date
-                            from Product inner join Category on Product.Category_ID = Category.Category_ID""");
-        searchTextField.setText("");
-        productSort.setSelectedIndex(0);
-        searchCb.setSelectedIndex(0);
-    }//GEN-LAST:event_refreshMouseClicked
+    }//GEN-LAST:event_detailButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

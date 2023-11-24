@@ -68,9 +68,9 @@ public class Category extends javax.swing.JPanel {
         editButton.setForeground(new java.awt.Color(255, 255, 255));
         editButton.setText("Sửa");
         editButton.setBorder(null);
-        editButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                editButtonMouseClicked(evt);
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
             }
         });
 
@@ -79,9 +79,9 @@ public class Category extends javax.swing.JPanel {
         addButton.setForeground(new java.awt.Color(255, 255, 255));
         addButton.setText("Thêm");
         addButton.setBorder(null);
-        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addButtonMouseClicked(evt);
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
             }
         });
 
@@ -90,9 +90,9 @@ public class Category extends javax.swing.JPanel {
         deleteButton.setForeground(new java.awt.Color(255, 255, 255));
         deleteButton.setText("Xóa");
         deleteButton.setBorder(null);
-        deleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                deleteButtonMouseClicked(evt);
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
             }
         });
 
@@ -251,28 +251,6 @@ public class Category extends javax.swing.JPanel {
         }
     }
 
-    private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
-        int id = Util.getNextID("Category_ID", "Category");
-        String name = categoryName.getText();
-        if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-        } else {
-            CategoryModel category = new CategoryModel(id, name);
-            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm danh mục này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = tmp.add(category);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã thêm danh mục");
-                }
-            }
-        }
-        clearTextField();
-        searchTextField.setText("");
-        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-    }//GEN-LAST:event_addButtonMouseClicked
-
     private void categoryTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categoryTableMouseClicked
         DefaultTableModel model = (DefaultTableModel) categoryTable.getModel();
         int my_idx = categoryTable.getSelectedRow();
@@ -282,50 +260,6 @@ public class Category extends javax.swing.JPanel {
             categoryName.setText(model.getValueAt(my_idx, 1).toString());
         }
     }//GEN-LAST:event_categoryTableMouseClicked
-
-    private void editButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editButtonMouseClicked
-        if (categoryTable.getSelectedRow() > 0) {
-            String name = categoryName.getText();
-            if (name.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-            } else {
-                CategoryModel category = new CategoryModel(key, name);
-                CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật danh mục này?", "Alert",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION) {
-                    boolean success = tmp.update(category);
-                    if (success) {
-                        JOptionPane.showMessageDialog(null, "Đã cập nhật danh mục");
-                    }
-                }
-            }
-            clearTextField();
-            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-        }
-        else {
-            JOptionPane.showMessageDialog(null, "Chọn một phân loại để sửa");
-        }
-    }//GEN-LAST:event_editButtonMouseClicked
-
-    private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
-        if (categoryTable.getSelectedRow() < 0) {
-            JOptionPane.showMessageDialog(null, "Chọn một phân loại để xóa!");
-        } else {
-            CategoryModel category = new CategoryModel(key);
-            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa danh mục này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = tmp.delete(category);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã xóa danh mục");
-                }
-            }
-        }
-        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-        clearTextField();
-    }//GEN-LAST:event_deleteButtonMouseClicked
 
     private void categorySortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_categorySortItemStateChanged
         clearTextField();
@@ -381,6 +315,72 @@ public class Category extends javax.swing.JPanel {
         clearTextField();
         searchTextField.setText("");
     }//GEN-LAST:event_refreshMouseClicked
+
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        if (categoryTable.getSelectedRow() > 0) {
+            String name = categoryName.getText();
+            if (name.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+            } else {
+                CategoryModel category = new CategoryModel(key, name);
+                CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật danh mục này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.update(category);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã cập nhật danh mục");
+                    }
+                }
+            }
+            clearTextField();
+            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "Chọn một phân loại để sửa");
+        }
+    }//GEN-LAST:event_editButtonActionPerformed
+
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        int id = Util.getNextID("Category_ID", "Category");
+        String name = categoryName.getText();
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+        } else {
+            CategoryModel category = new CategoryModel(id, name);
+            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
+            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm danh mục này?", "Alert",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (response == JOptionPane.YES_OPTION) {
+                boolean success = tmp.add(category);
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "Đã thêm danh mục");
+                }
+            }
+        }
+        clearTextField();
+        searchTextField.setText("");
+        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
+    }//GEN-LAST:event_addButtonActionPerformed
+
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        if (categoryTable.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(null, "Chọn một phân loại để xóa!");
+        } else {
+            CategoryModel category = new CategoryModel(key);
+            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
+            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa danh mục này?", "Alert",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (response == JOptionPane.YES_OPTION) {
+                boolean success = tmp.delete(category);
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "Đã xóa danh mục");
+                }
+            }
+        }
+        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
+        clearTextField();
+    }//GEN-LAST:event_deleteButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
