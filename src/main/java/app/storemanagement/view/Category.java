@@ -58,6 +58,8 @@ public class Category extends javax.swing.JPanel {
         categoryTable = new javax.swing.JTable();
         refresh = new javax.swing.JLabel();
 
+        setName(""); // NOI18N
+
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel15.setForeground(new java.awt.Color(76, 149, 108));
         jLabel15.setText("Phân loại");
@@ -205,8 +207,8 @@ public class Category extends javax.swing.JPanel {
                         .addComponent(jLabel21))
                     .addComponent(refresh))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(58, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     private void displayCategory(String sortMethod) {
