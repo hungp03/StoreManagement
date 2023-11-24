@@ -24,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 public class Category extends javax.swing.JPanel {
 
     private int key = 0;
+    private boolean isRowSelected = false;
 
     /**
      * Creates new form Category
@@ -35,6 +36,7 @@ public class Category extends javax.swing.JPanel {
 
     private void clearTextField() {
         categoryName.setText("");
+        searchTextField.setText("");
     }
 
     /**
@@ -57,20 +59,20 @@ public class Category extends javax.swing.JPanel {
         categorySort = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         categoryTable = new javax.swing.JTable();
-        refresh = new javax.swing.JLabel();
 
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel15.setForeground(new java.awt.Color(76, 149, 108));
         jLabel15.setText("Phân loại");
 
-        editButton.setBackground(new java.awt.Color(76, 149, 108));
+        editButton.setBackground(new java.awt.Color(242, 242, 242));
         editButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         editButton.setForeground(new java.awt.Color(255, 255, 255));
         editButton.setText("Sửa");
         editButton.setBorder(null);
-        editButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButtonActionPerformed(evt);
+        editButton.setEnabled(false);
+        editButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                editButtonMouseClicked(evt);
             }
         });
 
@@ -79,9 +81,9 @@ public class Category extends javax.swing.JPanel {
         addButton.setForeground(new java.awt.Color(255, 255, 255));
         addButton.setText("Thêm");
         addButton.setBorder(null);
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
+        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addButtonMouseClicked(evt);
             }
         });
 
@@ -91,9 +93,9 @@ public class Category extends javax.swing.JPanel {
         deleteButton.setText("Xóa");
         deleteButton.setBorder(null);
         deleteButton.setEnabled(false);
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
+        deleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                deleteButtonMouseClicked(evt);
             }
         });
 
@@ -144,13 +146,6 @@ public class Category extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(categoryTable);
 
-        refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
-        refresh.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                refreshMouseClicked(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -172,8 +167,6 @@ public class Category extends javax.swing.JPanel {
                                 .addComponent(jLabel21)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(categorySort, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(refresh)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel20)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -199,24 +192,29 @@ public class Category extends javax.swing.JPanel {
                     .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel20)
-                        .addComponent(categorySort, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel21))
-                    .addComponent(refresh))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20)
+                    .addComponent(categorySort, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel21))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(35, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     private void displayCategory(String sortMethod) {
-        displayCategoryTable(CategoryCtrl.displayQuery(sortMethod, searchTextField.getText()));
+        displayCategoryTable(CategoryCtrl.displayQuery(sortMethod));
+        handleButton(false, "#F2F2F2");
     }
-    
+    private void handleButton(boolean b, String color){
+        editButton.setEnabled(b);
+        deleteButton.setEnabled(b);
+        editButton.setBackground(Color.decode(color));
+        deleteButton.setBackground(Color.decode(color));
+    }
     private void searchCategory(String keyword) {
-        displayCategoryTable(CategoryCtrl.displayQuery((String) categorySort.getSelectedItem(), keyword));
+        displayCategoryTable(CategoryCtrl.searchQuery(keyword, (String) categorySort.getSelectedItem()));
+        handleButton(false, "#F2F2F2");
     }
 
     private void displayCategoryTable(String sql) {
@@ -252,7 +250,6 @@ public class Category extends javax.swing.JPanel {
         }
     }
 
-    /*
     private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
         int id = Util.getNextID("Category_ID", "Category");
         String name = categoryName.getText();
@@ -271,20 +268,23 @@ public class Category extends javax.swing.JPanel {
                 }
             }
         }
+        isRowSelected = false; //Phòng ngừa trường hợp bấm vào để chỉnh nhưng không chỉnh sửa mà thêm mới
         clearTextField();
         displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
     }//GEN-LAST:event_addButtonMouseClicked
-    */
+
     private void categoryTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categoryTableMouseClicked
         DefaultTableModel model = (DefaultTableModel) categoryTable.getModel();
         int my_idx = categoryTable.getSelectedRow();
         if (my_idx != -1) {
             // Cập nhật giá trị của key nếu một hàng đã được chọn
             key = Integer.parseInt(model.getValueAt(my_idx, 0).toString());
+            isRowSelected = true;
             categoryName.setText(model.getValueAt(my_idx, 1).toString());
         }
+        handleButton(true, "#4C956C");
     }//GEN-LAST:event_categoryTableMouseClicked
-/*
+
     private void editButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editButtonMouseClicked
         if (editButton.isEnabled() == true) {
             String name = categoryName.getText();
@@ -333,9 +333,11 @@ public class Category extends javax.swing.JPanel {
             clearTextField();
         }
     }//GEN-LAST:event_deleteButtonMouseClicked
-*/
+
     private void categorySortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_categorySortItemStateChanged
+        searchTextField.setText("");
         clearTextField();
+        isRowSelected = false;
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
             displayCategory(selectedMethod); // Gọi hàm displayCategory với phương thức sắp xếp được chọn
@@ -343,6 +345,10 @@ public class Category extends javax.swing.JPanel {
     }//GEN-LAST:event_categorySortItemStateChanged
 
     private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
+        clearTextField();
+        if (isRowSelected = true) {
+            isRowSelected = false;
+        }
         Timer timer = new Timer(500, (ActionEvent e) -> {
             String keyword = searchTextField.getText();
             if (keyword.trim().isEmpty()) {
@@ -382,81 +388,6 @@ public class Category extends javax.swing.JPanel {
         });
     }//GEN-LAST:event_searchTextFieldKeyTyped
 
-    private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
-        displayCategoryTable("Select * from Category order by Category_ID");
-        categorySort.setSelectedIndex(0);
-        clearTextField();
-        searchTextField.setText("");
-    }//GEN-LAST:event_refreshMouseClicked
-
-    private boolean verifyInput() {
-        if (categoryName.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-            return false;
-        }
-        return true;
-    }
-    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        if (categoryTable.getSelectedRow() > 0) {
-            String name = categoryName.getText();
-            if (verifyInput()) {
-                CategoryModel category = new CategoryModel(key, name);
-                CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật danh mục này?", "Alert",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION) {
-                    boolean success = tmp.update(category);
-                    if (success) {
-                        JOptionPane.showMessageDialog(null, "Đã cập nhật danh mục");
-                    }
-                }
-            }
-            clearTextField();
-            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-        } else {
-            JOptionPane.showMessageDialog(null, "Chọn một phân loại để sửa");
-        }
-    }//GEN-LAST:event_editButtonActionPerformed
-
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        int id = Util.getNextID("Category_ID", "Category");
-        String name = categoryName.getText();
-        if (verifyInput()) {
-            CategoryModel category = new CategoryModel(id, name);
-            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm danh mục này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = tmp.add(category);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã thêm danh mục");
-                }
-            }
-        }
-        clearTextField();
-        searchTextField.setText("");
-        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-    }//GEN-LAST:event_addButtonActionPerformed
-
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        if (categoryTable.getSelectedRow() < 0) {
-            JOptionPane.showMessageDialog(null, "Chọn một phân loại để xóa!");
-        } else {
-            CategoryModel category = new CategoryModel(key);
-            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa danh mục này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = tmp.delete(category);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã xóa danh mục");
-                }
-            }
-        }
-        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-        clearTextField();
-    }//GEN-LAST:event_deleteButtonActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
@@ -469,7 +400,6 @@ public class Category extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel refresh;
     private javax.swing.JTextField searchTextField;
     // End of variables declaration//GEN-END:variables
 }
