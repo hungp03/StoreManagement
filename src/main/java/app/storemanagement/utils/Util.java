@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package app.storemanagement.utils;
 
 import app.storemanagement.model.Connection.DBConnection;
@@ -11,7 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import javax.swing.JOptionPane;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 /**
  *
  * @author Hung Pham
@@ -56,5 +53,9 @@ public class Util {
             return false;
         }
         return true;
+    }
+    
+    public static String getCurrentDateTime() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy"));
     }
 }

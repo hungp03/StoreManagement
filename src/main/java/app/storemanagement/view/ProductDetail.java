@@ -330,7 +330,14 @@ public class ProductDetail extends javax.swing.JFrame {
     private void initShowPage() {
         try {
             // Thực hiện truy vấn SQL để lấy tất cả các thông tin của sản phẩm
-            String query = "SELECT * FROM Product inner join Category ON Category.Category_ID = Product.Category_ID WHERE Product_ID = ?";
+            String query = """
+                           SELECT Product_ID, Product_Name, Category.Category_ID, Category_Name, Unit_Price,
+                           Quantity_In_Stock, Description, Manufacture_Date, Expiry_Date, Entry_Date, 
+                           FORMAT(Created_At, 'HH:mm dd/MM/yyyy') as Created_Time,
+                           FORMAT(Updated_At, 'HH:mm dd/MM/yyyy') as Updated_Time 
+                           FROM Product inner join Category ON Category.Category_ID = Product.Category_ID
+                           WHERE Product_ID = ?
+                           """;
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, id);
@@ -346,6 +353,7 @@ public class ProductDetail extends javax.swing.JFrame {
                 String name = rs.getString("Product_Name");
                 DefaultComboBoxModel comboBoxModel = (DefaultComboBoxModel) cateCb.getModel();
                 String cateName = rs.getString("Category_Name");
+                jLabel1.setText("Thời gian tạo: " + rs.getString("Created_Time"));
                 productName.setText(name);
                 unitPrice.setText(String.valueOf(unitP));
                 cateCb.setSelectedIndex(comboBoxModel.getIndexOf(new CategoryModel(categoryId, cateName)));
@@ -355,6 +363,11 @@ public class ProductDetail extends javax.swing.JFrame {
                 hsd.setDate(expiryDate);
                 entryDate.setDate(entry);
                 checkHSD(expiryDate, quantityInStock);
+                if (rs.getString("Updated_Time") == null) {
+                    jLabel2.setText("");
+                } else {
+                    jLabel2.setText("Cập nhật lần cuối: " + rs.getString("Updated_Time"));
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
@@ -370,8 +383,7 @@ public class ProductDetail extends javax.swing.JFrame {
             if (qty > 0) {
                 productCondition.setText("Tình trạng: Còn hàng");
                 productCondition.setForeground(Color.decode("#4C956C"));
-            }
-            else{
+            } else {
                 productCondition.setText("Tình trạng: Hết hàng");
                 productCondition.setForeground(Color.red);
             }
@@ -413,11 +425,13 @@ public class ProductDetail extends javax.swing.JFrame {
                 }
                 setProperties("Thông tin sản phẩm", false, "#F2F2F2");
                 checkHSD(expiryDate, quantityInStock);
+                jLabel2.setText("Cập nhật lần cuối: " + Util.getCurrentDateTime());
             }
         } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_saveBtnActionPerformed
+    
     private void setProperties(String topLbText, boolean b, String colorCode) {
         topLabel.setText(topLbText);
         productName.setEditable(b);
