@@ -167,7 +167,7 @@ public class AddProduct extends javax.swing.JFrame {
                             .addComponent(jLabel42)
                             .addComponent(jLabel46)
                             .addComponent(qtyInStock, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -239,10 +239,11 @@ public class AddProduct extends javax.swing.JFrame {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
-    }    
-    private boolean isExpired(Date hsd){
+    }
+    
+    private boolean isExpired(Date hsd) {
         Date today = new Date();
-        if (hsd.before(today)){
+        if (hsd.before(today)) {
             JOptionPane.showMessageDialog(null, "Đã hết HSD");
             return true;
         }
@@ -257,19 +258,12 @@ public class AddProduct extends javax.swing.JFrame {
         Date manufactureDate = nsx.getDate();
         Date expiryDate = hsd.getDate();
         Date entry = entryDate.getDate();
-        if (name.isEmpty() || manufactureDate == null || expiryDate == null || entry == null) {
-            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-            return;
-        }
         try {
             double unitP = Double.parseDouble(unitPrice.getText().trim());
             int quantityInStock = Integer.parseInt(qtyInStock.getText().trim());
             String description = des.getText().trim();
-            if (unitP < 0 || quantityInStock < 0) {
-                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-                return;
-            }
-            if (Util.checkDate(manufactureDate, expiryDate, entry) == true && isExpired(expiryDate) == false) {
+
+            if (Util.validateProductInput(name, manufactureDate, expiryDate, entry, unitP, quantityInStock) && isExpired(expiryDate) == false) {
                 ProductModel product = new ProductModel(id, name, categoryId, unitP, quantityInStock, description, manufactureDate, expiryDate, entry);
                 ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
                 int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm sản phẩm này?", "Alert",

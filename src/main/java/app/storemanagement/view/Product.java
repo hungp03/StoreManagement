@@ -362,6 +362,7 @@ public class Product extends javax.swing.JPanel {
         searchTextField.setText("");
         productSort.setSelectedIndex(0);
         searchCb.setSelectedIndex(0);
+        dp();
     }//GEN-LAST:event_refreshMouseClicked
 
     private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed

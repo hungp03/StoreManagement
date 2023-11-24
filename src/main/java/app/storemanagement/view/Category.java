@@ -316,12 +316,17 @@ public class Category extends javax.swing.JPanel {
         searchTextField.setText("");
     }//GEN-LAST:event_refreshMouseClicked
 
+    private boolean verifyInput() {
+        if (categoryName.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+            return false;
+        }
+        return true;
+    }
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         if (categoryTable.getSelectedRow() > 0) {
             String name = categoryName.getText();
-            if (name.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-            } else {
+            if (verifyInput()) {
                 CategoryModel category = new CategoryModel(key, name);
                 CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
                 int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật danh mục này?", "Alert",
@@ -335,8 +340,7 @@ public class Category extends javax.swing.JPanel {
             }
             clearTextField();
             displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-        }
-        else {
+        } else {
             JOptionPane.showMessageDialog(null, "Chọn một phân loại để sửa");
         }
     }//GEN-LAST:event_editButtonActionPerformed
@@ -344,9 +348,7 @@ public class Category extends javax.swing.JPanel {
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         int id = Util.getNextID("Category_ID", "Category");
         String name = categoryName.getText();
-        if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-        } else {
+        if (verifyInput()) {
             CategoryModel category = new CategoryModel(id, name);
             CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
             int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm danh mục này?", "Alert",

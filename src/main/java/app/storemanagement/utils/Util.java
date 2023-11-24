@@ -58,4 +58,16 @@ public class Util {
     public static String getCurrentDateTime() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy"));
     }
+    
+    public static boolean validateProductInput(String name, Date manufactureDate, Date expiryDate, Date entry, double unitP, int quantityInStock) {
+        if (name.isEmpty() || manufactureDate == null || expiryDate == null || entry == null) {
+            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+            return false;
+        }
+        if (unitP < 0 || quantityInStock < 0) {
+            JOptionPane.showMessageDialog(null, "Đơn giá và số lượng phải >= 0");
+            return false;
+        }
+        return !(!checkDate(manufactureDate, expiryDate, entry));
+    }
 }
