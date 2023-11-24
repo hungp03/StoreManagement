@@ -165,7 +165,6 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addButtonMouseClicked"/>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addButtonActionPerformed"/>
       </Events>
     </Component>
@@ -228,9 +227,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="qtyInStock">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="qtyInStockActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="des">
     </Component>

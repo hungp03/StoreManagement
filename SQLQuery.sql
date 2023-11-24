@@ -38,7 +38,7 @@ CREATE TABLE Customer (
   Full_Name NVARCHAR(50) NOT NULL, 
   Address NVARCHAR(100) NOT NULL, 
   Phone VARCHAR(15) NOT NULL, 
-  Email VARCHAR(50)
+  Email VARCHAR(50) UNIQUE
 );
 
 CREATE TABLE Invoice ( 

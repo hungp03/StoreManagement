@@ -10,10 +10,14 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import app.storemanagement.model.CustomerModel;
 import app.storemanagement.utils.Util;
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.sql.PreparedStatement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -23,6 +27,7 @@ public class Customer extends javax.swing.JPanel {
 
     private int key = 0;
     private boolean isRowSelected = false;
+    private String searchByItem;
 
     /**
      * Creates new form Customer
@@ -59,7 +64,6 @@ public class Customer extends javax.swing.JPanel {
         customerTable = new javax.swing.JTable();
         phone = new javax.swing.JTextField();
         CbSearch = new javax.swing.JComboBox<>();
-        SearchBtn = new javax.swing.JButton();
         resetBtn = new javax.swing.JButton();
 
         addMouseListener(new java.awt.event.MouseAdapter() {
@@ -124,6 +128,12 @@ public class Customer extends javax.swing.JPanel {
         jLabel29.setForeground(new java.awt.Color(76, 149, 108));
         jLabel29.setText("Tìm kiếm");
 
+        searchInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                searchInputKeyTyped(evt);
+            }
+        });
+
         jLabel30.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel30.setForeground(new java.awt.Color(76, 149, 108));
         jLabel30.setText("Sắp xếp");
@@ -159,18 +169,12 @@ public class Customer extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(customerTable);
 
-        CbSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã KH", "Tên KH", "Số điện thoại", " " }));
+        CbSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã KH", "Tên KH", "Số điện thoại" }));
+        CbSearch.setSelectedItem(null);
         CbSearch.setFocusable(false);
-
-        SearchBtn.setBackground(new java.awt.Color(76, 149, 108));
-        SearchBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        SearchBtn.setForeground(new java.awt.Color(255, 255, 255));
-        SearchBtn.setText("SEARCH");
-        SearchBtn.setToolTipText("");
-        SearchBtn.setFocusable(false);
-        SearchBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                SearchBtnMouseClicked(evt);
+        CbSearch.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                CbSearchItemStateChanged(evt);
             }
         });
 
@@ -211,32 +215,30 @@ public class Customer extends javax.swing.JPanel {
                                     .addGap(73, 73, 73)
                                     .addComponent(jLabel29)
                                     .addGap(18, 18, 18)
-                                    .addComponent(CbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(SearchBtn)))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(510, 510, 510)
-                                .addComponent(jLabel27))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(53, 53, 53)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel22)
-                                    .addComponent(fullName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(29, 29, 29)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel24)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(address, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(28, 28, 28)
-                                        .addComponent(phone, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(36, 36, 36)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel28))))
+                                    .addComponent(CbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(510, 510, 510)
+                                    .addComponent(jLabel27))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(53, 53, 53)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel22)
+                                        .addComponent(fullName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(29, 29, 29)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel24)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(address, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(28, 28, 28)
+                                            .addComponent(phone, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addGap(36, 36, 36)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel28)))))
                 .addContainerGap(157, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -271,8 +273,7 @@ public class Customer extends javax.swing.JPanel {
                     .addComponent(sortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel29)
                     .addComponent(CbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(SearchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -382,23 +383,6 @@ public class Customer extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_sortCbItemStateChanged
 
-    private void SearchBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SearchBtnMouseClicked
-        // TODO add your handling code here:
-        String selectedValue = CbSearch.getSelectedItem().toString();
-        String inputValue = searchInput.getText();
-        if (selectedValue.equals("Mã KH")) {
-            String sql = "SELECT * FROM Customer WHERE Customer_ID=" + inputValue;
-            displayCustomers(sql);
-        } else if (selectedValue.equals("Tên KH")) {
-            String sql = "SELECT * FROM Customer WHERE Full_Name='" + inputValue + "'";
-            displayCustomers(sql);
-        } else if (selectedValue.equals("Số điện thoại")) {
-            String sql = "SELECT * FROM Customer WHERE Phone=" + inputValue;
-            displayCustomers(sql);
-        }
-        searchInput.setText("");
-    }//GEN-LAST:event_SearchBtnMouseClicked
-
     private void addButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton1ActionPerformed
         // TODO add your handling code here:
         try {
@@ -446,8 +430,64 @@ public class Customer extends javax.swing.JPanel {
         // TODO add your handling code here:
         displayCustomers("SELECT * FROM Customer");
         searchInput.setText("");
+        CbSearch.setSelectedItem(null);
         clearTextField();
     }//GEN-LAST:event_resetBtnActionPerformed
+
+    private void searchInputKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchInputKeyTyped
+        // TODO add your handling code here:
+        Timer timer = new Timer(500, (ActionEvent e) -> {
+            String keyword = searchInput.getText();
+            if (keyword.trim().isEmpty()) {
+                // Nếu textField rỗng, hiển thị toàn bộ danh sách
+                displayCustomers("SELECT * FROM Customer");
+            } else {
+                // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
+                String tmp = "";
+                switch (searchByItem) {
+                    case "Mã KH" -> tmp+="Customer_ID";
+                    case "Tên KH" -> tmp+="Full_name";
+                    case "Số điện thoại" -> tmp+="Phone";
+                    default -> {}
+                }
+                String query = "SELECT * FROM Customer "
+                        + "WHERE " + tmp + " LIKE '%" + keyword +"%'";
+                displayCustomers(query);
+            }
+        });
+        timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
+
+        // Thêm DocumentListener vào searchTextField
+        searchInput.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            public void restartTimer() {
+                if (timer.isRunning()) {
+                    timer.restart();
+                } else {
+                    timer.start();
+                }
+            }
+        });
+    }//GEN-LAST:event_searchInputKeyTyped
+
+    private void CbSearchItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_CbSearchItemStateChanged
+        // TODO add your handling code here:
+        searchByItem = CbSearch.getSelectedItem().toString();
+    }//GEN-LAST:event_CbSearchItemStateChanged
 
     private void displayCustomers(String sql) {
         try {
@@ -490,7 +530,6 @@ public class Customer extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> CbSearch;
-    private javax.swing.JButton SearchBtn;
     private javax.swing.JButton addButton1;
     private javax.swing.JTextField address;
     private javax.swing.JTable customerTable;

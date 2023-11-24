@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package app.storemanagement.view;
 
 import app.storemanagement.controller.ProductCtrl;
@@ -78,11 +74,6 @@ public class AddProduct extends javax.swing.JFrame {
         addButton.setText("Thêm");
         addButton.setBorder(null);
         addButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addButtonMouseClicked(evt);
-            }
-        });
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addButtonActionPerformed(evt);
@@ -106,12 +97,6 @@ public class AddProduct extends javax.swing.JFrame {
         jLabel46.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel46.setForeground(new java.awt.Color(76, 149, 108));
         jLabel46.setText("Số lượng trong kho");
-
-        qtyInStock.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                qtyInStockActionPerformed(evt);
-            }
-        });
 
         jLabel41.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel41.setForeground(new java.awt.Color(76, 149, 108));
@@ -219,7 +204,6 @@ public class AddProduct extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(unitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(49, 49, 49)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(qtyInStock, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(des, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -256,11 +240,17 @@ public class AddProduct extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
-    private void qtyInStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_qtyInStockActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_qtyInStockActionPerformed
-
-    private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
+    
+    private boolean isExpired(Date hsd){
+        Date today = new Date();
+        if (hsd.before(today)){
+            JOptionPane.showMessageDialog(null, "Đã hết HSD");
+            return true;
+        }
+        return false;
+    }
+    
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         int id = Util.getNextID("Product_ID", "Product");
         String name = productName.getText().trim();
         CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
@@ -280,7 +270,7 @@ public class AddProduct extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
                 return;
             }
-            if (Util.checkDate(manufactureDate, expiryDate, entry) == true) {
+            if (Util.checkDate(manufactureDate, expiryDate, entry) == true && isExpired(expiryDate) == false) {
                 ProductModel product = new ProductModel(id, name, categoryId, unitP, quantityInStock, description, manufactureDate, expiryDate, entry);
                 ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
                 int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm sản phẩm này?", "Alert",
@@ -296,10 +286,6 @@ public class AddProduct extends javax.swing.JFrame {
         } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_addButtonMouseClicked
-
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_addButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -324,5 +310,4 @@ public class AddProduct extends javax.swing.JFrame {
     private javax.swing.JLabel topLabel;
     private javax.swing.JTextField unitPrice;
     // End of variables declaration//GEN-END:variables
-
 }
