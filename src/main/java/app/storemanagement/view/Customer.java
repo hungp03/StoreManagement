@@ -12,9 +12,6 @@ import app.storemanagement.model.CustomerModel;
 import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.sql.PreparedStatement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -26,15 +23,13 @@ import javax.swing.event.DocumentListener;
 public class Customer extends javax.swing.JPanel {
 
     private int key = 0;
-    private boolean isRowSelected = false;
-    private String searchByItem;
 
     /**
      * Creates new form Customer
      */
     public Customer() {
         initComponents();
-        displayCustomers("SELECT * FROM Customer");
+        displayCustomer((String) customerSortCb.getSelectedItem());
     }
 
     /**
@@ -57,20 +52,14 @@ public class Customer extends javax.swing.JPanel {
         addButton1 = new javax.swing.JButton();
         deleteButton1 = new javax.swing.JButton();
         jLabel29 = new javax.swing.JLabel();
-        searchInput = new javax.swing.JTextField();
+        searchTextField = new javax.swing.JTextField();
         jLabel30 = new javax.swing.JLabel();
-        sortCb = new javax.swing.JComboBox<>();
+        customerSortCb = new javax.swing.JComboBox<>();
         jScrollPane2 = new javax.swing.JScrollPane();
         customerTable = new javax.swing.JTable();
         phone = new javax.swing.JTextField();
-        CbSearch = new javax.swing.JComboBox<>();
-        jLabel1 = new javax.swing.JLabel();
-
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                formMouseClicked(evt);
-            }
-        });
+        searchCb = new javax.swing.JComboBox<>();
+        refresh = new javax.swing.JLabel();
 
         jLabel22.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel22.setForeground(new java.awt.Color(76, 149, 108));
@@ -118,9 +107,9 @@ public class Customer extends javax.swing.JPanel {
         deleteButton1.setText("Xóa");
         deleteButton1.setBorder(null);
         deleteButton1.setFocusable(false);
-        deleteButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                deleteButton1MouseClicked(evt);
+        deleteButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButton1ActionPerformed(evt);
             }
         });
 
@@ -128,9 +117,9 @@ public class Customer extends javax.swing.JPanel {
         jLabel29.setForeground(new java.awt.Color(76, 149, 108));
         jLabel29.setText("Tìm kiếm");
 
-        searchInput.addKeyListener(new java.awt.event.KeyAdapter() {
+        searchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                searchInputKeyTyped(evt);
+                searchTextFieldKeyTyped(evt);
             }
         });
 
@@ -138,11 +127,11 @@ public class Customer extends javax.swing.JPanel {
         jLabel30.setForeground(new java.awt.Color(76, 149, 108));
         jLabel30.setText("Sắp xếp");
 
-        sortCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã KH", "Tên KH" }));
-        sortCb.setFocusable(false);
-        sortCb.addItemListener(new java.awt.event.ItemListener() {
+        customerSortCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã KH", "Tên KH" }));
+        customerSortCb.setFocusable(false);
+        customerSortCb.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                sortCbItemStateChanged(evt);
+                customerSortCbItemStateChanged(evt);
             }
         });
 
@@ -172,18 +161,18 @@ public class Customer extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(customerTable);
 
-        CbSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã KH", "Tên KH", "Số điện thoại" }));
-        CbSearch.setFocusable(false);
-        CbSearch.addItemListener(new java.awt.event.ItemListener() {
+        searchCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã KH", "Tên KH", "Số điện thoại" }));
+        searchCb.setFocusable(false);
+        searchCb.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                CbSearchItemStateChanged(evt);
+                searchCbItemStateChanged(evt);
             }
         });
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
+        refresh.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
+                refreshMouseClicked(evt);
             }
         });
 
@@ -207,15 +196,15 @@ public class Customer extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel30)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(sortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(customerSortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel1)
+                                .addComponent(refresh)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel29)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(searchCb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(CbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -266,34 +255,38 @@ public class Customer extends javax.swing.JPanel {
                     .addComponent(addButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deleteButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel30)
-                    .addComponent(sortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel29)
-                    .addComponent(CbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(refresh)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel30)
+                        .addComponent(customerSortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel29)
+                        .addComponent(searchCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
     }// </editor-fold>//GEN-END:initComponents
+    private void displayCustomer(String sortMethod) {
+        displayCustomerTable(CustomerCtrl.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
+    }
 
+    private void searchCustomer(String keyword) {
+        displayCustomerTable(CustomerCtrl.displayQuery((String) customerSortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
+    }
     private void editButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editButton1MouseClicked
-        // TODO add your handling code here:
-        try {
-            String customerName = fullName.getText();
-            String customerAddress = address.getText();
-            String customerPhone = phone.getText();
-            String customerEmail = email.getText();
+        if (customerTable.getSelectedRow() >= 0) {
+            try {
+                String customerName = fullName.getText();
+                String customerAddress = address.getText();
+                String customerPhone = phone.getText();
+                String customerEmail = email.getText();
 
-            if (customerName.isEmpty() || customerAddress.isEmpty() || customerPhone.isEmpty() || customerEmail.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Thông tin không được bỏ trống");
-            } else {
-                if (Util.checkEmail(customerEmail)) {
+                if (Util.validateCustomerInput(customerName, customerAddress, customerPhone, customerEmail) && Util.isValidPhoneNumber(customerPhone)) {
                     CustomerModel customer = new CustomerModel(key, customerName, customerAddress, customerPhone, customerEmail);
                     CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
-                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật khác hàng này?", "Alert",
+                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật khách hàng này?", "Alert",
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (response == JOptionPane.YES_OPTION) {
                         boolean success = tmp.update(customer);
@@ -301,153 +294,81 @@ public class Customer extends javax.swing.JPanel {
                             JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
                         }
                     }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Email không hợp lệ!", "LỖI", JOptionPane.ERROR_MESSAGE);
+                    clearTextField();
+                    displayCustomer((String) customerSortCb.getSelectedItem());
                 }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Chọn một khách hàng để sửa!");
         }
-        isRowSelected = false;
-        clearTextField();
-        displayCustomers("SELECT * FROM Customer");
+
     }//GEN-LAST:event_editButton1MouseClicked
 
-    private void deleteButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButton1MouseClicked
-        // TODO add your handling code here:
-        if (isRowSelected == false) {
-            JOptionPane.showMessageDialog(null, "Chọn một khách hàng để xóa!");
-        } else {
-            CustomerModel product = new CustomerModel(key);
-            CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa khách hàng này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = tmp.delete(product);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
-                }
-            }
-        }
-        isRowSelected = false;
-        clearTextField();
-        displayCustomers("SELECT * FROM Customer");
-    }//GEN-LAST:event_deleteButton1MouseClicked
-
     private void customerTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_customerTableMouseClicked
-        // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) customerTable.getModel();
         int my_idx = customerTable.getSelectedRow();
-        if (my_idx != -1) {
+        if (my_idx >= 0) {
+            // Cập nhật giá trị của key nếu một hàng đã được chọn
             key = Integer.parseInt(model.getValueAt(my_idx, 0).toString());
-            try {
-                String query = "SELECT * FROM Customer WHERE Customer_ID=?";
-                Connection conn = DBConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query);
-                stmt.setInt(1, key);
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next()) {
-//                    String fullName1 = rs.getString("Full_Name");
-//                    String address1 = rs.getString("Address");
-//                    String phone1 = rs.getString("Phone");
-//                    String email1 = rs.getString("Email");
-                    fullName.setText(model.getValueAt(my_idx, 1).toString());
-                    address.setText(model.getValueAt(my_idx, 2).toString());
-                    phone.setText(model.getValueAt(my_idx, 3).toString());
-                    email.setText(model.getValueAt(my_idx, 4).toString());
-                }
-                isRowSelected = true;
-                addButton1.setEnabled(false);
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage());
-            } catch (SQLException ex) {
-                Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            fullName.setText(model.getValueAt(my_idx, 1).toString());
+            address.setText(model.getValueAt(my_idx, 2).toString());
+            phone.setText(model.getValueAt(my_idx, 3).toString());
+            email.setText(model.getValueAt(my_idx, 4).toString());
         }
+
     }//GEN-LAST:event_customerTableMouseClicked
 
-    private void sortCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_sortCbItemStateChanged
-        // TODO add your handling code here:
-        String sortByCol = sortCb.getSelectedItem().toString();
+    private void customerSortCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_customerSortCbItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            if (sortByCol.equals("Mã KH")) {
-                String query1 = "SELECT * FROM Customer ORDER BY Customer_ID";
-                displayCustomers(query1);
-            } else if (sortByCol.equals("Tên KH")) {
-                String query2 = "SELECT * FROM Customer ORDER BY Full_Name";
-                displayCustomers(query2);
-            }
+            String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
+            displayCustomer(selectedMethod); // Gọi hàm display với phương thức sắp xếp được chọn
         }
-    }//GEN-LAST:event_sortCbItemStateChanged
+    }//GEN-LAST:event_customerSortCbItemStateChanged
 
     private void addButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton1ActionPerformed
-        // TODO add your handling code here:
         try {
             int id = Util.getNextID("Customer_ID", "Customer");
             String customerName = fullName.getText();
             String customerAddress = address.getText();
             String customerPhone = phone.getText();
             String customerEmail = email.getText();
-
-            if (customerName.isEmpty() || customerAddress.isEmpty() || customerPhone.isEmpty() || customerEmail.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-            } else {
-                if (Util.checkEmail(customerEmail)) {
-                    CustomerModel customer = new CustomerModel(id, customerName, customerAddress, customerPhone, customerEmail);
-                    CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
-                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm khác hàng này?", "Alert",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (response == JOptionPane.YES_OPTION) {
-                        boolean success = tmp.add(customer);
-                        if (success) {
-                            JOptionPane.showMessageDialog(null, "Đã thêm khách hàng!");
-                        }
+            if (Util.validateCustomerInput(customerName, customerAddress, customerPhone, customerEmail) && Util.isValidPhoneNumber(customerPhone)) {
+                CustomerModel customer = new CustomerModel(id, customerName, customerAddress, customerPhone, customerEmail);
+                CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm khách hàng này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.add(customer);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã thêm khách hàng!");
+                        displayCustomer((String) customerSortCb.getSelectedItem());
+                        clearTextField();
                     }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Email không hợp lệ!", "LỖI", JOptionPane.ERROR_MESSAGE);
                 }
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        isRowSelected = false;
-        clearTextField();
-        displayCustomers("SELECT * FROM Customer");
     }//GEN-LAST:event_addButton1ActionPerformed
 
-    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        // TODO add your handling code here:
-        addButton1.setEnabled(true);
-        isRowSelected = false;
-        customerTable.clearSelection();
-        clearTextField();
-    }//GEN-LAST:event_formMouseClicked
-
-    private void searchInputKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchInputKeyTyped
+    private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
         // TODO add your handling code here:
         Timer timer = new Timer(500, (ActionEvent e) -> {
-            String keyword = searchInput.getText();
+            String keyword = searchTextField.getText();
             if (keyword.trim().isEmpty()) {
                 // Nếu textField rỗng, hiển thị toàn bộ danh sách
-                displayCustomers("SELECT * FROM Customer");
+                displayCustomer((String) customerSortCb.getSelectedItem());
             } else {
                 // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
-                String tmp = "";
-                switch (searchByItem) {
-                    case "Mã KH" -> tmp+="Customer_ID";
-                    case "Tên KH" -> tmp+="Full_name";
-                    case "Số điện thoại" -> tmp+="Phone";
-                    default -> {}
-                }
-                String query = "SELECT * FROM Customer "
-                        + "WHERE " + tmp + " LIKE '%" + keyword +"%'";
-                displayCustomers(query);
+                searchCustomer(keyword);
             }
         });
         timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
 
         // Thêm DocumentListener vào searchTextField
-        searchInput.getDocument().addDocumentListener(new DocumentListener() {
+        searchTextField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
                 restartTimer();
@@ -471,21 +392,40 @@ public class Customer extends javax.swing.JPanel {
                 }
             }
         });
-    }//GEN-LAST:event_searchInputKeyTyped
+    }//GEN-LAST:event_searchTextFieldKeyTyped
 
-    private void CbSearchItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_CbSearchItemStateChanged
-        // TODO add your handling code here:
-        searchByItem = CbSearch.getSelectedItem().toString();
-    }//GEN-LAST:event_CbSearchItemStateChanged
+    private void searchCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_searchCbItemStateChanged
 
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-        displayCustomers("SELECT * FROM Customer");
-        searchInput.setText("");
-        CbSearch.setSelectedItem(null);
+    }//GEN-LAST:event_searchCbItemStateChanged
+
+    private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
+        displayCustomerTable("SELECT * FROM Customer");
+        searchTextField.setText("");
+        searchCb.setSelectedIndex(0);
+        customerSortCb.setSelectedIndex(0);
         clearTextField();
-    }//GEN-LAST:event_jLabel1MouseClicked
+    }//GEN-LAST:event_refreshMouseClicked
 
-    private void displayCustomers(String sql) {
+    private void deleteButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton1ActionPerformed
+        if (customerTable.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(null, "Chọn một khách hàng để xóa!");
+        } else {
+            CustomerModel product = new CustomerModel(key);
+            CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
+            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa khách hàng này?", "Alert",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (response == JOptionPane.YES_OPTION) {
+                boolean success = tmp.delete(product);
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
+                }
+            }
+        }
+        clearTextField();
+        displayCustomer((String) customerSortCb.getSelectedItem());
+    }//GEN-LAST:event_deleteButton1ActionPerformed
+
+    private void displayCustomerTable(String sql) {
         try {
             Connection conn = DBConnection.getConnection();
             Statement St = conn.createStatement();
@@ -525,15 +465,14 @@ public class Customer extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> CbSearch;
     private javax.swing.JButton addButton1;
     private javax.swing.JTextField address;
+    private javax.swing.JComboBox<String> customerSortCb;
     private javax.swing.JTable customerTable;
     private javax.swing.JButton deleteButton1;
     private javax.swing.JButton editButton1;
     private javax.swing.JTextField email;
     private javax.swing.JTextField fullName;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel27;
@@ -542,7 +481,8 @@ public class Customer extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel30;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField phone;
-    private javax.swing.JTextField searchInput;
-    private javax.swing.JComboBox<String> sortCb;
+    private javax.swing.JLabel refresh;
+    private javax.swing.JComboBox<String> searchCb;
+    private javax.swing.JTextField searchTextField;
     // End of variables declaration//GEN-END:variables
 }

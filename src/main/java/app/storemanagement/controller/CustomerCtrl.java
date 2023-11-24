@@ -65,5 +65,29 @@ public class CustomerCtrl implements BaseController<CustomerModel>{
             return false;
         }
     }
-    
+    public static String displayQuery(String sortMethod, String keyword, String searchMethod) {
+        String tmp = "";
+        if (keyword.trim().isEmpty() == false) {
+            switch (searchMethod) {
+                case "Mã KH" ->
+                    tmp = " WHERE Customer_ID LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                case "Tên KH" ->
+                    tmp = " WHERE Full_Name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                case "Số điện thoại" ->
+                    tmp = " WHERE Phone LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                default -> {
+                }
+            }
+        }
+        String query = "select * from Customer" + tmp;
+        switch (sortMethod) {
+            case "Mã KH" ->
+                query += " ORDER BY Customer_ID";
+            case "Tên KH" ->
+                query += " ORDER BY Full_Name";
+            default -> {
+            }
+        }
+        return query;
+    }
 }

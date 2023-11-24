@@ -4,7 +4,6 @@ import app.storemanagement.controller.CategoryCtrl;
 import app.storemanagement.model.CategoryModel;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.utils.Util;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.sql.Connection;
@@ -85,12 +84,11 @@ public class Category extends javax.swing.JPanel {
             }
         });
 
-        deleteButton.setBackground(new java.awt.Color(242, 242, 242));
+        deleteButton.setBackground(new java.awt.Color(76, 149, 108));
         deleteButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         deleteButton.setForeground(new java.awt.Color(255, 255, 255));
         deleteButton.setText("Xóa");
         deleteButton.setBorder(null);
-        deleteButton.setEnabled(false);
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
@@ -252,29 +250,7 @@ public class Category extends javax.swing.JPanel {
         }
     }
 
-    /*
-    private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
-        int id = Util.getNextID("Category_ID", "Category");
-        String name = categoryName.getText();
-
-        if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-        } else {
-            CategoryModel category = new CategoryModel(id, name);
-            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm danh mục này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = tmp.add(category);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã thêm danh mục");
-                }
-            }
-        }
-        clearTextField();
-        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-    }//GEN-LAST:event_addButtonMouseClicked
-    */
+        
     private void categoryTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categoryTableMouseClicked
         DefaultTableModel model = (DefaultTableModel) categoryTable.getModel();
         int my_idx = categoryTable.getSelectedRow();
@@ -284,56 +260,7 @@ public class Category extends javax.swing.JPanel {
             categoryName.setText(model.getValueAt(my_idx, 1).toString());
         }
     }//GEN-LAST:event_categoryTableMouseClicked
-/*
-    private void editButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editButtonMouseClicked
-        if (editButton.isEnabled() == true) {
-            String name = categoryName.getText();
-            if (name.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
-            } else {
-                if (isRowSelected == false) {
-                    JOptionPane.showMessageDialog(null, "Chọn một danh mục để sửa!");
-                } else {
-                    CategoryModel category = new CategoryModel(key, name);
-                    CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật danh mục này?", "Alert",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (response == JOptionPane.YES_OPTION) {
-                        boolean success = tmp.update(category);
-                        if (success) {
-                            JOptionPane.showMessageDialog(null, "Đã cập nhật danh mục");
-                        }
-                    }
-                }
-            }
-            isRowSelected = false; // Đặt lại trạng thái
-            clearTextField();
-            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-        }
-    }//GEN-LAST:event_editButtonMouseClicked
 
-    private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
-        if (deleteButton.isEnabled() == true) {
-            if (isRowSelected == false) {
-                JOptionPane.showMessageDialog(null, "Chọn một danh mục để xóa!");
-            } else {
-                CategoryModel category = new CategoryModel(key);
-                CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa danh mục này?", "Alert",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION) {
-                    boolean success = tmp.delete(category);
-                    if (success) {
-                        JOptionPane.showMessageDialog(null, "Đã xóa danh mục");
-                    }
-                }
-            }
-            isRowSelected = false; // Đặt lại trạng thái sau khi xóa
-            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-            clearTextField();
-        }
-    }//GEN-LAST:event_deleteButtonMouseClicked
-*/
     private void categorySortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_categorySortItemStateChanged
         clearTextField();
         if (evt.getStateChange() == ItemEvent.SELECTED) {
