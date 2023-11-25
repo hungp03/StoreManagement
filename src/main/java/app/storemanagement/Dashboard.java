@@ -1,5 +1,6 @@
 package app.storemanagement;
 
+import app.storemanagement.utils.Util;
 import app.storemanagement.view.Category;
 import app.storemanagement.view.Customer;
 import app.storemanagement.view.Overview;
@@ -28,6 +29,7 @@ public class Dashboard extends javax.swing.JFrame {
     Overview overviewPanel = new Overview();
     Category categoryPanel = new Category();
     Invoice invoicePanel = new Invoice();
+
     public Dashboard() {
         initComponents();
         cardLayout = (CardLayout) (jPanel1.getLayout());
@@ -38,9 +40,19 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel1.add(categoryPanel, "category");
         jPanel1.add(invoicePanel, "invoice");
         cardLayout.show(jPanel1, "overview");
+        
+        infoLabel.setText("Xin chào, " + Util.userLogin);
+        if (Util.userRole.equals("NVBH") || Util.userRole.equals("NVK")){
+            employeeBtn.setVisible(false);
+        }
+        if (Util.userRole.equals("NVK")){
+            customerBtn.setVisible(false);
+            invoiceBtn.setVisible(false);
+            refundBtn.setVisible(false);
+        }
         overviewBtn.setForeground(Color.black);
         overviewBtn.setBackground(Color.decode("#F2F2F2"));
-        
+
         // Tạo ActionListener chung
         ActionListener actionListener = (ActionEvent e) -> {
             overviewBtn.setBackground(Color.decode("#4C956C"));
@@ -50,7 +62,7 @@ public class Dashboard extends javax.swing.JFrame {
             customerBtn.setBackground(Color.decode("#4C956C"));
             invoiceBtn.setBackground(Color.decode("#4C956C"));
             refundBtn.setBackground(Color.decode("#4C956C"));
-            
+
             overviewBtn.setForeground(Color.WHITE);
             employeeBtn.setForeground(Color.WHITE);
             categoryBtn.setForeground(Color.WHITE);
@@ -58,7 +70,7 @@ public class Dashboard extends javax.swing.JFrame {
             customerBtn.setForeground(Color.WHITE);
             invoiceBtn.setForeground(Color.WHITE);
             refundBtn.setForeground(Color.WHITE);
-            
+
             JButton source = (JButton) e.getSource();
             source.setBackground(Color.decode("#F2F2F2"));
             source.setForeground(Color.black);
@@ -72,7 +84,7 @@ public class Dashboard extends javax.swing.JFrame {
         customerBtn.addActionListener(actionListener);
         invoiceBtn.addActionListener(actionListener);
         refundBtn.addActionListener(actionListener);
-        
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -98,7 +110,6 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         infoLabel = new javax.swing.JLabel();
-        logoutLabel = new javax.swing.JLabel();
         overviewBtn = new javax.swing.JButton();
         employeeBtn = new javax.swing.JButton();
         categoryBtn = new javax.swing.JButton();
@@ -106,6 +117,7 @@ public class Dashboard extends javax.swing.JFrame {
         customerBtn = new javax.swing.JButton();
         invoiceBtn = new javax.swing.JButton();
         refundBtn = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Quản lý cửa hàng");
@@ -121,11 +133,6 @@ public class Dashboard extends javax.swing.JFrame {
         infoLabel.setForeground(new java.awt.Color(255, 255, 255));
         infoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/user.png"))); // NOI18N
         infoLabel.setText("Xin chào, username");
-
-        logoutLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        logoutLabel.setForeground(new java.awt.Color(255, 255, 255));
-        logoutLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logout.png"))); // NOI18N
-        logoutLabel.setText("   Đăng xuất");
 
         overviewBtn.setBackground(new java.awt.Color(76, 149, 108));
         overviewBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -218,25 +225,38 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setBackground(new java.awt.Color(76, 149, 108));
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logout.png"))); // NOI18N
+        jButton1.setText("Đăng xuất");
+        jButton1.setBorder(null);
+        jButton1.setFocusPainted(false);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(infoLabel))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addComponent(logoutLabel))
                     .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(customerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(refundBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(infoLabel))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(56, 56, 56)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -244,13 +264,11 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addComponent(infoLabel)
-                .addGap(6, 6, 6)
-                .addComponent(logoutLabel)
-                .addGap(212, 212, 212)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(197, 197, 197)
                 .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16)
                 .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -260,6 +278,8 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(refundBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -299,7 +319,7 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_categoryBtnActionPerformed
 
     private void customerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customerBtnActionPerformed
-         cardLayout.show(jPanel1, "customer");
+        cardLayout.show(jPanel1, "customer");
     }//GEN-LAST:event_customerBtnActionPerformed
 
     private void invoiceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceBtnActionPerformed
@@ -310,6 +330,14 @@ public class Dashboard extends javax.swing.JFrame {
         cardLayout.show(jPanel1, "employee");
     }//GEN-LAST:event_employeeBtnActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        int confirmed = JOptionPane.showConfirmDialog(null, "Xác nhận đăng xuất?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        if (confirmed == JOptionPane.YES_OPTION) {
+            this.dispose();
+            new Login().setVisible(true);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -318,9 +346,9 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JButton employeeBtn;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JButton invoiceBtn;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JLabel logoutLabel;
     private javax.swing.JButton overviewBtn;
     private javax.swing.JButton productBtn;
     private javax.swing.JButton refundBtn;

@@ -1,6 +1,15 @@
 package app.storemanagement;
 
+import app.storemanagement.model.Connection.DBConnection;
+import app.storemanagement.utils.Util;
+import java.awt.HeadlessException;
 import java.awt.event.ItemEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -31,17 +40,18 @@ public class Login extends javax.swing.JFrame {
         jLabel35 = new javax.swing.JLabel();
         jLabel36 = new javax.swing.JLabel();
         jLabel37 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        userName = new javax.swing.JTextField();
         jLabel38 = new javax.swing.JLabel();
         passwordField = new javax.swing.JPasswordField();
         jLabel39 = new javax.swing.JLabel();
-        jRadioButton4 = new javax.swing.JRadioButton();
-        jRadioButton5 = new javax.swing.JRadioButton();
-        jRadioButton6 = new javax.swing.JRadioButton();
-        jButton2 = new javax.swing.JButton();
+        nvbhRd = new javax.swing.JRadioButton();
+        adminRd = new javax.swing.JRadioButton();
+        nvkRd = new javax.swing.JRadioButton();
+        loginBtn = new javax.swing.JButton();
         showPW = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Đăng nhập");
         setResizable(false);
 
         jPanel9.setBackground(new java.awt.Color(76, 149, 108));
@@ -93,7 +103,7 @@ public class Login extends javax.swing.JFrame {
         jLabel37.setForeground(new java.awt.Color(76, 149, 108));
         jLabel37.setText("Username");
 
-        jTextField2.setBackground(new java.awt.Color(248, 248, 248));
+        userName.setBackground(new java.awt.Color(248, 248, 248));
 
         jLabel38.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel38.setForeground(new java.awt.Color(76, 149, 108));
@@ -105,44 +115,29 @@ public class Login extends javax.swing.JFrame {
         jLabel39.setForeground(new java.awt.Color(76, 149, 108));
         jLabel39.setText("Đăng nhập với tư cách");
 
-        checkRole.add(jRadioButton4);
-        jRadioButton4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jRadioButton4.setText("NV bán hàng");
-        jRadioButton4.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jRadioButton4StateChanged(evt);
-            }
-        });
-        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton4ActionPerformed(evt);
-            }
-        });
+        checkRole.add(nvbhRd);
+        nvbhRd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        nvbhRd.setText("NV bán hàng");
 
-        checkRole.add(jRadioButton5);
-        jRadioButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jRadioButton5.setText("Quản trị viên");
-        jRadioButton5.addActionListener(new java.awt.event.ActionListener() {
+        checkRole.add(adminRd);
+        adminRd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        adminRd.setText("Quản trị viên");
+
+        checkRole.add(nvkRd);
+        nvkRd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        nvkRd.setText("NV kho");
+
+        loginBtn.setBackground(new java.awt.Color(76, 149, 108));
+        loginBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        loginBtn.setForeground(new java.awt.Color(255, 255, 255));
+        loginBtn.setText("Login");
+        loginBtn.setBorder(null);
+        loginBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        loginBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton5ActionPerformed(evt);
+                loginBtnActionPerformed(evt);
             }
         });
-
-        checkRole.add(jRadioButton6);
-        jRadioButton6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jRadioButton6.setText("NV kho");
-        jRadioButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton6ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setBackground(new java.awt.Color(76, 149, 108));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Login");
-        jButton2.setBorder(null);
-        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         showPW.setForeground(new java.awt.Color(76, 149, 108));
         showPW.setText("Hiện mật khẩu");
@@ -167,21 +162,21 @@ public class Login extends javax.swing.JFrame {
                         .addGap(48, 48, 48)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel39)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(userName, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel38)
                             .addComponent(jLabel37)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(129, 129, 129)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(loginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(showPW)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(jRadioButton4)
+                                        .addComponent(nvbhRd)
                                         .addGap(50, 50, 50)
-                                        .addComponent(jRadioButton6)
+                                        .addComponent(nvkRd)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jRadioButton5))
+                                        .addComponent(adminRd))
                                     .addComponent(passwordField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addContainerGap(55, Short.MAX_VALUE))))
         );
@@ -194,7 +189,7 @@ public class Login extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addComponent(jLabel37)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(userName, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel38)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -205,41 +200,30 @@ public class Login extends javax.swing.JFrame {
                 .addComponent(jLabel39)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton5)
-                    .addComponent(jRadioButton6)
-                    .addComponent(jRadioButton4))
+                    .addComponent(adminRd)
+                    .addComponent(nvkRd)
+                    .addComponent(nvbhRd))
                 .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(loginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34))
         );
-
-        jRadioButton4.getAccessibleContext().setAccessibleParent(null);
-        jRadioButton5.getAccessibleContext().setAccessibleParent(null);
-        jRadioButton6.getAccessibleContext().setAccessibleParent(null);
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
-//        jRadioButton4.setSelected(false);
-//        jRadioButton6.setSelected(false);
-    }//GEN-LAST:event_jRadioButton5ActionPerformed
-
-    private void jRadioButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton6ActionPerformed
-//        jRadioButton4.setSelected(false);
-//        jRadioButton5.setSelected(false);
-    }//GEN-LAST:event_jRadioButton6ActionPerformed
-
-    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
-//       jRadioButton5.setSelected(false);
-//       jRadioButton6.setSelected(false);
-    }//GEN-LAST:event_jRadioButton4ActionPerformed
-
-    private void jRadioButton4StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jRadioButton4StateChanged
-
-    }//GEN-LAST:event_jRadioButton4StateChanged
-
+    private boolean checkInfo() {
+        if (userName.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Username không được để trống", "Missing information", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        String password = new String(passwordField.getPassword());
+        if (password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Password không được để trống", "Missing information", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
     private void showPWItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_showPWItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             // Hiển thị mật khẩu
@@ -249,42 +233,50 @@ public class Login extends javax.swing.JFrame {
             passwordField.setEchoChar('\u2022'); // Ký tự Unicode '•'
         }
     }//GEN-LAST:event_showPWItemStateChanged
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+    
+    private void checkLogin(String user, String pw, String role, String query) {
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-
-}
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setString(1, user);
+            pst.setString(2, pw);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                Util.userLogin = user;
+                Util.userRole = role;
+                new Dashboard().setVisible(true);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Thông tin không chính xác", "Wrong", JOptionPane.WARNING_MESSAGE);
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Login.class  
-
-.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        //</editor-fold>
-        
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new Login().setVisible(true);
-        });
     }
+    
+    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
+        if (checkInfo()) {
+            String user = userName.getText();
+            String pw = String.valueOf(passwordField.getPassword());
+            String role = "";
+            String query = "";
+            if (adminRd.isSelected()) {
+                role = "admin";
+                query = "select Username from Admin where Username = ? and Password = ?";
+            } else if (nvbhRd.isSelected()) {
+                role = "NVBH";
+                query = "select Username from Employee where (Username = ? and Password = ? and Role = 'Bán hàng')";
+            } else if (nvkRd.isSelected()) {
+                role = "NVK";
+                query = "select Username from Employee where (Username = ? and Password = ? and Role = 'Kho')";
+            }
+            checkLogin(user, pw, role, query);
+        }
+    }//GEN-LAST:event_loginBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton adminRd;
     private javax.swing.ButtonGroup checkRole;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
@@ -293,11 +285,11 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JRadioButton jRadioButton4;
-    private javax.swing.JRadioButton jRadioButton5;
-    private javax.swing.JRadioButton jRadioButton6;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JButton loginBtn;
+    private javax.swing.JRadioButton nvbhRd;
+    private javax.swing.JRadioButton nvkRd;
     private javax.swing.JPasswordField passwordField;
     private javax.swing.JCheckBox showPW;
+    private javax.swing.JTextField userName;
     // End of variables declaration//GEN-END:variables
 }

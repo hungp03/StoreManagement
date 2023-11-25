@@ -394,11 +394,6 @@ public class ProductDetail extends javax.swing.JFrame {
             Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void editBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editBtnMouseClicked
-        setProperties("Cập nhật thông tin", true, "#4C956C");
-    }//GEN-LAST:event_editBtnMouseClicked
-
 
     private void preventChange() {
         productName.addKeyListener(new KeyAdapter() {
@@ -433,13 +428,15 @@ public class ProductDetail extends javax.swing.JFrame {
         }
     }
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        for (KeyListener keyListener : productName.getKeyListeners()) {
-            productName.removeKeyListener(keyListener);
+        if (Util.authorizationNVBH()) {
+            for (KeyListener keyListener : productName.getKeyListeners()) {
+                productName.removeKeyListener(keyListener);
+            }
+            setProperties("Cập nhật thông tin", true, "#4C956C");
         }
-        setProperties("Cập nhật thông tin", true, "#4C956C");
     }//GEN-LAST:event_editBtnActionPerformed
 
-    private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
+    private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {
         String name = productName.getText().trim();
         CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
         int categoryId = categoryItem.getId();
@@ -470,7 +467,7 @@ public class ProductDetail extends javax.swing.JFrame {
         } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }                                       
+    }
 
     private void setProperties(String topLbText, boolean b, String colorCode) {
         topLabel.setText(topLbText);

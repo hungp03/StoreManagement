@@ -214,7 +214,7 @@ public class Category extends javax.swing.JPanel {
     private void displayCategory(String sortMethod) {
         displayCategoryTable(CategoryCtrl.displayQuery(sortMethod, searchTextField.getText()));
     }
-    
+
     private void searchCategory(String keyword) {
         displayCategoryTable(CategoryCtrl.displayQuery((String) categorySort.getSelectedItem(), keyword));
     }
@@ -252,7 +252,7 @@ public class Category extends javax.swing.JPanel {
         }
     }
 
-        
+
     private void categoryTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categoryTableMouseClicked
         DefaultTableModel model = (DefaultTableModel) categoryTable.getModel();
         int my_idx = categoryTable.getSelectedRow();
@@ -325,65 +325,73 @@ public class Category extends javax.swing.JPanel {
         }
         return true;
     }
+
+    
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        if (categoryTable.getSelectedRow() > 0) {
-            String name = categoryName.getText();
-            if (verifyInput()) {
-                CategoryModel category = new CategoryModel(key, name);
-                CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật danh mục này?", "Alert",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION) {
-                    boolean success = tmp.update(category);
-                    if (success) {
-                        JOptionPane.showMessageDialog(null, "Đã cập nhật danh mục");
+        if (Util.authorizationNVBH()) {
+            if (categoryTable.getSelectedRow() > 0) {
+                String name = categoryName.getText();
+                if (verifyInput()) {
+                    CategoryModel category = new CategoryModel(key, name);
+                    CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
+                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật danh mục này?", "Alert",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (response == JOptionPane.YES_OPTION) {
+                        boolean success = tmp.update(category);
+                        if (success) {
+                            JOptionPane.showMessageDialog(null, "Đã cập nhật danh mục");
+                        }
                     }
                 }
+                clearTextField();
+                displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
+            } else {
+                JOptionPane.showMessageDialog(null, "Chọn một phân loại để sửa");
             }
-            clearTextField();
-            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-        } else {
-            JOptionPane.showMessageDialog(null, "Chọn một phân loại để sửa");
         }
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        int id = Util.getNextID("Category_ID", "Category");
-        String name = categoryName.getText();
-        if (verifyInput()) {
-            CategoryModel category = new CategoryModel(id, name);
-            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm danh mục này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = tmp.add(category);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã thêm danh mục");
+        if (Util.authorizationNVBH()) {
+            int id = Util.getNextID("Category_ID", "Category");
+            String name = categoryName.getText();
+            if (verifyInput()) {
+                CategoryModel category = new CategoryModel(id, name);
+                CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm danh mục này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.add(category);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã thêm danh mục");
+                    }
                 }
             }
+            clearTextField();
+            searchTextField.setText("");
+            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
         }
-        clearTextField();
-        searchTextField.setText("");
-        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        if (categoryTable.getSelectedRow() < 0) {
-            JOptionPane.showMessageDialog(null, "Chọn một phân loại để xóa!");
-        } else {
-            CategoryModel category = new CategoryModel(key);
-            CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa danh mục này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = tmp.delete(category);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã xóa danh mục");
+        if (Util.authorizationNVBH()) {
+            if (categoryTable.getSelectedRow() < 0) {
+                JOptionPane.showMessageDialog(null, "Chọn một phân loại để xóa!");
+            } else {
+                CategoryModel category = new CategoryModel(key);
+                CategoryCtrl tmp = new CategoryCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa danh mục này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.delete(category);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã xóa danh mục");
+                    }
                 }
             }
+            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
+            clearTextField();
         }
-        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
-        clearTextField();
     }//GEN-LAST:event_deleteButtonActionPerformed
 
 

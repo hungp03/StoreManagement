@@ -276,34 +276,35 @@ public class Customer extends javax.swing.JPanel {
         displayCustomerTable(CustomerCtrl.displayQuery((String) customerSortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
     }
     private void editButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editButton1MouseClicked
-        if (customerTable.getSelectedRow() >= 0) {
-            try {
-                String customerName = fullName.getText();
-                String customerAddress = address.getText();
-                String customerPhone = phone.getText();
-                String customerEmail = email.getText();
+        if (Util.authorizationNVK()) {
+            if (customerTable.getSelectedRow() >= 0) {
+                try {
+                    String customerName = fullName.getText();
+                    String customerAddress = address.getText();
+                    String customerPhone = phone.getText();
+                    String customerEmail = email.getText();
 
-                if (Util.validateCustomerInput(customerName, customerAddress, customerPhone, customerEmail) && Util.isValidPhoneNumber(customerPhone)) {
-                    CustomerModel customer = new CustomerModel(key, customerName, customerAddress, customerPhone, customerEmail);
-                    CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
-                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật khách hàng này?", "Alert",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (response == JOptionPane.YES_OPTION) {
-                        boolean success = tmp.update(customer);
-                        if (success) {
-                            JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
+                    if (Util.validateCustomerInput(customerName, customerAddress, customerPhone, customerEmail) && Util.isValidPhoneNumber(customerPhone)) {
+                        CustomerModel customer = new CustomerModel(key, customerName, customerAddress, customerPhone, customerEmail);
+                        CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
+                        int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật khách hàng này?", "Alert",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (response == JOptionPane.YES_OPTION) {
+                            boolean success = tmp.update(customer);
+                            if (success) {
+                                JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
+                            }
                         }
+                        clearTextField();
+                        displayCustomer((String) customerSortCb.getSelectedItem());
                     }
-                    clearTextField();
-                    displayCustomer((String) customerSortCb.getSelectedItem());
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Chọn một khách hàng để sửa!");
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Chọn một khách hàng để sửa!");
         }
-
     }//GEN-LAST:event_editButton1MouseClicked
 
     private void customerTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_customerTableMouseClicked
@@ -328,28 +329,30 @@ public class Customer extends javax.swing.JPanel {
     }//GEN-LAST:event_customerSortCbItemStateChanged
 
     private void addButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton1ActionPerformed
-        try {
-            int id = Util.getNextID("Customer_ID", "Customer");
-            String customerName = fullName.getText();
-            String customerAddress = address.getText();
-            String customerPhone = phone.getText();
-            String customerEmail = email.getText();
-            if (Util.validateCustomerInput(customerName, customerAddress, customerPhone, customerEmail) && Util.isValidPhoneNumber(customerPhone)) {
-                CustomerModel customer = new CustomerModel(id, customerName, customerAddress, customerPhone, customerEmail);
-                CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
-                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm khách hàng này?", "Alert",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION) {
-                    boolean success = tmp.add(customer);
-                    if (success) {
-                        JOptionPane.showMessageDialog(null, "Đã thêm khách hàng!");
-                        displayCustomer((String) customerSortCb.getSelectedItem());
-                        clearTextField();
+        if (Util.authorizationNVK()) {
+            try {
+                int id = Util.getNextID("Customer_ID", "Customer");
+                String customerName = fullName.getText();
+                String customerAddress = address.getText();
+                String customerPhone = phone.getText();
+                String customerEmail = email.getText();
+                if (Util.validateCustomerInput(customerName, customerAddress, customerPhone, customerEmail) && Util.isValidPhoneNumber(customerPhone)) {
+                    CustomerModel customer = new CustomerModel(id, customerName, customerAddress, customerPhone, customerEmail);
+                    CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
+                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm khách hàng này?", "Alert",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (response == JOptionPane.YES_OPTION) {
+                        boolean success = tmp.add(customer);
+                        if (success) {
+                            JOptionPane.showMessageDialog(null, "Đã thêm khách hàng!");
+                            displayCustomer((String) customerSortCb.getSelectedItem());
+                            clearTextField();
+                        }
                     }
                 }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_addButton1ActionPerformed
 
@@ -407,22 +410,24 @@ public class Customer extends javax.swing.JPanel {
     }//GEN-LAST:event_refreshMouseClicked
 
     private void deleteButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton1ActionPerformed
-        if (customerTable.getSelectedRow() < 0) {
-            JOptionPane.showMessageDialog(null, "Chọn một khách hàng để xóa!");
-        } else {
-            CustomerModel product = new CustomerModel(key);
-            CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa khách hàng này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = tmp.delete(product);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
+        if (Util.authorizationNVK()) {
+            if (customerTable.getSelectedRow() < 0) {
+                JOptionPane.showMessageDialog(null, "Chọn một khách hàng để xóa!");
+            } else {
+                CustomerModel product = new CustomerModel(key);
+                CustomerCtrl tmp = new CustomerCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa khách hàng này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.delete(product);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
+                    }
                 }
             }
+            clearTextField();
+            displayCustomer((String) customerSortCb.getSelectedItem());
         }
-        clearTextField();
-        displayCustomer((String) customerSortCb.getSelectedItem());
     }//GEN-LAST:event_deleteButton1ActionPerformed
 
     private void displayCustomerTable(String sql) {

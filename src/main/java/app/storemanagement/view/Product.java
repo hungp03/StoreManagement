@@ -366,37 +366,41 @@ public class Product extends javax.swing.JPanel {
     }//GEN-LAST:event_refreshMouseClicked
 
     private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed
-        AddProduct detail = new AddProduct();
-        detail.setVisible(true);
-        detail.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
-                displayProduct((String) productSort.getSelectedItem());
-                searchTextField.setText("");
-                dp();
-            }
-        });
+        if (Util.authorizationNVBH()) {
+            AddProduct detail = new AddProduct();
+            detail.setVisible(true);
+            detail.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
+                    displayProduct((String) productSort.getSelectedItem());
+                    searchTextField.setText("");
+                    dp();
+                }
+            });
+        }
     }//GEN-LAST:event_addProductActionPerformed
 
     private void deleteProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteProductActionPerformed
-        if (deleteProduct.isEnabled() == true) {
-            if (productTable.getSelectedRow() < 0) {
-                JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xóa!");
-            } else {
-                ProductModel product = new ProductModel(key);
-                ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
-                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa sản phẩm này?", "Alert",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION) {
-                    boolean success = tmp.delete(product);
-                    if (success) {
-                        JOptionPane.showMessageDialog(null, "Đã xóa sản phẩm");
+        if (Util.authorizationNVBH()) {
+            if (deleteProduct.isEnabled() == true) {
+                if (productTable.getSelectedRow() < 0) {
+                    JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xóa!");
+                } else {
+                    ProductModel product = new ProductModel(key);
+                    ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
+                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa sản phẩm này?", "Alert",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (response == JOptionPane.YES_OPTION) {
+                        boolean success = tmp.delete(product);
+                        if (success) {
+                            JOptionPane.showMessageDialog(null, "Đã xóa sản phẩm");
+                        }
                     }
                 }
+                displayProduct((String) productSort.getSelectedItem());
+                dp();
             }
-            displayProduct((String) productSort.getSelectedItem());
-            dp();
         }
     }//GEN-LAST:event_deleteProductActionPerformed
 

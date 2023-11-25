@@ -19,7 +19,8 @@ import java.util.regex.Pattern;
 public class Util {
 
     public static String tmpID = "";
-
+    public static String userLogin = "";
+    public static String userRole = "";
     public static int getNextID(String idName, String tableName) {
         int nextID = 1;
         try {
@@ -101,5 +102,21 @@ public class Util {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(phoneNumber);
         return matcher.matches();
+    }
+    
+    public static boolean authorizationNVBH() {
+        if (Util.userRole.equals("NVBH")) {
+            JOptionPane.showMessageDialog(null, "Bạn không có quyền sử dụng thao tác này");
+            return false;
+        }
+        return true;
+    }
+    
+    public static boolean authorizationNVK() {
+        if (Util.userRole.equals("NVK")) {
+            JOptionPane.showMessageDialog(null, "Bạn không có quyền sử dụng thao tác này");
+            return false;
+        }
+        return true;
     }
 }
