@@ -268,7 +268,12 @@ public class Product extends javax.swing.JPanel {
             Connection conn = DBConnection.getConnection();
             Statement St = conn.createStatement();
             ResultSet Rs = St.executeQuery(sql);
-            DefaultTableModel tableModel = new DefaultTableModel();
+            DefaultTableModel tableModel = new DefaultTableModel() {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
             int columnCount = Rs.getMetaData().getColumnCount();
             for (int i = 1; i <= columnCount; i++) {
                 tableModel.addColumn(Rs.getMetaData().getColumnName(i));

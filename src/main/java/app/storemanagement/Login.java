@@ -270,6 +270,10 @@ public class Login extends javax.swing.JFrame {
                 role = "NVK";
                 query = "select Username from Employee where (Username = ? and Password = ? and Role = 'Kho')";
             }
+            else{
+                JOptionPane.showMessageDialog(this, "Chọn chức vụ của bạn", "Missing information", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             checkLogin(user, pw, role, query);
         }
     }//GEN-LAST:event_loginBtnActionPerformed

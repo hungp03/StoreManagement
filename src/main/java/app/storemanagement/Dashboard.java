@@ -121,6 +121,7 @@ public class Dashboard extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Quản lý cửa hàng");
+        setFocusable(false);
         setResizable(false);
 
         jPanel1.setPreferredSize(new java.awt.Dimension(1024, 720));
@@ -141,6 +142,7 @@ public class Dashboard extends javax.swing.JFrame {
         overviewBtn.setText("   Tổng quan");
         overviewBtn.setBorder(null);
         buttonGroup1.add(overviewBtn);
+        overviewBtn.setFocusable(false);
         overviewBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 overviewBtnActionPerformed(evt);
@@ -154,6 +156,7 @@ public class Dashboard extends javax.swing.JFrame {
         employeeBtn.setText("   Nhân viên");
         employeeBtn.setBorder(null);
         buttonGroup1.add(employeeBtn);
+        employeeBtn.setFocusable(false);
         employeeBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 employeeBtnActionPerformed(evt);
@@ -167,6 +170,7 @@ public class Dashboard extends javax.swing.JFrame {
         categoryBtn.setText("   Phân loại");
         categoryBtn.setBorder(null);
         buttonGroup1.add(categoryBtn);
+        categoryBtn.setFocusable(false);
         categoryBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 categoryBtnActionPerformed(evt);
@@ -180,6 +184,7 @@ public class Dashboard extends javax.swing.JFrame {
         productBtn.setText("   Sản phẩm");
         productBtn.setBorder(null);
         buttonGroup1.add(productBtn);
+        productBtn.setFocusable(false);
         productBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 productBtnActionPerformed(evt);
@@ -193,6 +198,7 @@ public class Dashboard extends javax.swing.JFrame {
         customerBtn.setText("   Khách hàng");
         customerBtn.setBorder(null);
         buttonGroup1.add(customerBtn);
+        customerBtn.setFocusable(false);
         customerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 customerBtnActionPerformed(evt);
@@ -206,6 +212,7 @@ public class Dashboard extends javax.swing.JFrame {
         invoiceBtn.setText("   Hóa đơn");
         invoiceBtn.setBorder(null);
         buttonGroup1.add(invoiceBtn);
+        invoiceBtn.setFocusable(false);
         invoiceBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 invoiceBtnActionPerformed(evt);
@@ -219,6 +226,7 @@ public class Dashboard extends javax.swing.JFrame {
         refundBtn.setText("   Hoàn trả");
         refundBtn.setBorder(null);
         buttonGroup1.add(refundBtn);
+        refundBtn.setFocusable(false);
         refundBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refundBtnActionPerformed(evt);
