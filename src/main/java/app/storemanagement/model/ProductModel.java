@@ -1,6 +1,9 @@
 package app.storemanagement.model;
-
 import java.util.Date;
+/**
+ *
+ * @author Hung Pham
+ */
 
 public class ProductModel extends BaseEntity{
     private String name;

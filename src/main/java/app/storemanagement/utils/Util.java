@@ -5,9 +5,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +24,7 @@ public class Util {
     public static String tmpID = "";
     public static String userLogin = "";
     public static String userRole = "";
+
     public static int getNextID(String idName, String tableName) {
         int nextID = 1;
         try {
@@ -64,7 +68,7 @@ public class Util {
 
     public static boolean validateProductInput(String name, Date manufactureDate, Date expiryDate, Date entry, double unitP, int quantityInStock) {
         if (name.isEmpty() || manufactureDate == null || expiryDate == null || entry == null) {
-            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ");
             return false;
         }
         if (unitP < 0 || quantityInStock < 0) {
@@ -83,27 +87,27 @@ public class Util {
 
     public static boolean validateCustomerInput(String name, String address, String phone, String email) {
         if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ");
+            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ");
             return false;
         }
         if (checkEmail(email) == false) {
             JOptionPane.showMessageDialog(null, "Email không hợp lệ");
             return false;
         }
-        if (isValidPhoneNumber(phone) == false){
+        if (isValidPhoneNumber(phone) == false) {
             JOptionPane.showMessageDialog(null, "SĐT không hợp lệ");
             return false;
         }
         return true;
     }
-    
+
     public static boolean isValidPhoneNumber(String phoneNumber) {
         String regex = "^(\\+\\d{1,11}|\\d{9})$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(phoneNumber);
         return matcher.matches();
     }
-    
+
     public static boolean authorizationNVBH() {
         if (Util.userRole.equals("NVBH")) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền sử dụng thao tác này");
@@ -111,10 +115,41 @@ public class Util {
         }
         return true;
     }
-    
+
     public static boolean authorizationNVK() {
         if (Util.userRole.equals("NVK")) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền sử dụng thao tác này");
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isUnder18(LocalDate birthDate) {
+        LocalDate today = LocalDate.now();
+        Period period = Period.between(birthDate, today);
+        return period.getYears() < 18;
+    }
+      public static boolean isValidUsername(String username) {
+        // Chỉ cho phép các ký tự chữ và số
+        String regex = "^[a-zA-Z0-9]+$";
+        return Pattern.matches(regex, username);
+    }
+      
+    public static boolean validateEmployeeInput(String uname, String pword, String fname, Date dob, int slr) {
+        if (uname.isEmpty() || pword.isEmpty() || fname.isEmpty() || dob == null || String.valueOf(slr).isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ");
+            return false;
+        }
+        if (isValidUsername(uname) == false){
+            JOptionPane.showMessageDialog(null, "Username không hợp lệ");
+            return false;
+        }
+        if (isUnder18(dob.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) {
+            JOptionPane.showMessageDialog(null, "Nhân viên không được dưới 18 tuổi");
+            return false;
+        }
+        if (slr < 0 || slr >= Integer.MAX_VALUE){
+            JOptionPane.showMessageDialog(null, "Nhân viên không được dưới 18 tuổi");
             return false;
         }
         return true;

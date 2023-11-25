@@ -70,11 +70,11 @@ public class CustomerCtrl implements BaseController<CustomerModel>{
         if (keyword.trim().isEmpty() == false) {
             switch (searchMethod) {
                 case "Mã KH" ->
-                    tmp = " WHERE Customer_ID LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                    tmp = " WHERE Customer_ID LIKE N'%" + keyword.trim() + "%' ";
                 case "Tên KH" ->
                     tmp = " WHERE Full_Name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
                 case "Số điện thoại" ->
-                    tmp = " WHERE Phone LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                    tmp = " WHERE Phone LIKE N'%" + keyword.trim() + "%' ";
                 default -> {
                 }
             }

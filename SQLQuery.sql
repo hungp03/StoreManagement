@@ -10,9 +10,9 @@ CREATE TABLE Employee (
   Password VARCHAR(20) NOT NULL,
   Full_Name NVARCHAR(50) NOT NULL, 
   Date_of_Birth DATE NOT NULL, 
-  Gender NVARCHAR(10) CHECK (Gender IN ('Nam', 'Nữ', 'Khác')), 
+  Gender NVARCHAR(10) CHECK (Gender IN ('Nam', 'Nu', 'Khác')), 
   Role NVARCHAR(20) NOT NULL CHECK (Role IN ('Bán hàng', 'Kho')), 
-  Salary DECIMAL(10,2) NOT NULL CHECK (Salary >= 0)  
+  Salary INT NOT NULL CHECK (Salary >= 0)  
 );
 
 CREATE TABLE Category (
@@ -37,7 +37,7 @@ CREATE TABLE Customer (
   Customer_ID INT PRIMARY KEY, 
   Full_Name NVARCHAR(50) NOT NULL, 
   Address NVARCHAR(100) NOT NULL, 
-  Phone VARCHAR(15) NOT NULL, 
+  Phone VARCHAR(15) NOT NULL UNIQUE, 
   Email VARCHAR(50) UNIQUE
 );
 
@@ -59,14 +59,4 @@ CREATE TABLE Contain (
   PRIMARY KEY (Invoice_ID, Product_ID), 
   FOREIGN KEY (Invoice_ID) REFERENCES Invoice (Invoice_ID), 
   FOREIGN KEY (Product_ID) REFERENCES Product (Product_ID) 
-);
-
-CREATE TABLE Refund (
-  Refund_ID INT PRIMARY KEY,
-  Invoice_ID INT,
-  Product_ID INT,
-  Refund_Quantity INT NOT NULL CHECK (Refund_Quantity > 0),
-  Refund_Date DATE NOT NULL,
-  FOREIGN KEY (Invoice_ID) REFERENCES Invoice (Invoice_ID),
-  FOREIGN KEY (Product_ID) REFERENCES Product (Product_ID)
 );

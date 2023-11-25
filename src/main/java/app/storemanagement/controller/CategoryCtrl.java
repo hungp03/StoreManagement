@@ -53,7 +53,7 @@ public class CategoryCtrl implements BaseController<CategoryModel>{
             return true;
         } catch (SQLException e) {
             if (e.getSQLState().equals("23000")){
-                JOptionPane.showMessageDialog(null, "Không thể xóa danh mục do đã có sản phẩm liên kết đến danh mục này" , "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Không thể xóa phân loại do đã có sản phẩm liên kết đến phân loại này" , "Error", JOptionPane.ERROR_MESSAGE);
             }
             else{
                 JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

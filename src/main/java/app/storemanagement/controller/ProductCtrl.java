@@ -80,7 +80,7 @@ public class ProductCtrl implements BaseController<ProductModel> {
         if (keyword.trim().isEmpty() == false) {
             switch (searchMethod) {
                 case "Mã" ->
-                    tmp = " WHERE Product_ID LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                    tmp = " WHERE Product_ID LIKE N'%" + keyword.trim() + "%' ";
                 case "Tên" ->
                     tmp = " WHERE Product_Name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
                 case "Phân loại" ->

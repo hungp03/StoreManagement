@@ -5,7 +5,10 @@ import app.storemanagement.model.CategoryModel;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
 import app.storemanagement.utils.Util;
+import com.toedter.calendar.JTextFieldDateEditor;
 import java.awt.HeadlessException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -107,6 +110,22 @@ public class AddProduct extends javax.swing.JFrame {
         jLabel43.setText("Ngày nhập");
 
         entryDate.setEnabled(true);
+        JTextFieldDateEditor _entry = ((JTextFieldDateEditor) entryDate.getDateEditor());
+        _entry.setEnabled(true);
+        _entry.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                e.consume(); // Chặn sự kiện phím
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
+                    e.consume(); // Chặn sự kiện phím
+                }
+            }
+        });
 
         jLabel44.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel44.setForeground(new java.awt.Color(76, 149, 108));
@@ -119,6 +138,22 @@ public class AddProduct extends javax.swing.JFrame {
         jLabel49.setText("HSD");
 
         hsd.setEnabled(true);
+        JTextFieldDateEditor _hsd = ((JTextFieldDateEditor) hsd.getDateEditor());
+        _hsd.setEnabled(true);
+        _hsd.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                e.consume(); // Chặn sự kiện phím
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
+                    e.consume(); // Chặn sự kiện phím
+                }
+            }
+        });
 
         productID.setEditable(false);
         productID.setFocusable(false);
@@ -212,6 +247,23 @@ public class AddProduct extends javax.swing.JFrame {
                 .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(54, 54, 54))
         );
+
+        JTextFieldDateEditor _nsx = ((JTextFieldDateEditor) nsx.getDateEditor());
+        _nsx.setEnabled(true);
+        _nsx.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                e.consume(); // Chặn sự kiện phím
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
+                    e.consume(); // Chặn sự kiện phím
+                }
+            }
+        });
 
         pack();
         setLocationRelativeTo(null);

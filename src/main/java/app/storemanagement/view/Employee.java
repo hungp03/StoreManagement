@@ -1,8 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package app.storemanagement.view;
+
+import app.storemanagement.controller.EmployeeCtrl;
+import app.storemanagement.model.Connection.DBConnection;
+import app.storemanagement.model.EmployeeModel;
+import app.storemanagement.utils.Util;
+import com.toedter.calendar.JTextFieldDateEditor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -10,11 +26,13 @@ package app.storemanagement.view;
  */
 public class Employee extends javax.swing.JPanel {
 
+    private int key = 0;
     /**
      * Creates new form Employee
      */
     public Employee() {
         initComponents();
+        displayEmployee((String) sortCb.getSelectedItem());
     }
 
     /**
@@ -26,29 +44,31 @@ public class Employee extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField9 = new javax.swing.JTextField();
+        uname = new javax.swing.JTextField();
         jLabel31 = new javax.swing.JLabel();
         jLabel32 = new javax.swing.JLabel();
-        jPasswordField3 = new javax.swing.JPasswordField();
+        pword = new javax.swing.JPasswordField();
         jLabel33 = new javax.swing.JLabel();
-        jTextField10 = new javax.swing.JTextField();
+        fname = new javax.swing.JTextField();
         jLabel34 = new javax.swing.JLabel();
-        jComboBox7 = new javax.swing.JComboBox<>();
+        genderCb = new javax.swing.JComboBox<>();
         jLabel35 = new javax.swing.JLabel();
-        jComboBox8 = new javax.swing.JComboBox<>();
-        jDateChooser3 = new com.toedter.calendar.JDateChooser();
+        roleCb = new javax.swing.JComboBox<>();
+        dob = new com.toedter.calendar.JDateChooser();
         jLabel36 = new javax.swing.JLabel();
         jLabel37 = new javax.swing.JLabel();
-        jTextField11 = new javax.swing.JTextField();
+        salaryText = new javax.swing.JTextField();
         editButton2 = new javax.swing.JButton();
         addButton2 = new javax.swing.JButton();
         deleteButton2 = new javax.swing.JButton();
         jLabel38 = new javax.swing.JLabel();
-        jTextField12 = new javax.swing.JTextField();
+        searchTextField = new javax.swing.JTextField();
         jLabel39 = new javax.swing.JLabel();
-        jComboBox9 = new javax.swing.JComboBox<>();
+        sortCb = new javax.swing.JComboBox<>();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        employeeTable = new javax.swing.JTable();
+        searchCb = new javax.swing.JComboBox<>();
+        refresh = new javax.swing.JLabel();
 
         jLabel31.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel31.setForeground(new java.awt.Color(76, 149, 108));
@@ -66,15 +86,33 @@ public class Employee extends javax.swing.JPanel {
         jLabel34.setForeground(new java.awt.Color(76, 149, 108));
         jLabel34.setText("Giới tính");
 
-        jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nam", "Nữ", "Khác" }));
+        genderCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nam", "Nu", "Khác" }));
 
         jLabel35.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel35.setForeground(new java.awt.Color(76, 149, 108));
         jLabel35.setText("Vai trò");
 
-        jComboBox8.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bán hàng", "Kho" }));
+        roleCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bán hàng", "Kho" }));
 
-        jDateChooser3.setEnabled(true);
+        dob.setEnabled(true);
+        dob.setMaxSelectableDate(new java.util.Date(1735668074000L));
+        dob.setMinSelectableDate(new java.util.Date(-631177126000L));
+        JTextFieldDateEditor _dob = ((JTextFieldDateEditor) dob.getDateEditor());
+        _dob.setEnabled(true);
+        _dob.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                e.consume(); // Chặn sự kiện phím
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
+                    e.consume(); // Chặn sự kiện phím
+                }
+            }
+        });
 
         jLabel36.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel36.setForeground(new java.awt.Color(76, 149, 108));
@@ -89,30 +127,56 @@ public class Employee extends javax.swing.JPanel {
         editButton2.setForeground(new java.awt.Color(255, 255, 255));
         editButton2.setText("Sửa");
         editButton2.setBorder(null);
+        editButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButton2ActionPerformed(evt);
+            }
+        });
 
         addButton2.setBackground(new java.awt.Color(76, 149, 108));
         addButton2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         addButton2.setForeground(new java.awt.Color(255, 255, 255));
         addButton2.setText("Thêm");
         addButton2.setBorder(null);
+        addButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButton2ActionPerformed(evt);
+            }
+        });
 
         deleteButton2.setBackground(new java.awt.Color(76, 149, 108));
         deleteButton2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         deleteButton2.setForeground(new java.awt.Color(255, 255, 255));
         deleteButton2.setText("Xóa");
         deleteButton2.setBorder(null);
+        deleteButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButton2ActionPerformed(evt);
+            }
+        });
 
         jLabel38.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel38.setForeground(new java.awt.Color(76, 149, 108));
         jLabel38.setText("Tìm kiếm");
 
+        searchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                searchTextFieldKeyTyped(evt);
+            }
+        });
+
         jLabel39.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel39.setForeground(new java.awt.Color(76, 149, 108));
         jLabel39.setText("Sắp xếp");
 
-        jComboBox9.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã NV", "Tên", "Ngày sinh", "Lương" }));
+        sortCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã NV", "Tên NV", "Ngày sinh", "Lương" }));
+        sortCb.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                sortCbItemStateChanged(evt);
+            }
+        });
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        employeeTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -128,7 +192,24 @@ public class Employee extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTable3);
+        employeeTable.setRowHeight(28);
+        employeeTable.setSelectionBackground(new java.awt.Color(76, 149, 108));
+        employeeTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        employeeTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                employeeTableMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(employeeTable);
+
+        searchCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã NV", "Tên NV" }));
+
+        refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
+        refresh.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                refreshMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -139,76 +220,77 @@ public class Employee extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel32)
                     .addComponent(jLabel31)
-                    .addComponent(jTextField9)
-                    .addComponent(jPasswordField3, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
+                    .addComponent(uname)
+                    .addComponent(pword, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(29, 29, 29)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel33)
-                            .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fname, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel34)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(30, 30, 30)
-                        .addComponent(jComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(genderCb, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jLabel35)
-                        .addComponent(jComboBox8, 0, 199, Short.MAX_VALUE)
-                        .addComponent(jDateChooser3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(roleCb, 0, 199, Short.MAX_VALUE)
+                        .addComponent(dob, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jLabel36))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel37)
-                    .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(salaryText, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(85, 85, 85))
             .addGroup(layout.createSequentialGroup()
                 .addGap(36, 36, 36)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel39)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(sortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(refresh)
+                        .addGap(205, 205, 205)
+                        .addComponent(jLabel38)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(searchCb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 944, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(173, 173, 173)
-                                .addComponent(editButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(92, 92, 92)
-                                .addComponent(addButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel39)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jComboBox9, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(172, 172, 172)
+                        .addComponent(editButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(92, 92, 92)
+                        .addComponent(addButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(108, 108, 108)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel38)
-                                .addGap(18, 18, 18)
-                                .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(deleteButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(deleteButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(44, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel31)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(uname, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel33)
                                 .addComponent(jLabel36))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jDateChooser3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField10, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE))))
+                                .addComponent(dob, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(fname, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel37)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField11)))
+                        .addComponent(salaryText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel32)
@@ -216,35 +298,240 @@ public class Employee extends javax.swing.JPanel {
                     .addComponent(jLabel35))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jPasswordField3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox8, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pword, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(genderCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(roleCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deleteButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel39)
+                    .addComponent(searchCb, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
                     .addComponent(jLabel38)
-                    .addComponent(jComboBox9, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel39))
+                    .addComponent(refresh))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void employeeTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_employeeTableMouseClicked
+        DefaultTableModel model = (DefaultTableModel) employeeTable.getModel();
+        int my_idx = employeeTable.getSelectedRow();
+        if (my_idx >= 0) {
+            // Cập nhật giá trị của key nếu một hàng đã được chọn
+            key = Integer.parseInt(model.getValueAt(my_idx, 0).toString());
+            uname.setText(model.getValueAt(my_idx, 1).toString());
+            fname.setText(model.getValueAt(my_idx, 2).toString());
+            dob.setDate((Date) model.getValueAt(my_idx, 3));
+            salaryText.setText(model.getValueAt(my_idx, 4).toString());
+            genderCb.setSelectedItem(model.getValueAt(my_idx, 5).toString());
+            roleCb.setSelectedItem(model.getValueAt(my_idx, 6).toString());
+        }
+    }//GEN-LAST:event_employeeTableMouseClicked
+
+    private void sortCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_sortCbItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
+            displayEmployee(selectedMethod); // Gọi hàm display với phương thức sắp xếp được chọn
+        }
+    }//GEN-LAST:event_sortCbItemStateChanged
+
+    private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
+        Timer timer = new Timer(500, (ActionEvent e) -> {
+            String keyword = searchTextField.getText();
+            if (keyword.trim().isEmpty()) {
+                // Nếu textField rỗng, hiển thị toàn bộ danh sách
+                displayEmployee((String) sortCb.getSelectedItem());
+            } else {
+                // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
+                searchEmployee(keyword);
+            }
+        });
+        timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
+
+        // Thêm DocumentListener vào searchTextField
+        searchTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                restartTimer();
+            }
+
+            public void restartTimer() {
+                if (timer.isRunning()) {
+                    timer.restart();
+                } else {
+                    timer.start();
+                }
+            }
+        });
+    }//GEN-LAST:event_searchTextFieldKeyTyped
+
+    private void editButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton2ActionPerformed
+        if (employeeTable.getSelectedRow() >= 0) {
+            try {
+                String usname = uname.getText();
+                String ename = fname.getText();
+                Date dateOB = dob.getDate();
+                int slr = Integer.parseInt(salaryText.getText());
+                String epword = String.valueOf(pword.getPassword());
+                String gender = (String) genderCb.getSelectedItem();
+                String role = (String) roleCb.getSelectedItem();
+                if (Util.validateEmployeeInput(usname, epword, ename, dateOB, slr)) {
+                    EmployeeModel employee = new EmployeeModel(key, usname, epword, ename, gender, role, dateOB, slr);
+                    EmployeeCtrl tmp = new EmployeeCtrl(DBConnection.getConnection());
+                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật thông tin nhân viên này?", "Alert",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (response == JOptionPane.YES_OPTION) {
+                        boolean success = tmp.update(employee);
+                        if (success) {
+                            JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
+                        }
+                    }
+                    clearTextField();
+                    displayEmployee((String) sortCb.getSelectedItem());
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Chọn một nhân viên để sửa thông tin!");
+        }
+    }//GEN-LAST:event_editButton2ActionPerformed
+
+    private void addButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton2ActionPerformed
+        try {
+            int id = Util.getNextID("Employee_ID", "Employee");
+            String usname = uname.getText();
+            String ename = fname.getText();
+            Date dateOB = dob.getDate();
+            int slr = Integer.parseInt(salaryText.getText());
+            String epword = String.valueOf(pword.getPassword());
+            String gender = (String) genderCb.getSelectedItem();
+            String role = (String) roleCb.getSelectedItem();
+            if (Util.validateEmployeeInput(usname, epword, ename, dateOB, slr)) {
+                EmployeeModel employee = new EmployeeModel(id, usname, epword, ename, gender, role, dateOB, slr);
+                EmployeeCtrl tmp = new EmployeeCtrl(DBConnection.getConnection());
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm nhân viên này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.add(employee);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");
+                    }
+                }
+                clearTextField();
+                displayEmployee((String) sortCb.getSelectedItem());
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_addButton2ActionPerformed
+
+    private void deleteButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton2ActionPerformed
+        if (employeeTable.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(null, "Chọn một khách hàng để xóa!");
+        } else {
+            EmployeeModel employee = new EmployeeModel(key);
+            EmployeeCtrl tmp = new EmployeeCtrl(DBConnection.getConnection());
+            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa khách hàng này?", "Alert",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (response == JOptionPane.YES_OPTION) {
+                boolean success = tmp.delete(employee);
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
+                }
+            }
+        }
+        clearTextField();
+        displayEmployee((String) sortCb.getSelectedItem());
+    }//GEN-LAST:event_deleteButton2ActionPerformed
+
+    private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
+        displayEmployeeTable("select Employee_ID, Username, Full_Name, Date_of_Birth, Salary, Gender, Role from Employee");
+        searchTextField.setText("");
+        searchCb.setSelectedIndex(0);
+        sortCb.setSelectedIndex(0);
+        clearTextField();
+    }//GEN-LAST:event_refreshMouseClicked
+
+    private void displayEmployee(String sortMethod) {
+        displayEmployeeTable(EmployeeCtrl.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
+    }
+
+    private void searchEmployee(String keyword) {
+        displayEmployeeTable(EmployeeCtrl.displayQuery((String) sortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
+    }
+
+    private void displayEmployeeTable(String sql) {
+        try {
+            Connection conn = DBConnection.getConnection();
+            Statement St = conn.createStatement();
+            ResultSet Rs = St.executeQuery(sql);
+            DefaultTableModel tableModel = new DefaultTableModel() {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+            int columnCount = Rs.getMetaData().getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
+            }
+
+            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
+            while (Rs.next()) {
+                Object[] row = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    row[i - 1] = Rs.getObject(i);
+                }
+                tableModel.addRow(row);
+            }
+            String[] columnNames = {"Mã NV", "Username", "Tên NV", "Ngày sinh", "Lương (VND)", "Giới tính", "Vai trò"};
+            tableModel.setColumnIdentifiers(columnNames);
+
+            employeeTable.setModel(tableModel);
+            Rs.close();
+            St.close();
+            conn.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
+    private void clearTextField() {
+        uname.setText("");
+        pword.setText("");
+        fname.setText("");
+        dob.setDate(null);
+        salaryText.setText("");
+        genderCb.setSelectedIndex(0);
+        roleCb.setSelectedIndex(0);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton2;
     private javax.swing.JButton deleteButton2;
+    private com.toedter.calendar.JDateChooser dob;
     private javax.swing.JButton editButton2;
-    private javax.swing.JComboBox<String> jComboBox7;
-    private javax.swing.JComboBox<String> jComboBox8;
-    private javax.swing.JComboBox<String> jComboBox9;
-    private com.toedter.calendar.JDateChooser jDateChooser3;
+    private javax.swing.JTable employeeTable;
+    private javax.swing.JTextField fname;
+    private javax.swing.JComboBox<String> genderCb;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
@@ -254,12 +541,14 @@ public class Employee extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
-    private javax.swing.JPasswordField jPasswordField3;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable3;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField11;
-    private javax.swing.JTextField jTextField12;
-    private javax.swing.JTextField jTextField9;
+    private javax.swing.JPasswordField pword;
+    private javax.swing.JLabel refresh;
+    private javax.swing.JComboBox<String> roleCb;
+    private javax.swing.JTextField salaryText;
+    private javax.swing.JComboBox<String> searchCb;
+    private javax.swing.JTextField searchTextField;
+    private javax.swing.JComboBox<String> sortCb;
+    private javax.swing.JTextField uname;
     // End of variables declaration//GEN-END:variables
 }
