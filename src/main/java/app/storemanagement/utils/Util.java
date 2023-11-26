@@ -101,6 +101,11 @@ public class Util {
         return true;
     }
 
+    public static boolean checkExistInput(String name, Date manufactureDate, Date expiryDate, Date entry, String unitP, String quantityInStock, String description) {
+        // Kiểm tra xem có ít nhất một giá trị tồn tại hay không
+        return !name.isEmpty() || manufactureDate != null || expiryDate != null || entry != null || !unitP.isEmpty() || !quantityInStock.isEmpty() || !description.isEmpty();
+    }
+
     public static boolean isValidPhoneNumber(String phoneNumber) {
         String regex = "^(\\+\\d{1,11}|\\d{9})$";
         Pattern pattern = Pattern.compile(regex);
@@ -129,18 +134,19 @@ public class Util {
         Period period = Period.between(birthDate, today);
         return period.getYears() < 18;
     }
-      public static boolean isValidUsername(String username) {
+
+    public static boolean isValidUsername(String username) {
         // Chỉ cho phép các ký tự chữ và số
         String regex = "^[a-zA-Z0-9]+$";
         return Pattern.matches(regex, username);
     }
-      
+
     public static boolean validateEmployeeInput(String uname, String pword, String fname, Date dob, int slr) {
         if (uname.isEmpty() || pword.isEmpty() || fname.isEmpty() || dob == null || String.valueOf(slr).isEmpty()) {
             JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ");
             return false;
         }
-        if (isValidUsername(uname) == false){
+        if (isValidUsername(uname) == false) {
             JOptionPane.showMessageDialog(null, "Username không hợp lệ");
             return false;
         }
@@ -148,7 +154,7 @@ public class Util {
             JOptionPane.showMessageDialog(null, "Nhân viên không được dưới 18 tuổi");
             return false;
         }
-        if (slr < 0 || slr >= Integer.MAX_VALUE){
+        if (slr < 0 || slr >= Integer.MAX_VALUE) {
             JOptionPane.showMessageDialog(null, "Nhân viên không được dưới 18 tuổi");
             return false;
         }
