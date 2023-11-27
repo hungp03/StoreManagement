@@ -16,7 +16,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -181,7 +184,7 @@ public class ProductDetail extends javax.swing.JFrame {
 
         jLabel45.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel45.setForeground(new java.awt.Color(76, 149, 108));
-        jLabel45.setText("Đơn giá");
+        jLabel45.setText("Đơn giá (VND)");
 
         topLabel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         topLabel.setForeground(new java.awt.Color(76, 149, 108));
@@ -386,7 +389,7 @@ public class ProductDetail extends javax.swing.JFrame {
 
         jLabel1.setText("Thời gian tạo: " + rs.getString("Created_Time"));
         productName.setText(name);
-        unitPrice.setText(String.valueOf(unitP));
+        unitPrice.setText(Util.convertToVND(unitP));
         cateCb.setSelectedIndex(comboBoxModel.getIndexOf(new CategoryModel(categoryId, cateName)));
         qtyInStock.setText(String.valueOf(quantityInStock));
         des.setText(description);
@@ -434,7 +437,13 @@ public class ProductDetail extends javax.swing.JFrame {
             for (KeyListener keyListener : productName.getKeyListeners()) {
                 productName.removeKeyListener(keyListener);
             }
+            String unitP = unitPrice.getText();
             setProperties("Cập nhật thông tin", true, "#4C956C");
+            try {
+                unitPrice.setText(Util.vndConvertToNumber(unitP));
+            } catch (ParseException ex) {
+                Logger.getLogger(ProductDetail.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_editBtnActionPerformed
 
@@ -463,12 +472,16 @@ public class ProductDetail extends javax.swing.JFrame {
                         setProperties("Thông tin sản phẩm", false, "#F2F2F2");
                         checkHSD(expiryDate, quantityInStock);
                         jLabel2.setText("Cập nhật lần cuối: " + Util.getCurrentDateTime());
+                        double unit_Tmp = Double.parseDouble(unitPrice.getText());
+                        unitPrice.setText(Util.convertToVND(unit_Tmp));
                         preventChange();
                     }
                 }
             }
-        } catch (HeadlessException | NumberFormatException e) {
+        } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Đầu vào không hợp lệ", "Error", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -501,7 +514,7 @@ public class ProductDetail extends javax.swing.JFrame {
             // Đặt model cho ComboBox
             cateCb.setModel(model);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

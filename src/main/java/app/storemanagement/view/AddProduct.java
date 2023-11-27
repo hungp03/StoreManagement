@@ -346,8 +346,10 @@ public class AddProduct extends javax.swing.JFrame {
                     }
                 }
             }
-        } catch (HeadlessException | NumberFormatException e) {
+        } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Đầu vào không hợp lệ", "Error", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_addButtonActionPerformed
 

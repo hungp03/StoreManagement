@@ -274,8 +274,8 @@ public class Customer extends javax.swing.JPanel {
         if (Util.authorizationNVK()) {
             if (customerTable.getSelectedRow() >= 0) {
                 try {
-                    String customerName = fullName.getText();
-                    String customerAddress = address.getText();
+                    String customerName = Util.formatName(fullName.getText());
+                    String customerAddress = Util.formatName(address.getText());
                     String customerPhone = phone.getText();
                     String customerEmail = email.getText();
 
@@ -288,10 +288,11 @@ public class Customer extends javax.swing.JPanel {
                             boolean success = tmp.update(customer);
                             if (success) {
                                 JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
+                                clearTextField();
+                                displayCustomer((String) customerSortCb.getSelectedItem());
                             }
                         }
-                        clearTextField();
-                        displayCustomer((String) customerSortCb.getSelectedItem());
+                        
                     }
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -340,8 +341,8 @@ public class Customer extends javax.swing.JPanel {
                         boolean success = tmp.add(customer);
                         if (success) {
                             JOptionPane.showMessageDialog(null, "Đã thêm khách hàng!");
-                            displayCustomer((String) customerSortCb.getSelectedItem());
                             clearTextField();
+                            displayCustomer((String) customerSortCb.getSelectedItem());
                         }
                     }
                 }
@@ -413,10 +414,10 @@ public class Customer extends javax.swing.JPanel {
                     boolean success = tmp.delete(product);
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
+                        clearTextField();
                     }
                 }
             }
-            clearTextField();
             displayCustomer((String) customerSortCb.getSelectedItem());
         }
     }//GEN-LAST:event_deleteButton1ActionPerformed

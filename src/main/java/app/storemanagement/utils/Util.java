@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.mindrot.jbcrypt.BCrypt;
@@ -43,19 +46,19 @@ public class Util {
     public static boolean checkDate(Date manufactureDate, Date expiryDate, Date entry) {
         Date today = new Date();
         if (manufactureDate.after(entry)) {
-            JOptionPane.showMessageDialog(null, "NSX không được sau ngày nhập");
+            JOptionPane.showMessageDialog(null, "NSX không được sau ngày nhập", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         } else if (manufactureDate.after(entry)) {
-            JOptionPane.showMessageDialog(null, "NSX không được sau HSD");
+            JOptionPane.showMessageDialog(null, "NSX không được sau HSD", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         } else if (entry.after(expiryDate)) {
-            JOptionPane.showMessageDialog(null, "Ngày nhập không được sau HSD");
+            JOptionPane.showMessageDialog(null, "Ngày nhập không được sau HSD", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         } else if (manufactureDate.after(today)) {
-            JOptionPane.showMessageDialog(null, "NSX không được sau hôm nay");
+            JOptionPane.showMessageDialog(null, "NSX không được sau hôm nay", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         } else if (entry.after(today)) {
-            JOptionPane.showMessageDialog(null, "Ngày nhập không được sau hôm nay");
+            JOptionPane.showMessageDialog(null, "Ngày nhập không được sau hôm nay", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;
@@ -69,11 +72,11 @@ public class Util {
     //Kiểm tra đầu vào của Product
     public static boolean validateProductInput(String name, Date manufactureDate, Date expiryDate, Date entry, double unitP, int quantityInStock) {
         if (name.isEmpty() || manufactureDate == null || expiryDate == null || entry == null) {
-            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ");
+            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (unitP < 0 || quantityInStock < 0) {
-            JOptionPane.showMessageDialog(null, "Đơn giá và số lượng phải >= 0");
+            JOptionPane.showMessageDialog(null, "Đơn giá và số lượng phải >= 0", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return !(!checkDate(manufactureDate, expiryDate, entry));
@@ -89,16 +92,37 @@ public class Util {
 
     //Kiểm tra đầu vào của Customer
     public static boolean validateCustomerInput(String name, String address, String phone, String email) {
-        if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ");
+        if (name.isEmpty() || address.isEmpty() || phone.isEmpty() || email.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (checkEmail(email) == false) {
-            JOptionPane.showMessageDialog(null, "Email không hợp lệ");
+            JOptionPane.showMessageDialog(null, "Email không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (isValidPhoneNumber(phone) == false) {
-            JOptionPane.showMessageDialog(null, "SĐT không hợp lệ");
+            JOptionPane.showMessageDialog(null, "SĐT không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    //Kiểm tra đầu vào của Employee
+    public static boolean validateEmployeeInput(String uname, String pword, String fname, Date dob, int slr) {
+        if (uname.isEmpty() || pword.isEmpty() || fname.isEmpty() || dob == null || String.valueOf(slr).isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ", "Warning", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (isValidUsername(uname) == false) {
+            JOptionPane.showMessageDialog(null, "Username không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (isUnder18(dob.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) {
+            JOptionPane.showMessageDialog(null, "Nhân viên không được dưới 18 tuổi", "Warning", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (slr < 0 || slr >= Integer.MAX_VALUE) {
+            JOptionPane.showMessageDialog(null, "Lương không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;
@@ -150,45 +174,26 @@ public class Util {
         return Pattern.matches(regex, username);
     }
 
-    //Kiểm tra đầu vào của Employee
-    public static boolean validateEmployeeInput(String uname, String pword, String fname, Date dob, int slr) {
-        if (uname.isEmpty() || pword.isEmpty() || fname.isEmpty() || dob == null || String.valueOf(slr).isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ");
-            return false;
-        }
-        if (isValidUsername(uname) == false) {
-            JOptionPane.showMessageDialog(null, "Username không hợp lệ");
-            return false;
-        }
-        if (isUnder18(dob.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) {
-            JOptionPane.showMessageDialog(null, "Nhân viên không được dưới 18 tuổi");
-            return false;
-        }
-        if (slr < 0 || slr >= Integer.MAX_VALUE) {
-            JOptionPane.showMessageDialog(null, "Nhân viên không được dưới 18 tuổi");
-            return false;
-        }
-        return true;
-    }
-
     //Format tên đúng định dạng. Ví dụ: "NGuyỄn Văn a" -> "Nguyễn Văn A"
     public static String formatName(String name) {
         // Chuyển tất cả các ký tự thành chữ thường
         name = name.toLowerCase();
-        // Tách tên thành các phần riêng biệt
+        // Tách tên thành các phần riêng biệt 
         String[] nameParts = name.split(" ");
         // Khởi tạo một StringBuilder để tạo lại tên theo đúng định dạng
         StringBuilder formattedNameBuilder = new StringBuilder();
         for (String part : nameParts) {
-            // Chuyển chữ cái đầu tiên của mỗi phần thành chữ hoa
-            String firstLetter = part.substring(0, 1).toUpperCase();
-            // Ghép lại phần đã được chuyển đổi vào StringBuilder
-            formattedNameBuilder.append(firstLetter).append(part.substring(1)).append(" ");
+            part = part.trim();
+            if (!part.isEmpty()) {
+                // Chuyển chữ cái đầu tiên của mỗi phần thành chữ hoa
+                String firstLetter = part.substring(0, 1).toUpperCase();
+                // Ghép lại phần đã được chuyển đổi vào StringBuilder
+                formattedNameBuilder.append(firstLetter).append(part.substring(1)).append(" ");
+            }
         }
-        // Xóa khoảng trắng ở cuối và trả về tên đã được format
         return formattedNameBuilder.toString().trim();
     }
-    
+
     //Mã hóa mật khẩu
     public static String hashPw(String pw) {
         String salt = BCrypt.gensalt(10);
@@ -199,7 +204,22 @@ public class Util {
             // Xử lý ngoại lệ khi mật khẩu hoặc muối là null hoặc không hợp lệ
             System.out.println("Mật khẩu hoặc muối không hợp lệ: " + e.getMessage());
             JOptionPane.showMessageDialog(null, "Có lỗi xảy ra trong quá trình mã hóa mật khẩu", "Error", JOptionPane.ERROR_MESSAGE);
-        } 
+        }
         return hashed;
     }
+
+    //Chuyển đổi giá từ số sang VND
+    public static String convertToVND(double number) {
+        @SuppressWarnings("deprecation")
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        return currencyFormat.format(number);
+    }
+
+    public static String vndConvertToNumber(String amount) throws ParseException {
+        amount = amount.replace("đ", "").replace(".", "").trim();
+        @SuppressWarnings("deprecation")
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        return String.valueOf(currencyFormat.parse(amount).intValue());
+    }
+
 }

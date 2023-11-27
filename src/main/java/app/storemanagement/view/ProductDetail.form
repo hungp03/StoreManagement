@@ -328,7 +328,7 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="6c" green="95" red="4c" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="&#x110;&#x1a1;n gi&#xe1;"/>
+        <Property name="text" type="java.lang.String" value="&#x110;&#x1a1;n gi&#xe1; (VND)"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="topLabel">

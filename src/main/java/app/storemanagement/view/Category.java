@@ -327,7 +327,7 @@ public class Category extends javax.swing.JPanel {
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         if (Util.authorizationNVBH()) {
-            if (categoryTable.getSelectedRow() > 0) {
+            if (categoryTable.getSelectedRow() >= 0) {
                 String name = categoryName.getText();
                 if (verifyInput()) {
                     CategoryModel category = new CategoryModel(key, name);
@@ -338,11 +338,12 @@ public class Category extends javax.swing.JPanel {
                         boolean success = tmp.update(category);
                         if (success) {
                             JOptionPane.showMessageDialog(null, "Đã cập nhật danh mục");
+                            clearTextField();
+                            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
                         }
                     }
                 }
-                clearTextField();
-                displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
+
             } else {
                 JOptionPane.showMessageDialog(null, "Chọn một phân loại để sửa");
             }
@@ -362,12 +363,12 @@ public class Category extends javax.swing.JPanel {
                     boolean success = tmp.add(category);
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Đã thêm danh mục");
+                        clearTextField();
+                        searchTextField.setText("");
+                        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
                     }
                 }
             }
-            clearTextField();
-            searchTextField.setText("");
-            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
         }
     }//GEN-LAST:event_addButtonActionPerformed
 

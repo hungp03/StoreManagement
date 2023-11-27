@@ -13,7 +13,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.Locale;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
@@ -336,7 +339,18 @@ public class Employee extends javax.swing.JPanel {
             uname.setText(model.getValueAt(my_idx, 1).toString());
             fname.setText(model.getValueAt(my_idx, 2).toString());
             dob.setDate((Date) model.getValueAt(my_idx, 3));
-            salaryText.setText(model.getValueAt(my_idx, 4).toString());
+            String slr = model.getValueAt(my_idx, 4).toString();
+            slr = slr.replace("đ", "").trim();
+            
+            @SuppressWarnings("deprecation")
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+            try {
+                Number number = currencyFormat.parse(slr);
+                salaryText.setText(String.valueOf(number.intValue()));
+            } catch (ParseException e) {
+                System.out.print(e.getMessage());
+            }
+            
             genderCb.setSelectedItem(model.getValueAt(my_idx, 5).toString());
             roleCb.setSelectedItem(model.getValueAt(my_idx, 6).toString());
         }
@@ -393,7 +407,7 @@ public class Employee extends javax.swing.JPanel {
         if (employeeTable.getSelectedRow() >= 0) {
             try {
                 String usname = uname.getText();
-                String ename = fname.getText();
+                String ename = Util.formatName(fname.getText());
                 Date dateOB = dob.getDate();
                 int slr = Integer.parseInt(salaryText.getText());
                 String epword = String.valueOf(pword.getPassword());
@@ -408,13 +422,13 @@ public class Employee extends javax.swing.JPanel {
                         boolean success = tmp.update(employee);
                         if (success) {
                             JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
+                            clearTextField();
+                            displayEmployee((String) sortCb.getSelectedItem());
                         }
                     }
-                    clearTextField();
-                    displayEmployee((String) sortCb.getSelectedItem());
                 }
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Đầu vào không hợp lệ", "Error", JOptionPane.WARNING_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(null, "Chọn một nhân viên để sửa thông tin!");
@@ -425,7 +439,7 @@ public class Employee extends javax.swing.JPanel {
         try {
             int id = Util.getNextID("Employee_ID", "Employee");
             String usname = uname.getText();
-            String ename = fname.getText();
+            String ename = Util.formatName(fname.getText());
             Date dateOB = dob.getDate();
             int slr = Integer.parseInt(salaryText.getText());
             String epword = String.valueOf(pword.getPassword());
@@ -440,19 +454,19 @@ public class Employee extends javax.swing.JPanel {
                     boolean success = tmp.add(employee);
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");
+                        clearTextField();
+                        displayEmployee((String) sortCb.getSelectedItem());
                     }
                 }
-                clearTextField();
-                displayEmployee((String) sortCb.getSelectedItem());
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Đầu vào không hợp lệ", "Error", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_addButton2ActionPerformed
 
     private void deleteButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton2ActionPerformed
         if (employeeTable.getSelectedRow() < 0) {
-            JOptionPane.showMessageDialog(null, "Chọn một khách hàng để xóa!");
+            JOptionPane.showMessageDialog(null, "Chọn một nhân viên để xóa!");
         } else {
             EmployeeModel employee = new EmployeeModel(key);
             EmployeeCtrl tmp = new EmployeeCtrl(DBConnection.getConnection());
@@ -462,11 +476,11 @@ public class Employee extends javax.swing.JPanel {
                 boolean success = tmp.delete(employee);
                 if (success) {
                     JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
+                    clearTextField();
                 }
             }
+            displayEmployee((String) sortCb.getSelectedItem());
         }
-        clearTextField();
-        displayEmployee((String) sortCb.getSelectedItem());
     }//GEN-LAST:event_deleteButton2ActionPerformed
 
     private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
@@ -502,11 +516,20 @@ public class Employee extends javax.swing.JPanel {
                 tableModel.addColumn(Rs.getMetaData().getColumnName(i));
             }
 
+            // Tạo một đối tượng NumberFormat để định dạng số thành định dạng tiền tệ VND
+            @SuppressWarnings("deprecation")
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
             // Đổ dữ liệu từ ResultSet vào DefaultTableModel
             while (Rs.next()) {
                 Object[] row = new Object[columnCount];
                 for (int i = 1; i <= columnCount; i++) {
-                    row[i - 1] = Rs.getObject(i);
+                    if (i == 5) { // Giả sử cột 5 là cột lương
+                        double salary = Rs.getDouble(i);
+                        row[i - 1] = currencyFormat.format(salary);
+                    } else {
+                        row[i - 1] = Rs.getObject(i);
+                    }
                 }
                 tableModel.addRow(row);
             }
