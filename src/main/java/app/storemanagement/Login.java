@@ -240,7 +240,6 @@ public class Login extends javax.swing.JFrame {
             pst.setString(2, pw);
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
-                    Util.userRole = role;
                     Dashboard db = new Dashboard();
                     db.setInfoLabel(user);
                     db.setVisible(true);
