@@ -1,6 +1,7 @@
 package app.storemanagement.controller;
 
 import app.storemanagement.model.EmployeeModel;
+import app.storemanagement.utils.Util;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,14 +19,17 @@ public class EmployeeCtrl implements BaseController<EmployeeModel> {
         this.conn = conn;
     }
 
+    
+
     @Override
     public boolean add(EmployeeModel employee) {
         String sql = "INSERT INTO Employee (Employee_ID, Username, Password, Full_Name, Date_of_Birth, Gender, Role, Salary)"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, employee.getId());
             stmt.setString(2, employee.getUsername());
-            stmt.setString(3, employee.getPassword());
+            stmt.setString(3, Util.hashPw(employee.getPassword()));
             stmt.setString(4, employee.getFullname());
             stmt.setDate(5, new java.sql.Date(employee.getDateOfBirth().getTime()));
             stmt.setString(6, employee.getGender());
@@ -46,7 +50,7 @@ public class EmployeeCtrl implements BaseController<EmployeeModel> {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(8, employee.getId());
             stmt.setString(1, employee.getUsername());
-            stmt.setString(2, employee.getPassword());
+            stmt.setString(2, Util.hashPw(employee.getPassword()));
             stmt.setString(3, employee.getFullname());
             stmt.setDate(4, new java.sql.Date(employee.getDateOfBirth().getTime()));
             stmt.setString(5, employee.getGender());
@@ -72,6 +76,7 @@ public class EmployeeCtrl implements BaseController<EmployeeModel> {
             return false;
         }
     }
+
     public static String displayQuery(String sortMethod, String keyword, String searchMethod) {
         String tmp = "";
         if (keyword.trim().isEmpty() == false) {

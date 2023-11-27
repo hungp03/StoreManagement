@@ -4,11 +4,13 @@ import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.utils.Util;
 import java.awt.HeadlessException;
 import java.awt.event.ItemEvent;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -235,15 +237,33 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_showPWItemStateChanged
 
     private void checkLogin(String user, String pw, String role, String query) {
+        // Không cần băm lại mật khẩu
+        // String hashed = Util.hashPw(pw);
         try (Connection conn = DBConnection.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
             pst.setString(1, user);
-            pst.setString(2, pw);
+            // Không cần truyền hashed vào câu truy vấn
+            // pst.setString(2, hashed);
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
-                    Dashboard db = new Dashboard();
-                    db.setInfoLabel(user);
-                    db.setVisible(true);
-                    this.dispose();
+                    // Lấy chuỗi băm từ cơ sở dữ liệu
+                    String dbhash = rs.getString("Password");
+                    // So sánh mật khẩu với chuỗi băm bằng BCrypt.checkpw
+                    // Bắt các ngoại lệ có thể xảy ra
+                    try {
+                        if (BCrypt.checkpw(pw, dbhash)) {
+                            Util.userRole = role;
+                            Dashboard db = new Dashboard();
+                            db.setInfoLabel(user);
+                            db.setVisible(true);
+                            this.dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Thông tin không chính xác", "Wrong", JOptionPane.WARNING_MESSAGE);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // Xử lý ngoại lệ khi mật khẩu hoặc chuỗi băm không hợp lệ
+                        System.out.println("Mật khẩu hoặc chuỗi băm không hợp lệ: " + e.getMessage());
+                        JOptionPane.showMessageDialog(this, "Có lỗi xảy ra, vui lòng thử lại sau ", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(this, "Thông tin không chính xác", "Wrong", JOptionPane.WARNING_MESSAGE);
                 }
@@ -262,13 +282,13 @@ public class Login extends javax.swing.JFrame {
             String query;
             if (adminRd.isSelected()) {
                 role = "admin";
-                query = "select Username from Admin where Username = ? and Password = ?";
+                query = "select Username, Password from Admin where Username = ?";
             } else if (nvbhRd.isSelected()) {
                 role = "NVBH";
-                query = "select Username from Employee where (Username = ? and Password = ? and Role = 'Bán hàng')";
+                query = "select Username, Password from Employee where (Username = ? and Role = 'Bán hàng')";
             } else if (nvkRd.isSelected()) {
                 role = "NVK";
-                query = "select Username from Employee where (Username = ? and Password = ? and Role = 'Kho')";
+                query = "select Username, Password from Employee where (Username = ? and Role = 'Kho')";
             } else {
                 JOptionPane.showMessageDialog(this, "Chọn chức vụ của bạn", "Missing information", JOptionPane.WARNING_MESSAGE);
                 return;

@@ -14,6 +14,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -186,5 +187,19 @@ public class Util {
         }
         // Xóa khoảng trắng ở cuối và trả về tên đã được format
         return formattedNameBuilder.toString().trim();
+    }
+    
+    //Mã hóa mật khẩu
+    public static String hashPw(String pw) {
+        String salt = BCrypt.gensalt(10);
+        String hashed = null;
+        try {
+            hashed = BCrypt.hashpw(pw, salt);
+        } catch (IllegalArgumentException e) {
+            // Xử lý ngoại lệ khi mật khẩu hoặc muối là null hoặc không hợp lệ
+            System.out.println("Mật khẩu hoặc muối không hợp lệ: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Có lỗi xảy ra trong quá trình mã hóa mật khẩu", "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+        return hashed;
     }
 }

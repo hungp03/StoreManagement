@@ -456,7 +456,7 @@ public class Employee extends javax.swing.JPanel {
         } else {
             EmployeeModel employee = new EmployeeModel(key);
             EmployeeCtrl tmp = new EmployeeCtrl(DBConnection.getConnection());
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa khách hàng này?", "Alert",
+            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa nhân viên này?", "Alert",
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (response == JOptionPane.YES_OPTION) {
                 boolean success = tmp.delete(employee);
