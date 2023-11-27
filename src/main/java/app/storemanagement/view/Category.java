@@ -220,10 +220,7 @@ public class Category extends javax.swing.JPanel {
     }
 
     private void displayCategoryTable(String sql) {
-        try {
-            Connection conn = DBConnection.getConnection();
-            Statement St = conn.createStatement();
-            ResultSet Rs = St.executeQuery(sql);
+        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
             DefaultTableModel tableModel = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
@@ -248,10 +245,6 @@ public class Category extends javax.swing.JPanel {
             tableModel.setColumnIdentifiers(columnNames);
 
             categoryTable.setModel(tableModel);
-            Rs.close();
-            St.close();
-            conn.close();
-
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
@@ -331,7 +324,7 @@ public class Category extends javax.swing.JPanel {
         return true;
     }
 
-    
+
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         if (Util.authorizationNVBH()) {
             if (categoryTable.getSelectedRow() > 0) {

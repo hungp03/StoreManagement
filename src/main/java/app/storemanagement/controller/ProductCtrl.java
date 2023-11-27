@@ -1,7 +1,6 @@
 package app.storemanagement.controller;
 
 import app.storemanagement.model.ProductModel;
-import app.storemanagement.view.AddProduct;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -102,9 +101,5 @@ public class ProductCtrl implements BaseController<ProductModel> {
             }
         }
         return query;
-    }
-
-    public static int getTmpID(int key) {
-        return key;
     }
 }

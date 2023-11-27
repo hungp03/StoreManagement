@@ -132,13 +132,15 @@
                   <Component id="deleteButton2" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="searchTextField" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="sortCb" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="jLabel39" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="searchCb" alignment="0" pref="36" max="32767" attributes="0"/>
-                  <Component id="jLabel38" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="refresh" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="searchTextField" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                      <Component id="sortCb" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                      <Component id="jLabel39" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel38" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="refresh" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jScrollPane3" min="-2" pref="375" max="-2" attributes="0"/>
@@ -427,6 +429,9 @@
           </StringArray>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="searchCbItemStateChanged"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>

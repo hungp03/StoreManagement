@@ -65,6 +65,7 @@ public class CustomerCtrl implements BaseController<CustomerModel>{
             return false;
         }
     }
+    
     public static String displayQuery(String sortMethod, String keyword, String searchMethod) {
         String tmp = "";
         if (keyword.trim().isEmpty() == false) {

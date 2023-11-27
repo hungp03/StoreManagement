@@ -163,6 +163,11 @@ public class Customer extends javax.swing.JPanel {
 
         searchCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã KH", "Tên KH", "Số điện thoại" }));
         searchCb.setFocusable(false);
+        searchCb.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                searchCbItemStateChanged(evt);
+            }
+        });
 
         refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
         refresh.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -416,11 +421,12 @@ public class Customer extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_deleteButton1ActionPerformed
 
+    private void searchCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_searchCbItemStateChanged
+        searchTextField.setText("");
+    }//GEN-LAST:event_searchCbItemStateChanged
+
     private void displayCustomerTable(String sql) {
-        try {
-            Connection conn = DBConnection.getConnection();
-            Statement St = conn.createStatement();
-            ResultSet Rs = St.executeQuery(sql);
+        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
             DefaultTableModel tableModel = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {

@@ -4,7 +4,6 @@ import app.storemanagement.controller.ProductCtrl;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
 import app.storemanagement.utils.Util;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
@@ -162,6 +161,11 @@ public class Product extends javax.swing.JPanel {
         });
 
         searchCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã", "Tên", "Phân loại" }));
+        searchCb.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                searchCbItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -250,10 +254,8 @@ public class Product extends javax.swing.JPanel {
     }
 
     private void dp() {
-        try {
-            Connection conn = DBConnection.getConnection();
-            Statement st = conn.createStatement();
-            ResultSet Rs = st.executeQuery("select count(Product_ID) as Total_Product from Product");
+        String query = "select count(Product_ID) as Total_Product from Product";
+        try (Connection conn = DBConnection.getConnection(); Statement st = conn.createStatement(); ResultSet Rs = st.executeQuery(query)) {
             if (Rs.next()) {
                 int countProduct = Rs.getInt("Total_Product");
                 jLabel2.setText(countProduct + " sản phẩm");
@@ -264,10 +266,7 @@ public class Product extends javax.swing.JPanel {
     }
 
     private void displayProductTable(String sql) {
-        try {
-            Connection conn = DBConnection.getConnection();
-            Statement St = conn.createStatement();
-            ResultSet Rs = St.executeQuery(sql);
+        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
             DefaultTableModel tableModel = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
@@ -292,22 +291,16 @@ public class Product extends javax.swing.JPanel {
             tableModel.setColumnIdentifiers(columnNames);
 
             productTable.setModel(tableModel);
-            Rs.close();
-            St.close();
-            conn.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
+
     private void productTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_productTableMouseClicked
         DefaultTableModel model = (DefaultTableModel) productTable.getModel();
         int my_idx = productTable.getSelectedRow();
         if (my_idx != -1) {
             // Lấy ID từ hàng được chọn
-            detailButton.setEnabled(true);
-            deleteProduct.setEnabled(true);
-            detailButton.setBackground(Color.decode("#4C956C"));
-            deleteProduct.setBackground(Color.decode("#4C956C"));
             key = Integer.parseInt(model.getValueAt(my_idx, 0).toString());
         }
     }//GEN-LAST:event_productTableMouseClicked
@@ -317,7 +310,6 @@ public class Product extends javax.swing.JPanel {
             String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
             displayProduct(selectedMethod); // Gọi hàm displayCategory với phương thức sắp xếp được chọn
         }
-
     }//GEN-LAST:event_productSortItemStateChanged
 
     private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
@@ -413,8 +405,7 @@ public class Product extends javax.swing.JPanel {
         //System.out.print(key);
         if (detailButton.isEnabled() == true) {
             if (productTable.getSelectedRow() >= 0) {
-                Util.tmpID = String.valueOf(key);
-                ProductDetail pd = new ProductDetail();
+                ProductDetail pd = new ProductDetail(key);
                 pd.setVisible(true);
                 pd.addWindowListener(new WindowAdapter() {
                     @Override
@@ -428,6 +419,10 @@ public class Product extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_detailButtonActionPerformed
+
+    private void searchCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_searchCbItemStateChanged
+        searchTextField.setText("");
+    }//GEN-LAST:event_searchCbItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

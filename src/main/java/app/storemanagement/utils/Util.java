@@ -21,26 +21,24 @@ import java.util.regex.Pattern;
  */
 public class Util {
 
-    public static String tmpID = "";
-    public static String userLogin = "";
+    //Dùng để lấy vai trò của người dùng (admin, nhân viên bán hàng, nhân viên kho)
     public static String userRole = "";
 
+    //Tạo ID tiếp theo
     public static int getNextID(String idName, String tableName) {
         int nextID = 1;
-        try {
-            Connection conn = DBConnection.getConnection();
-            Statement St1 = conn.createStatement();
-            ResultSet Rs1 = St1.executeQuery("SELECT MAX(" + idName + ") FROM " + tableName);
+        String query = "SELECT MAX(" + idName + ") FROM " + tableName;
+        try (Connection conn = DBConnection.getConnection(); Statement St1 = conn.createStatement(); ResultSet Rs1 = St1.executeQuery(query)) {
             if (Rs1.next()) {
                 nextID = Rs1.getInt(1) + 1;
             }
-            conn.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
         return nextID;
     }
 
+    //Ràng buộc ngày tháng của sản phẩm
     public static boolean checkDate(Date manufactureDate, Date expiryDate, Date entry) {
         Date today = new Date();
         if (manufactureDate.after(entry)) {
@@ -62,10 +60,12 @@ public class Util {
         return true;
     }
 
+    //Lấy thời gian hiện tại
     public static String getCurrentDateTime() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy"));
     }
 
+    //Kiểm tra đầu vào của Product
     public static boolean validateProductInput(String name, Date manufactureDate, Date expiryDate, Date entry, double unitP, int quantityInStock) {
         if (name.isEmpty() || manufactureDate == null || expiryDate == null || entry == null) {
             JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ");
@@ -78,6 +78,7 @@ public class Util {
         return !(!checkDate(manufactureDate, expiryDate, entry));
     }
 
+    //Kiểm tra email có hợp lệ không
     public static boolean checkEmail(String email) {
         final String EMAIL_REGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         final Pattern pattern = Pattern.compile(EMAIL_REGEX);
@@ -85,6 +86,7 @@ public class Util {
         return matcher.matches();
     }
 
+    //Kiểm tra đầu vào của Customer
     public static boolean validateCustomerInput(String name, String address, String phone, String email) {
         if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ");
@@ -101,11 +103,13 @@ public class Util {
         return true;
     }
 
+    //Kiểm tra đầu vào đã nhập hay chưa (thêm Product)
     public static boolean checkExistInput(String name, Date manufactureDate, Date expiryDate, Date entry, String unitP, String quantityInStock, String description) {
         // Kiểm tra xem có ít nhất một giá trị tồn tại hay không
         return !name.isEmpty() || manufactureDate != null || expiryDate != null || entry != null || !unitP.isEmpty() || !quantityInStock.isEmpty() || !description.isEmpty();
     }
 
+    //Kiểm tra số điện thoại hợp lệ (VD: Khu vực Việt Nam sẽ có dạng +8412345678 hoặc 012345678)
     public static boolean isValidPhoneNumber(String phoneNumber) {
         String regex = "^(\\+\\d{1,11}|\\d{9})$";
         Pattern pattern = Pattern.compile(regex);
@@ -113,34 +117,39 @@ public class Util {
         return matcher.matches();
     }
 
+    //Ngăn chặn nhân viên bán hàng sử dụng các thao tác họ không được phép (Phân quyền)
     public static boolean authorizationNVBH() {
-        if (Util.userRole.equals("NVBH")) {
+        if (userRole.equals("NVBH")) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền sử dụng thao tác này");
             return false;
         }
         return true;
     }
 
+    //Ngăn chặn nhân viên kho sử dụng các thao tác họ không được phép (Phân quyền)
     public static boolean authorizationNVK() {
-        if (Util.userRole.equals("NVK")) {
+        if (userRole.equals("NVK")) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền sử dụng thao tác này");
             return false;
         }
         return true;
     }
 
+    //Kiểm tra nhân viên có đủ 18 tuổi hay không
     public static boolean isUnder18(LocalDate birthDate) {
         LocalDate today = LocalDate.now();
         Period period = Period.between(birthDate, today);
         return period.getYears() < 18;
     }
 
+    //Kiểm tra username hợp lệ (không có kí tự đặc biệt và dấu cách, chỉ bao gồm chữ và số, không có tiếng việt)
     public static boolean isValidUsername(String username) {
         // Chỉ cho phép các ký tự chữ và số
         String regex = "^[a-zA-Z0-9]+$";
         return Pattern.matches(regex, username);
     }
 
+    //Kiểm tra đầu vào của Employee
     public static boolean validateEmployeeInput(String uname, String pword, String fname, Date dob, int slr) {
         if (uname.isEmpty() || pword.isEmpty() || fname.isEmpty() || dob == null || String.valueOf(slr).isEmpty()) {
             JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ");
@@ -159,5 +168,23 @@ public class Util {
             return false;
         }
         return true;
+    }
+
+    //Format tên đúng định dạng. Ví dụ: "NGuyỄn Văn a" -> "Nguyễn Văn A"
+    public static String formatName(String name) {
+        // Chuyển tất cả các ký tự thành chữ thường
+        name = name.toLowerCase();
+        // Tách tên thành các phần riêng biệt
+        String[] nameParts = name.split(" ");
+        // Khởi tạo một StringBuilder để tạo lại tên theo đúng định dạng
+        StringBuilder formattedNameBuilder = new StringBuilder();
+        for (String part : nameParts) {
+            // Chuyển chữ cái đầu tiên của mỗi phần thành chữ hoa
+            String firstLetter = part.substring(0, 1).toUpperCase();
+            // Ghép lại phần đã được chuyển đổi vào StringBuilder
+            formattedNameBuilder.append(firstLetter).append(part.substring(1)).append(" ");
+        }
+        // Xóa khoảng trắng ở cuối và trả về tên đã được format
+        return formattedNameBuilder.toString().trim();
     }
 }

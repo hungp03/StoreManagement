@@ -28,17 +28,19 @@ import javax.swing.JOptionPane;
  */
 public class ProductDetail extends javax.swing.JFrame {
 
-    private int id = Integer.parseInt(Util.tmpID);
+    private int id;
 
     /**
      * Creates new form ProductDetail
+     *
+     * @param id
      */
-    public ProductDetail() {
+    public ProductDetail(int id) {
+        this.id = id;
         initComponents();
         getCategories();
-        productID.setText(Util.tmpID);
+        productID.setText(String.valueOf(id));
         initShowPage();
-
     }
 
     /**
@@ -350,50 +352,49 @@ public class ProductDetail extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
     private void initShowPage() {
-        try {
-            // Thực hiện truy vấn SQL để lấy tất cả các thông tin của sản phẩm
-            String query = """
-                           SELECT Product_ID, Product_Name, Category.Category_ID, Category_Name, Unit_Price,
-                           Quantity_In_Stock, Description, Manufacture_Date, Expiry_Date, Entry_Date, 
-                           FORMAT(Created_At, 'HH:mm dd/MM/yyyy') as Created_Time,
-                           FORMAT(Updated_At, 'HH:mm dd/MM/yyyy') as Updated_Time 
-                           FROM Product inner join Category ON Category.Category_ID = Product.Category_ID
-                           WHERE Product_ID = ?
-                           """;
-            Connection conn = DBConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query);
+        String query = """
+                   SELECT Product_ID, Product_Name, Category.Category_ID, Category_Name, Unit_Price,
+                   Quantity_In_Stock, Description, Manufacture_Date, Expiry_Date, Entry_Date, 
+                   FORMAT(Created_At, 'HH:mm dd/MM/yyyy') as Created_Time,
+                   FORMAT(Updated_At, 'HH:mm dd/MM/yyyy') as Updated_Time 
+                   FROM Product inner join Category ON Category.Category_ID = Product.Category_ID
+                   WHERE Product_ID = ?
+                   """;
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int categoryId = rs.getInt("Category_ID");
-                double unitP = rs.getDouble("Unit_Price");
-                int quantityInStock = rs.getInt("Quantity_In_Stock");
-                String description = rs.getString("Description");
-                Date manufactureDate = rs.getDate("Manufacture_Date");
-                Date expiryDate = rs.getDate("Expiry_Date");
-                Date entry = rs.getDate("Entry_Date");
-                String name = rs.getString("Product_Name");
-                DefaultComboBoxModel comboBoxModel = (DefaultComboBoxModel) cateCb.getModel();
-                String cateName = rs.getString("Category_Name");
-                jLabel1.setText("Thời gian tạo: " + rs.getString("Created_Time"));
-                productName.setText(name);
-                unitPrice.setText(String.valueOf(unitP));
-                cateCb.setSelectedIndex(comboBoxModel.getIndexOf(new CategoryModel(categoryId, cateName)));
-                qtyInStock.setText(String.valueOf(quantityInStock));
-                des.setText(description);
-                nsx.setDate(manufactureDate);
-                hsd.setDate(expiryDate);
-                entryDate.setDate(entry);
-                checkHSD(expiryDate, quantityInStock);
-                if (rs.getString("Updated_Time") == null) {
-                    jLabel2.setText("");
-                } else {
-                    jLabel2.setText("Cập nhật lần cuối: " + rs.getString("Updated_Time"));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    updateUI(rs);
                 }
             }
         } catch (SQLException ex) {
             Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void updateUI(ResultSet rs) throws SQLException {
+        int categoryId = rs.getInt("Category_ID");
+        double unitP = rs.getDouble("Unit_Price");
+        int quantityInStock = rs.getInt("Quantity_In_Stock");
+        String description = rs.getString("Description");
+        Date manufactureDate = rs.getDate("Manufacture_Date");
+        Date expiryDate = rs.getDate("Expiry_Date");
+        Date entry = rs.getDate("Entry_Date");
+        String name = rs.getString("Product_Name");
+        DefaultComboBoxModel comboBoxModel = (DefaultComboBoxModel) cateCb.getModel();
+        String cateName = rs.getString("Category_Name");
+
+        jLabel1.setText("Thời gian tạo: " + rs.getString("Created_Time"));
+        productName.setText(name);
+        unitPrice.setText(String.valueOf(unitP));
+        cateCb.setSelectedIndex(comboBoxModel.getIndexOf(new CategoryModel(categoryId, cateName)));
+        qtyInStock.setText(String.valueOf(quantityInStock));
+        des.setText(description);
+        nsx.setDate(manufactureDate);
+        hsd.setDate(expiryDate);
+        entryDate.setDate(entry);
+        checkHSD(expiryDate, quantityInStock);
+        jLabel2.setText(rs.getString("Updated_Time") == null ? "" : "Cập nhật lần cuối: " + rs.getString("Updated_Time"));
     }
 
     private void preventChange() {
@@ -438,6 +439,7 @@ public class ProductDetail extends javax.swing.JFrame {
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {
+        id = Integer.parseInt(productID.getText());
         String name = productName.getText().trim();
         CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
         int categoryId = categoryItem.getId();
@@ -482,12 +484,9 @@ public class ProductDetail extends javax.swing.JFrame {
         saveBtn.setEnabled(b);
         saveBtn.setBackground(Color.decode(colorCode));
     }
-    
+
     private void getCategories() {
-        try {
-            Connection conn = DBConnection.getConnection();
-            Statement St = conn.createStatement();
-            ResultSet Rs = St.executeQuery("SELECT * FROM Category");
+        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery("SELECT * FROM Category")) {
 
             // Tạo một DefaultComboBoxModel để lưu trữ các mục category
             DefaultComboBoxModel<CategoryModel> model = new DefaultComboBoxModel<>();
@@ -505,6 +504,8 @@ public class ProductDetail extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<CategoryModel> cateCb;
     private javax.swing.JTextField des;

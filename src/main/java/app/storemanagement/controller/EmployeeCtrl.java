@@ -2,7 +2,6 @@ package app.storemanagement.controller;
 
 import app.storemanagement.model.EmployeeModel;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;

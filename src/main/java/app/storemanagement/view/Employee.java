@@ -27,6 +27,7 @@ import javax.swing.table.DefaultTableModel;
 public class Employee extends javax.swing.JPanel {
 
     private int key = 0;
+
     /**
      * Creates new form Employee
      */
@@ -203,6 +204,11 @@ public class Employee extends javax.swing.JPanel {
         jScrollPane3.setViewportView(employeeTable);
 
         searchCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã NV", "Tên NV" }));
+        searchCb.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                searchCbItemStateChanged(evt);
+            }
+        });
 
         refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
         refresh.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -307,13 +313,14 @@ public class Employee extends javax.swing.JPanel {
                     .addComponent(addButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deleteButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel39)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(searchCb, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
-                    .addComponent(jLabel38)
-                    .addComponent(refresh))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(sortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel39)
+                        .addComponent(jLabel38)
+                        .addComponent(refresh)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
@@ -470,6 +477,10 @@ public class Employee extends javax.swing.JPanel {
         clearTextField();
     }//GEN-LAST:event_refreshMouseClicked
 
+    private void searchCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_searchCbItemStateChanged
+        searchTextField.setText("");
+    }//GEN-LAST:event_searchCbItemStateChanged
+
     private void displayEmployee(String sortMethod) {
         displayEmployeeTable(EmployeeCtrl.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
     }
@@ -479,10 +490,7 @@ public class Employee extends javax.swing.JPanel {
     }
 
     private void displayEmployeeTable(String sql) {
-        try {
-            Connection conn = DBConnection.getConnection();
-            Statement St = conn.createStatement();
-            ResultSet Rs = St.executeQuery(sql);
+        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
             DefaultTableModel tableModel = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
@@ -506,9 +514,6 @@ public class Employee extends javax.swing.JPanel {
             tableModel.setColumnIdentifiers(columnNames);
 
             employeeTable.setModel(tableModel);
-            Rs.close();
-            St.close();
-            conn.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }

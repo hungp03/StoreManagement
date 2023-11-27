@@ -291,11 +291,7 @@ public class AddProduct extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void getCategories() {
-        try {
-            Connection conn = DBConnection.getConnection();
-            Statement St = conn.createStatement();
-            ResultSet Rs = St.executeQuery("SELECT * FROM Category");
-
+        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery("SELECT * FROM Category")) {
             // Tạo một DefaultComboBoxModel để lưu trữ các mục category
             DefaultComboBoxModel<CategoryModel> model = new DefaultComboBoxModel<>();
 
@@ -345,6 +341,8 @@ public class AddProduct extends javax.swing.JFrame {
                     boolean success = tmp.add(product);
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Đã thêm sản phẩm");
+                        productID.setText(String.valueOf(Util.getNextID("Product_ID", "Product")));
+                        clearTextField();
                     }
                 }
             }

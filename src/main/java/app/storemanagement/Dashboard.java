@@ -41,7 +41,6 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel1.add(sellPanel, "sell");
         cardLayout.show(jPanel1, "overview");
         
-        infoLabel.setText("Xin chào, " + Util.userLogin);
         if (Util.userRole.equals("NVBH") || Util.userRole.equals("NVK")){
             employeeBtn.setVisible(false);
         }
@@ -346,6 +345,9 @@ public class Dashboard extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    public void setInfoLabel(String user) {
+        this.infoLabel.setText("Xin chào, " + user);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;

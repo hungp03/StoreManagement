@@ -223,6 +223,7 @@ public class Login extends javax.swing.JFrame {
         }
         return true;
     }
+
     private void showPWItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_showPWItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             // Hiển thị mật khẩu
@@ -232,33 +233,34 @@ public class Login extends javax.swing.JFrame {
             passwordField.setEchoChar('\u2022'); // Ký tự Unicode '•'
         }
     }//GEN-LAST:event_showPWItemStateChanged
-    
+
     private void checkLogin(String user, String pw, String role, String query) {
-        try {
-            Connection conn = DBConnection.getConnection();
-            PreparedStatement pst = conn.prepareStatement(query);
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
             pst.setString(1, user);
             pst.setString(2, pw);
-            ResultSet rs = pst.executeQuery();
-            if (rs.next()) {
-                Util.userLogin = user;
-                Util.userRole = role;
-                new Dashboard().setVisible(true);
-                this.dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Thông tin không chính xác", "Wrong", JOptionPane.WARNING_MESSAGE);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    Util.userRole = role;
+                    Dashboard db = new Dashboard();
+                    db.setInfoLabel(user);
+                    db.setVisible(true);
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thông tin không chính xác", "Wrong", JOptionPane.WARNING_MESSAGE);
+                }
             }
         } catch (HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
+
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         if (checkInfo()) {
             String user = userName.getText();
             String pw = String.valueOf(passwordField.getPassword());
-            String role = "";
-            String query = "";
+            String role;
+            String query;
             if (adminRd.isSelected()) {
                 role = "admin";
                 query = "select Username from Admin where Username = ? and Password = ?";
@@ -268,8 +270,7 @@ public class Login extends javax.swing.JFrame {
             } else if (nvkRd.isSelected()) {
                 role = "NVK";
                 query = "select Username from Employee where (Username = ? and Password = ? and Role = 'Kho')";
-            }
-            else{
+            } else {
                 JOptionPane.showMessageDialog(this, "Chọn chức vụ của bạn", "Missing information", JOptionPane.WARNING_MESSAGE);
                 return;
             }
