@@ -26,8 +26,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class Util {
 
     //Dùng để lấy vai trò của người dùng (admin, nhân viên bán hàng, nhân viên kho)
-    public static String userRole = "";
-
+    public static int eid = 0;
     //Tạo ID tiếp theo
     public static int getNextID(String idName, String tableName) {
         int nextID = 1;
@@ -41,7 +40,8 @@ public class Util {
         }
         return nextID;
     }
-
+    
+    
     //Ràng buộc ngày tháng của sản phẩm
     public static boolean checkDate(Date manufactureDate, Date expiryDate, Date entry) {
         Date today = new Date();
@@ -143,8 +143,8 @@ public class Util {
     }
 
     //Ngăn chặn nhân viên bán hàng sử dụng các thao tác họ không được phép (Phân quyền)
-    public static boolean authorizationNVBH() {
-        if (userRole.equals("NVBH")) {
+    public static boolean authorizationNVBH(String role) {
+        if (role.equals("NVBH")) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền sử dụng thao tác này");
             return false;
         }
@@ -152,8 +152,8 @@ public class Util {
     }
 
     //Ngăn chặn nhân viên kho sử dụng các thao tác họ không được phép (Phân quyền)
-    public static boolean authorizationNVK() {
-        if (userRole.equals("NVK")) {
+    public static boolean authorizationNVK(String role) {
+        if (role.equals("NVK")) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền sử dụng thao tác này");
             return false;
         }

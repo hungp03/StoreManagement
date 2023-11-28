@@ -23,6 +23,11 @@ import javax.swing.table.DefaultTableModel;
 public class Category extends javax.swing.JPanel {
 
     private int key = 0;
+    private String userRole;
+
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }
 
     /**
      * Creates new form Category
@@ -137,6 +142,7 @@ public class Category extends javax.swing.JPanel {
         categoryTable.setRowHeight(28);
         categoryTable.setSelectionBackground(new java.awt.Color(76, 149, 108));
         categoryTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        categoryTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         categoryTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 categoryTableMouseClicked(evt);
@@ -326,7 +332,7 @@ public class Category extends javax.swing.JPanel {
 
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        if (Util.authorizationNVBH()) {
+        if (Util.authorizationNVBH(userRole)) {
             if (categoryTable.getSelectedRow() >= 0) {
                 String name = categoryName.getText();
                 if (verifyInput()) {
@@ -351,7 +357,7 @@ public class Category extends javax.swing.JPanel {
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        if (Util.authorizationNVBH()) {
+        if (Util.authorizationNVBH(userRole)) {
             int id = Util.getNextID("Category_ID", "Category");
             String name = categoryName.getText();
             if (verifyInput()) {
@@ -373,7 +379,7 @@ public class Category extends javax.swing.JPanel {
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        if (Util.authorizationNVBH()) {
+        if (Util.authorizationNVBH(userRole)) {
             if (categoryTable.getSelectedRow() < 0) {
                 JOptionPane.showMessageDialog(null, "Chọn một phân loại để xóa!");
             } else {

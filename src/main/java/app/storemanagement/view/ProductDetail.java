@@ -16,10 +16,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -32,6 +30,11 @@ import javax.swing.JOptionPane;
 public class ProductDetail extends javax.swing.JFrame {
 
     private int id;
+    private String userRole;
+
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }
 
     /**
      * Creates new form ProductDetail
@@ -115,10 +118,13 @@ public class ProductDetail extends javax.swing.JFrame {
         jLabel40.setText("Tên SP");
 
         qtyInStock.setEditable(false);
+        qtyInStock.setBackground(new java.awt.Color(255, 255, 255));
 
         des.setEditable(false);
+        des.setBackground(new java.awt.Color(255, 255, 255));
 
         unitPrice.setEditable(false);
+        unitPrice.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel47.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel47.setForeground(new java.awt.Color(76, 149, 108));
@@ -177,6 +183,7 @@ public class ProductDetail extends javax.swing.JFrame {
         jLabel44.setText("NSX");
 
         productID.setEditable(false);
+        productID.setBackground(new java.awt.Color(255, 255, 255));
         productID.setFocusable(false);
 
         cateCb.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -433,7 +440,7 @@ public class ProductDetail extends javax.swing.JFrame {
         }
     }
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        if (Util.authorizationNVBH()) {
+        if (Util.authorizationNVBH(userRole)) {
             for (KeyListener keyListener : productName.getKeyListeners()) {
                 productName.removeKeyListener(keyListener);
             }

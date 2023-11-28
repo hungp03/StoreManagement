@@ -4,7 +4,6 @@ import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.utils.Util;
 import java.awt.HeadlessException;
 import java.awt.event.ItemEvent;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,7 +16,7 @@ import org.mindrot.jbcrypt.BCrypt;
  * @author Hung Pham
  */
 public class Login extends javax.swing.JFrame {
-
+    
     /**
      * Creates new form Login
      */
@@ -251,8 +250,8 @@ public class Login extends javax.swing.JFrame {
                     // Bắt các ngoại lệ có thể xảy ra
                     try {
                         if (BCrypt.checkpw(pw, dbhash)) {
-                            Util.userRole = role;
-                            Dashboard db = new Dashboard();
+                            int uid = rs.getInt(1);
+                            Dashboard db = new Dashboard(uid, role);
                             db.setInfoLabel(user);
                             db.setVisible(true);
                             this.dispose();
@@ -282,13 +281,13 @@ public class Login extends javax.swing.JFrame {
             String query;
             if (adminRd.isSelected()) {
                 role = "admin";
-                query = "select Username, Password from Admin where Username = ?";
+                query = "select Admin_ID, Username, Password from Admin where Username = ?";
             } else if (nvbhRd.isSelected()) {
                 role = "NVBH";
-                query = "select Username, Password from Employee where (Username = ? and Role = 'Bán hàng')";
+                query = "select Employee_ID, Username, Password from Employee where (Username = ? and Role = 'Bán hàng')";
             } else if (nvkRd.isSelected()) {
                 role = "NVK";
-                query = "select Username, Password from Employee where (Username = ? and Role = 'Kho')";
+                query = "select Employee_ID, Username, Password from Employee where (Username = ? and Role = 'Kho')";
             } else {
                 JOptionPane.showMessageDialog(this, "Chọn chức vụ của bạn", "Missing information", JOptionPane.WARNING_MESSAGE);
                 return;

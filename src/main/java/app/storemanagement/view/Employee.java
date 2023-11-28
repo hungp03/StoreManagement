@@ -199,6 +199,7 @@ public class Employee extends javax.swing.JPanel {
         employeeTable.setRowHeight(28);
         employeeTable.setSelectionBackground(new java.awt.Color(76, 149, 108));
         employeeTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        employeeTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         employeeTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 employeeTableMouseClicked(evt);
@@ -516,17 +517,13 @@ public class Employee extends javax.swing.JPanel {
                 tableModel.addColumn(Rs.getMetaData().getColumnName(i));
             }
 
-            // Tạo một đối tượng NumberFormat để định dạng số thành định dạng tiền tệ VND
-            @SuppressWarnings("deprecation")
-            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-
             // Đổ dữ liệu từ ResultSet vào DefaultTableModel
             while (Rs.next()) {
                 Object[] row = new Object[columnCount];
                 for (int i = 1; i <= columnCount; i++) {
                     if (i == 5) { // Giả sử cột 5 là cột lương
                         double salary = Rs.getDouble(i);
-                        row[i - 1] = currencyFormat.format(salary);
+                        row[i - 1] = Util.convertToVND(salary);
                     } else {
                         row[i - 1] = Rs.getObject(i);
                     }

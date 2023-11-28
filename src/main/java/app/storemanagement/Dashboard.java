@@ -29,9 +29,13 @@ public class Dashboard extends javax.swing.JFrame {
     Overview overviewPanel = new Overview();
     Category categoryPanel = new Category();
     Sell sellPanel = new Sell();
+    private int uid;
+    private String userRole;
 
-    public Dashboard() {
+    public Dashboard(int uid, String role) {
         initComponents();
+        this.userRole = role;
+        this.uid = uid;
         cardLayout = (CardLayout) (jPanel1.getLayout());
         jPanel1.add(productPanel, "product");
         jPanel1.add(employeePanel, "employee");
@@ -40,14 +44,22 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel1.add(categoryPanel, "category");
         jPanel1.add(sellPanel, "sell");
         cardLayout.show(jPanel1, "overview");
-        
-        if (Util.userRole.equals("NVBH") || Util.userRole.equals("NVK")){
-            employeeBtn.setVisible(false);
-        }
-        if (Util.userRole.equals("NVK")){
-            customerBtn.setVisible(false);
-            sellBtn.setVisible(false);
-            invoiceBtn.setVisible(false);
+        productPanel.setUserRole(role);
+        categoryPanel.setUserRole(role);
+        sellPanel.setUid(uid);
+        switch (userRole) {
+            case "NVBH" ->
+                employeeBtn.setVisible(false);
+            case "NVK" -> {
+                employeeBtn.setVisible(false);
+                customerBtn.setVisible(false);
+                sellBtn.setVisible(false);
+                invoiceBtn.setVisible(false);
+            }
+            case "admin" ->
+                sellBtn.setVisible(false);
+            default -> {
+            }
         }
         overviewBtn.setForeground(Color.black);
         overviewBtn.setBackground(Color.decode("#F2F2F2"));
@@ -105,7 +117,6 @@ public class Dashboard extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         infoLabel = new javax.swing.JLabel();
@@ -140,7 +151,6 @@ public class Dashboard extends javax.swing.JFrame {
         overviewBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/statistics.png"))); // NOI18N
         overviewBtn.setText("   Tổng quan");
         overviewBtn.setBorder(null);
-        buttonGroup1.add(overviewBtn);
         overviewBtn.setFocusable(false);
         overviewBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -154,7 +164,6 @@ public class Dashboard extends javax.swing.JFrame {
         employeeBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/employees.png"))); // NOI18N
         employeeBtn.setText("   Nhân viên");
         employeeBtn.setBorder(null);
-        buttonGroup1.add(employeeBtn);
         employeeBtn.setFocusable(false);
         employeeBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -168,7 +177,6 @@ public class Dashboard extends javax.swing.JFrame {
         categoryBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/categories.png"))); // NOI18N
         categoryBtn.setText("   Phân loại");
         categoryBtn.setBorder(null);
-        buttonGroup1.add(categoryBtn);
         categoryBtn.setFocusable(false);
         categoryBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -182,7 +190,6 @@ public class Dashboard extends javax.swing.JFrame {
         productBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/products.png"))); // NOI18N
         productBtn.setText("   Sản phẩm");
         productBtn.setBorder(null);
-        buttonGroup1.add(productBtn);
         productBtn.setFocusable(false);
         productBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -196,7 +203,6 @@ public class Dashboard extends javax.swing.JFrame {
         customerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/customer.png"))); // NOI18N
         customerBtn.setText("   Khách hàng");
         customerBtn.setBorder(null);
-        buttonGroup1.add(customerBtn);
         customerBtn.setFocusable(false);
         customerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -210,7 +216,6 @@ public class Dashboard extends javax.swing.JFrame {
         sellBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cross-selling.png"))); // NOI18N
         sellBtn.setText("   Bán hàng");
         sellBtn.setBorder(null);
-        buttonGroup1.add(sellBtn);
         sellBtn.setFocusable(false);
         sellBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -224,7 +229,6 @@ public class Dashboard extends javax.swing.JFrame {
         invoiceBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/invoice.png"))); // NOI18N
         invoiceBtn.setText("   Hóa đơn");
         invoiceBtn.setBorder(null);
-        buttonGroup1.add(invoiceBtn);
         invoiceBtn.setFocusable(false);
         invoiceBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -250,44 +254,40 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sellBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(infoLabel))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addGap(6, 6, 6)
+                .addComponent(infoLabel))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(56, 56, 56)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(customerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(sellBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addComponent(infoLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(197, 197, 197)
-                .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(customerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(sellBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(143, 143, 143)
+                .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(customerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(sellBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -350,7 +350,6 @@ public class Dashboard extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton categoryBtn;
     private javax.swing.JButton customerBtn;
     private javax.swing.JButton employeeBtn;
