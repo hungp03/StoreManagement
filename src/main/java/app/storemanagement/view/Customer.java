@@ -23,7 +23,7 @@ import javax.swing.event.DocumentListener;
 public class Customer extends javax.swing.JPanel {
 
     private int key = 0;
-
+    CustomerCtrl cus = new CustomerCtrl();
     /**
      * Creates new form Customer
      */
@@ -260,16 +260,16 @@ public class Customer extends javax.swing.JPanel {
                         .addComponent(searchCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
     }// </editor-fold>//GEN-END:initComponents
     private void displayCustomer(String sortMethod) {
-        displayCustomerTable(CustomerCtrl.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
+        displayCustomerTable(cus.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
     }
 
     private void searchCustomer(String keyword) {
-        displayCustomerTable(CustomerCtrl.displayQuery((String) customerSortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
+        displayCustomerTable(cus.displayQuery((String) customerSortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
     }
     private void editButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editButton1MouseClicked
         if (customerTable.getSelectedRow() >= 0) {

@@ -30,7 +30,7 @@ public class Product extends javax.swing.JPanel {
     public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
-    
+    ProductCtrl productCtrl = new ProductCtrl();
     /**
      * Creates new form Product
      */
@@ -263,18 +263,18 @@ public class Product extends javax.swing.JPanel {
                         .addComponent(productSort, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel48)
                         .addComponent(searchCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void displayProduct(String sortMethod) {
-        displayProductTable(ProductCtrl.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
+        displayProductTable(productCtrl.generateQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
     }
 
     private void searchProduct(String keyword) {
-        displayProductTable(ProductCtrl.displayQuery((String) productSort.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
+        displayProductTable(productCtrl.generateQuery((String) productSort.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
     }
 
     private void dp() {

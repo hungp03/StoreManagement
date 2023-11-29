@@ -28,7 +28,7 @@ public class Category extends javax.swing.JPanel {
     public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
-
+    CategoryCtrl ctg = new CategoryCtrl();
     /**
      * Creates new form Category
      */
@@ -218,11 +218,11 @@ public class Category extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     private void displayCategory(String sortMethod) {
-        displayCategoryTable(CategoryCtrl.displayQuery(sortMethod, searchTextField.getText()));
+        displayCategoryTable(ctg.displayQuery(sortMethod, searchTextField.getText()));
     }
 
     private void searchCategory(String keyword) {
-        displayCategoryTable(CategoryCtrl.displayQuery((String) categorySort.getSelectedItem(), keyword));
+        displayCategoryTable(ctg.displayQuery((String) categorySort.getSelectedItem(), keyword));
     }
 
     private void displayCategoryTable(String sql) {

@@ -1,5 +1,30 @@
 package app.storemanagement.view;
 
+import app.storemanagement.model.Connection.DBConnection;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.FieldPosition;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.DateTickUnit;
+import org.jfree.chart.axis.DateTickUnitType;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYDataset;
+
 /**
  *
  * @author Hung Pham
@@ -11,6 +36,7 @@ public class Overview extends javax.swing.JPanel {
      */
     public Overview() {
         initComponents();
+        generateWeekChart();
     }
 
     /**
@@ -23,9 +49,9 @@ public class Overview extends javax.swing.JPanel {
     private void initComponents() {
 
         overviewChart = new javax.swing.JTabbedPane();
-        dayChart = new javax.swing.JTabbedPane();
-        monthChart = new javax.swing.JTabbedPane();
-        yearChart = new javax.swing.JTabbedPane();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -36,9 +62,34 @@ public class Overview extends javax.swing.JPanel {
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
 
-        overviewChart.addTab("Hôm nay", dayChart);
-        overviewChart.addTab("Tháng này", monthChart);
-        overviewChart.addTab("Năm nay", yearChart);
+        jPanel4.setLayout(new java.awt.BorderLayout());
+        overviewChart.addTab("Doanh thu tuần", jPanel4);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 982, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 415, Short.MAX_VALUE)
+        );
+
+        overviewChart.addTab("Tháng", jPanel5);
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 982, Short.MAX_VALUE)
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 415, Short.MAX_VALUE)
+        );
+
+        overviewChart.addTab("Năm", jPanel6);
 
         jPanel1.setBackground(new java.awt.Color(21, 96, 100));
 
@@ -180,15 +231,98 @@ public class Overview extends javax.swing.JPanel {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addGap(32, 32, 32)
                 .addComponent(overviewChart, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(62, 62, 62))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+    public void refreshData(){
+        generateWeekChart();
+    }
+    private void generateWeekChart() {
+        String query = """
+                       SELECT Date, SUM(Total_Amount) as Revenue FROM Invoice 
+                       WHERE Date >= DATEADD(day, -7, GETDATE()) 
+                       GROUP BY Date ORDER BY Date
+                       """;
+        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(query)) {
+            TimeSeries series = new TimeSeries("Revenue");
 
+            while (Rs.next()) {
+                double revenue = Rs.getDouble("Revenue");
+                SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = fromFormat.parse(Rs.getString("Date"));
+                series.add(new Day(date), revenue);
+            }
+            TimeSeriesCollection dataset = new TimeSeriesCollection();
+            dataset.addSeries(series);
+            JFreeChart chart = ChartFactory.createTimeSeriesChart("Doanh thu 7 ngày", // title
+                    "Date", // x-axis label
+                    "Revenue",
+                    (XYDataset) dataset, // data
+                    true, // create legend?
+                    true, // generate tooltips?
+                    false // generate URLs?
+            );
+
+            NumberFormat customFormat = new NumberFormat() {
+                @Override
+                public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+                    double absoluteNumber = Math.abs(number);
+                    if (absoluteNumber >= 1_000_000_000) {
+                        number /= 1_000_000_000;
+                        toAppendTo.append(String.format("%.1fB", number));
+                    } else if (absoluteNumber >= 1_000_000) {
+                        number /= 1_000_000;
+                        toAppendTo.append(String.format("%.1fM", number));
+                    } else if (absoluteNumber >= 1_000) {
+                        number /= 1_000;
+                        toAppendTo.append(String.format("%.1fK", number));
+                    } else {
+                        toAppendTo.append(String.format("%.1f", number));
+                    }
+                    return toAppendTo;
+                }
+
+                @Override
+                public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+                    return format((double) number, toAppendTo, pos);
+                }
+
+                @Override
+                public Number parse(String source, ParsePosition parsePosition) {
+                    return null;
+                }
+            };
+
+            // Lấy đối tượng XYPlot
+            XYPlot plot = (XYPlot) chart.getPlot();
+            // Lấy đối tượng NumberAxis
+            NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+            // Đặt định dạng số
+            rangeAxis.setNumberFormatOverride(customFormat);
+
+            // Thay đổi màu sắc của đường
+            plot.getRenderer().setSeriesPaint(0, Color.RED);
+
+            // Tạo DateAxis cho trục x
+            DateAxis dateAxis = new DateAxis("Date");
+            dateAxis.setDateFormatOverride(new SimpleDateFormat("dd-MM-yyyy")); // Định dạng ngày tháng
+            // Chỉ định đơn vị (ví dụ: mỗi 1 ngày)
+            dateAxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY, 1)); // Mỗi ngày
+
+            plot.setDomainAxis(dateAxis);
+            ChartPanel chartPanel = new ChartPanel(chart);
+
+            jPanel4.add(chartPanel, BorderLayout.CENTER);
+            jPanel4.validate();
+            jPanel4.repaint();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTabbedPane dayChart;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -198,8 +332,9 @@ public class Overview extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JTabbedPane monthChart;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JTabbedPane overviewChart;
-    private javax.swing.JTabbedPane yearChart;
     // End of variables declaration//GEN-END:variables
 }

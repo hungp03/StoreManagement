@@ -1,4 +1,5 @@
 package app.storemanagement.controller;
+
 /**
  *
  * @author AnTran
@@ -9,19 +10,22 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
-public class CustomerCtrl implements BaseController<CustomerModel>{
+public class CustomerCtrl implements BaseController<CustomerModel> {
+
     private Connection conn;
+
+    public CustomerCtrl() {
+    }
 
     public CustomerCtrl(Connection conn) {
         this.conn = conn;
     }
-    
 
     @Override
     public boolean add(CustomerModel customer) {
         String sql = "INSERT INTO Customer (Customer_ID, Full_Name, Address, Phone, Email)"
                 + "VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, customer.getId());
             stmt.setString(2, customer.getFullName());
             stmt.setString(3, customer.getAddress());
@@ -38,8 +42,8 @@ public class CustomerCtrl implements BaseController<CustomerModel>{
     @Override
     public boolean update(CustomerModel customer) {
         String sql = "UPDATE Customer SET Full_Name=?, Address=?, Phone=?, Email=?"
-                 + "WHERE Customer_ID=?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+                + "WHERE Customer_ID=?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(5, customer.getId());
             stmt.setString(1, customer.getFullName());
             stmt.setString(2, customer.getAddress());
@@ -65,8 +69,8 @@ public class CustomerCtrl implements BaseController<CustomerModel>{
             return false;
         }
     }
-    
-    public static String displayQuery(String sortMethod, String keyword, String searchMethod) {
+
+    public String displayQuery(String sortMethod, String keyword, String searchMethod) {
         String tmp = "";
         if (keyword.trim().isEmpty() == false) {
             switch (searchMethod) {

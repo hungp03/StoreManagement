@@ -1,6 +1,5 @@
 package app.storemanagement;
 
-import app.storemanagement.utils.Util;
 import app.storemanagement.view.Category;
 import app.storemanagement.view.Customer;
 import app.storemanagement.view.Overview;
@@ -315,6 +314,10 @@ public class Dashboard extends javax.swing.JFrame {
 
     private void overviewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_overviewBtnActionPerformed
         cardLayout.show(jPanel1, "overview");
+        overviewPanel.validate();
+        overviewPanel.refreshData();
+        overviewPanel.repaint();
+
     }//GEN-LAST:event_overviewBtnActionPerformed
 
     private void invoiceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceBtnActionPerformed

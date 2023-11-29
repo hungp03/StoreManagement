@@ -15,6 +15,9 @@ public class EmployeeCtrl implements BaseController<EmployeeModel> {
 
     private Connection conn;
 
+    public EmployeeCtrl() {
+    }
+    
     public EmployeeCtrl(Connection conn) {
         this.conn = conn;
     }
@@ -77,7 +80,7 @@ public class EmployeeCtrl implements BaseController<EmployeeModel> {
         }
     }
 
-    public static String displayQuery(String sortMethod, String keyword, String searchMethod) {
+    public String displayQuery(String sortMethod, String keyword, String searchMethod) {
         String tmp = "";
         if (keyword.trim().isEmpty() == false) {
             switch (searchMethod) {

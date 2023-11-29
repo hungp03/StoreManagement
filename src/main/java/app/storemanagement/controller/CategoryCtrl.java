@@ -10,15 +10,20 @@ import javax.swing.JOptionPane;
  *
  * @author Hung Pham
  */
-public class CategoryCtrl implements BaseController<CategoryModel>{
+public class CategoryCtrl implements BaseController<CategoryModel> {
 
     private Connection conn;
+
+    public CategoryCtrl() {
+
+    }
 
     public CategoryCtrl(Connection conn) {
         this.conn = conn;
     }
+
     @Override
-    public boolean add(CategoryModel category){
+    public boolean add(CategoryModel category) {
         String sql = "INSERT INTO Category VALUES (?,?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, category.getId());
@@ -30,6 +35,7 @@ public class CategoryCtrl implements BaseController<CategoryModel>{
             return false;
         }
     }
+
     @Override
     public boolean update(CategoryModel category) {
         String sql = "update Category set Category_Name=? where Category_ID=?";
@@ -52,19 +58,18 @@ public class CategoryCtrl implements BaseController<CategoryModel>{
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            if (e.getSQLState().equals("23000")){
-                JOptionPane.showMessageDialog(null, "Không thể xóa phân loại do đã có sản phẩm liên kết đến phân loại này" , "Error", JOptionPane.ERROR_MESSAGE);
-            }
-            else{
+            if (e.getSQLState().equals("23000")) {
+                JOptionPane.showMessageDialog(null, "Không thể xóa phân loại do đã có sản phẩm liên kết đến phân loại này", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
                 JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
             return false;
         }
     }
 
-    public static String displayQuery(String sortMethod, String keyword) {
+    public String displayQuery(String sortMethod, String keyword) {
         String tmp = "";
-        if (keyword.trim().isEmpty() == false){
+        if (keyword.trim().isEmpty() == false) {
             tmp = "where Category_Name like N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI";
         }
         String query = "select * from Category " + tmp;
@@ -75,5 +80,5 @@ public class CategoryCtrl implements BaseController<CategoryModel>{
         }
         return query;
     }
-    
+
 }

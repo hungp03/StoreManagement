@@ -14,6 +14,9 @@ public class ProductCtrl implements BaseController<ProductModel> {
 
     private Connection conn;
 
+    public ProductCtrl() {
+    }
+    
     public ProductCtrl(Connection conn) {
         this.conn = conn;
     }
@@ -74,7 +77,7 @@ public class ProductCtrl implements BaseController<ProductModel> {
         }
     }
 
-    public static String displayQuery(String sortMethod, String keyword, String searchMethod) {
+    public String generateQuery(String sortMethod, String keyword, String searchMethod) {
         String tmp = "";
         if (keyword.trim().isEmpty() == false) {
             switch (searchMethod) {

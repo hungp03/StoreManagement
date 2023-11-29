@@ -30,7 +30,7 @@ import javax.swing.table.DefaultTableModel;
 public class Employee extends javax.swing.JPanel {
 
     private int key = 0;
-
+    EmployeeCtrl emp = new EmployeeCtrl();
     /**
      * Creates new form Employee
      */
@@ -318,7 +318,7 @@ public class Employee extends javax.swing.JPanel {
                     .addComponent(deleteButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchCb, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                    .addComponent(searchCb)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(sortCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -326,7 +326,7 @@ public class Employee extends javax.swing.JPanel {
                         .addComponent(jLabel38)
                         .addComponent(refresh)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -497,11 +497,11 @@ public class Employee extends javax.swing.JPanel {
     }//GEN-LAST:event_searchCbItemStateChanged
 
     private void displayEmployee(String sortMethod) {
-        displayEmployeeTable(EmployeeCtrl.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
+        displayEmployeeTable(emp.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
     }
 
     private void searchEmployee(String keyword) {
-        displayEmployeeTable(EmployeeCtrl.displayQuery((String) sortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
+        displayEmployeeTable(emp.displayQuery((String) sortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
     }
 
     private void displayEmployeeTable(String sql) {
