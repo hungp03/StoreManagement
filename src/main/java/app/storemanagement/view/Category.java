@@ -218,11 +218,11 @@ public class Category extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     private void displayCategory(String sortMethod) {
-        displayCategoryTable(ctg.displayQuery(sortMethod, searchTextField.getText()));
+        displayCategoryTable(ctg.generateQuery(sortMethod, searchTextField.getText()));
     }
 
     private void searchCategory(String keyword) {
-        displayCategoryTable(ctg.displayQuery((String) categorySort.getSelectedItem(), keyword));
+        displayCategoryTable(ctg.generateQuery((String) categorySort.getSelectedItem(), keyword));
     }
 
     private void displayCategoryTable(String sql) {

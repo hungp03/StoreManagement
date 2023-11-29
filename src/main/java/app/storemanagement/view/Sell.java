@@ -30,13 +30,26 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Sell extends javax.swing.JPanel {
 
-    List<productInCart> list = new ArrayList<>();
+    private List<productInCart> cart = new ArrayList<>();
     private int uid;
 
     public void setUid(int uid) {
         this.uid = uid;
     }
 
+    public boolean isCartEmpty() {
+        return cart.isEmpty();
+    }
+
+    public void clearCart() {
+        for (int i = 0; i < cart.size(); i++) {
+            int id = Integer.parseInt(cartTb.getValueAt(i, 0).toString());
+            int pqty = Integer.parseInt(cartTb.getValueAt(i, 3).toString());
+            sell.updateProductQuantity(id, pqty, "increase");
+        }
+        cart.clear();
+        displayCartTable();
+    }
     SellCtrl sell = new SellCtrl();
 
     /**
@@ -460,27 +473,21 @@ public class Sell extends javax.swing.JPanel {
         invoiceID.setText(String.valueOf(iid));
     }
 
-    private void deleteAllProduct() {
-        for (int i = 0; i < list.size(); i++) {
-            int id = Integer.parseInt(cartTb.getValueAt(i, 0).toString());
-            int pqty = Integer.parseInt(cartTb.getValueAt(i, 3).toString());
-            sell.updateProductQuantity(id, pqty, "increase");
-        }
-        list.clear();
-        displayCartTable();
-        totalTxt.setText("");
-        displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
-    }
-
     private void clearCustomerInfo() {
         customerName.setText("");
         customerID.setText("");
         customerPhone.setText("");
     }
 
+    private void forceButton(boolean b) {
+        confirmBtn.setEnabled(b);
+        cancelBtn.setEnabled(b);
+        newEntry.setEnabled(!b);
+    }
+
     private double totalAmount() {
         double total_amount = 0;
-        for (productInCart product : list) {
+        for (productInCart product : cart) {
             total_amount += product.getUnitPrice() * product.getQty();
         }
         return total_amount;
@@ -491,7 +498,9 @@ public class Sell extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "Vui lòng tạo mới hóa đơn trước", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        deleteAllProduct();
+        clearCart();
+        totalTxt.setText("");
+        displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
     }//GEN-LAST:event_deleteAllActionPerformed
 
     // Phương thức lấy sản phẩm được chọn từ bảng productTb
@@ -532,23 +541,23 @@ public class Sell extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(null, "Số lượng trong kho không đủ", "Warning", JOptionPane.WARNING_MESSAGE);
             } else {
                 //gán giá trị cho biến found
-                boolean found = list.stream().anyMatch(product -> product.getId() == selectedProduct.getId());
+                boolean found = cart.stream().anyMatch(product -> product.getId() == selectedProduct.getId());
                 if (found) {
                     // Tìm và cập nhật sản phẩm trong danh sách
-                    list.stream().filter(product -> product.getId() == selectedProduct.getId())
+                    cart.stream().filter(product -> product.getId() == selectedProduct.getId())
                             .forEach(product -> {
                                 product.setQty(product.getQty() + quantity);
                                 sell.updateProductQuantity(product.getId(), quantity, "reduce");
                             });
                 } else {
                     // Thêm sản phẩm mới vào danh sách
-                    list.add(new productInCart(selectedProduct.getId(), selectedProduct.getpName(), selectedProduct.getUnitPrice(), quantity));
+                    cart.add(new productInCart(selectedProduct.getId(), selectedProduct.getpName(), selectedProduct.getUnitPrice(), quantity));
                     sell.updateProductQuantity(selectedProduct.getId(), quantity, "reduce");
                 }
                 // Hiển thị bảng giỏ hàng và bảng sản phẩm
                 displayCartTable();
-                totalTxt.setText(Util.convertToVND(totalAmount()));
                 displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
+                totalTxt.setText(Util.convertToVND(totalAmount()));
             }
         } else {
             JOptionPane.showMessageDialog(null, "Chưa chọn sản phẩm", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -563,7 +572,7 @@ public class Sell extends javax.swing.JPanel {
 
         Object[] options = {"FindID", "FindPhone", "Cancel"};
 
-        int option = JOptionPane.showOptionDialog(null, message, "Enter", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+        int option = JOptionPane.showOptionDialog(null, message, "Enter", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
         String sql = "";
         switch (option) {
             case JOptionPane.YES_OPTION -> {
@@ -578,18 +587,20 @@ public class Sell extends javax.swing.JPanel {
             default -> {
             }
         }
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, textField.getText());
-            ResultSet rs = stmt.executeQuery();
-            if (!rs.next()) {
-                JOptionPane.showMessageDialog(null, "Không tìm thấy kết quả", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                customerName.setText(rs.getString("Full_Name"));
-                customerID.setText(String.valueOf(rs.getInt("Customer_ID")));
-                customerPhone.setText(rs.getString("Phone"));
+        if (!sql.isEmpty()) {
+            try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, textField.getText());
+                ResultSet rs = stmt.executeQuery();
+                if (!rs.next()) {
+                    JOptionPane.showMessageDialog(null, "Không tìm thấy kết quả", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    customerName.setText(rs.getString("Full_Name"));
+                    customerID.setText(String.valueOf(rs.getInt("Customer_ID")));
+                    customerPhone.setText(rs.getString("Phone"));
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_selectCustomerActionPerformed
 
@@ -602,9 +613,9 @@ public class Sell extends javax.swing.JPanel {
         if (idx >= 0) {
             int id = Integer.parseInt(cartTb.getValueAt(idx, 0).toString());
             int pqty = Integer.parseInt(cartTb.getValueAt(idx, 3).toString());
-            list.remove(idx);
+            cart.remove(idx);
             displayCartTable();
-            if (list.isEmpty()) {
+            if (cart.isEmpty()) {
                 totalTxt.setText("");
             } else {
                 totalTxt.setText(Util.convertToVND(totalAmount()));
@@ -617,20 +628,18 @@ public class Sell extends javax.swing.JPanel {
     }//GEN-LAST:event_deleteProductActionPerformed
 
     private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
-        deleteAllProduct();
+        clearCart();
+        totalTxt.setText("");
+        displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
         clearCustomerInfo();
     }//GEN-LAST:event_cancelBtnActionPerformed
 
     private void newEntryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newEntryActionPerformed
-        list.clear();
-        displayCartTable();
         createTime.setText("");
         invoiceID.setText(String.valueOf(Util.getNextID("Invoice_ID", "Invoice")));
         totalTxt.setText("");
-        confirmBtn.setEnabled(true);
-        cancelBtn.setEnabled(true);
+        forceButton(true);
         clearCustomerInfo();
-        newEntry.setEnabled(false);
     }//GEN-LAST:event_newEntryActionPerformed
 
     private void searchBoxKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchBoxKeyTyped
@@ -675,9 +684,8 @@ public class Sell extends javax.swing.JPanel {
         try (Connection conn = DBConnection.getConnection()) {
             // Bắt đầu một giao dịch
             conn.setAutoCommit(false);
-
             // Thêm một hóa đơn mới vào bảng Invoice
-            String sql = "INSERT INTO Invoice (Invoice_ID,Date, Total_Amount, Payment_Method, Employee_ID, Customer_ID) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Invoice (Invoice_ID, Date, Total_Amount, Payment_Method, Employee_ID, Customer_ID) VALUES (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setInt(1, invoiceId);
                 stmt.setDate(2, new java.sql.Date(System.currentTimeMillis())); // Ngày hiện tại
@@ -689,7 +697,7 @@ public class Sell extends javax.swing.JPanel {
                 // Thêm từng sản phẩm trong giỏ hàng vào bảng Contain
                 sql = "INSERT INTO Contain (Invoice_ID, Product_ID, Quantity) VALUES (?, ?, ?)";
                 try (PreparedStatement stmt2 = conn.prepareStatement(sql)) {
-                    for (productInCart product : list) {
+                    for (productInCart product : cart) {
                         stmt2.setInt(1, invoiceId);
                         stmt2.setInt(2, product.getId());
                         stmt2.setInt(3, product.getQty());
@@ -700,11 +708,10 @@ public class Sell extends javax.swing.JPanel {
                 conn.commit();
                 // Hiển thị thông báo thành công
                 JOptionPane.showMessageDialog(null, "Thêm hóa đơn thành công!", "Notification", JOptionPane.INFORMATION_MESSAGE);
-                //Tạm thời tắt nút xác nhận
-                confirmBtn.setEnabled(false);
-                cancelBtn.setEnabled(false);
-                //Mở nút tạo mới
-                newEntry.setEnabled(true);
+                //Xóa giỏ hàng
+                cart.clear();
+                displayCartTable();
+                forceButton(false);
                 createTime.setText("Thời gian tạo: " + Util.getCurrentDateTime());
             } catch (SQLException e) {
                 // Xử lý lỗi
@@ -716,7 +723,7 @@ public class Sell extends javax.swing.JPanel {
     }
 
     private void confirmBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmBtnActionPerformed
-        if (list.isEmpty()) {
+        if (cart.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Chưa có sản phẩm nào", "Notification", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
@@ -763,7 +770,7 @@ public class Sell extends javax.swing.JPanel {
         String[] columnNames = {"Mã SP", "Tên SP", "Đơn giá", "Số lượng"};
         model.setColumnIdentifiers(columnNames);
         // Thêm dữ liệu vào model
-        for (productInCart pic : list) {
+        for (productInCart pic : cart) {
             String vnd = Util.convertToVND(pic.getUnitPrice());
             Object[] row = new Object[]{pic.getId(), pic.getpName(), vnd, pic.getQty()};
             model.addRow(row);
@@ -801,7 +808,6 @@ public class Sell extends javax.swing.JPanel {
             // Đặt tên cột theo thiết kế
             String[] columnNames = {"Mã SP", "Tên SP", "Đơn giá", "Số lượng"};
             tableModel.setColumnIdentifiers(columnNames);
-
             productTb.setModel(tableModel);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());

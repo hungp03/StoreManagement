@@ -70,7 +70,7 @@ public class CustomerCtrl implements BaseController<CustomerModel> {
         }
     }
 
-    public String displayQuery(String sortMethod, String keyword, String searchMethod) {
+    public String generateQuery(String sortMethod, String keyword, String searchMethod) {
         String tmp = "";
         if (keyword.trim().isEmpty() == false) {
             switch (searchMethod) {

@@ -497,11 +497,11 @@ public class Employee extends javax.swing.JPanel {
     }//GEN-LAST:event_searchCbItemStateChanged
 
     private void displayEmployee(String sortMethod) {
-        displayEmployeeTable(emp.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
+        displayEmployeeTable(emp.generateQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
     }
 
     private void searchEmployee(String keyword) {
-        displayEmployeeTable(emp.displayQuery((String) sortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
+        displayEmployeeTable(emp.generateQuery((String) sortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
     }
 
     private void displayEmployeeTable(String sql) {

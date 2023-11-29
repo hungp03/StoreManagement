@@ -72,6 +72,7 @@ public class ProductCtrl implements BaseController<ProductModel> {
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
+            System.out.print(e.getErrorCode());
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }

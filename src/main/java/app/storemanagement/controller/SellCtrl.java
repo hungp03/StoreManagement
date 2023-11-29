@@ -30,25 +30,52 @@ public class SellCtrl {
         return query;
     }
 
+//    public void updateProductQuantity(int id, int pqty, String type) throws IllegalArgumentException {
+//
+//        String sql = "";
+//        switch (type) {
+//            // Giảm số lượng sản phẩm trong cơ sở dữ liệu
+//            case "reduce" ->
+//                sql = "UPDATE Product SET Quantity_In_Stock = Quantity_In_Stock - ? WHERE Product_ID = ?";
+//            // Tăng số lượng sản phẩm trong cơ sở dữ liệu
+//            case "increase" ->
+//                sql = "UPDATE Product SET Quantity_In_Stock = Quantity_In_Stock + ? WHERE Product_ID = ?";
+//            default ->
+//                throw new IllegalArgumentException("Type must be either 'reduce' or 'increase'");
+//        }
+//        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+//            stmt.setInt(1, pqty);
+//            stmt.setInt(2, id);
+//            stmt.executeUpdate();
+//        } catch (SQLException e) {
+//            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+//        }
+//    }
     public void updateProductQuantity(int id, int pqty, String type) throws IllegalArgumentException {
-
         String sql = "";
         switch (type) {
-            // Giảm số lượng sản phẩm trong cơ sở dữ liệu
             case "reduce" ->
                 sql = "UPDATE Product SET Quantity_In_Stock = Quantity_In_Stock - ? WHERE Product_ID = ?";
-            // Tăng số lượng sản phẩm trong cơ sở dữ liệu
             case "increase" ->
                 sql = "UPDATE Product SET Quantity_In_Stock = Quantity_In_Stock + ? WHERE Product_ID = ?";
             default ->
                 throw new IllegalArgumentException("Type must be either 'reduce' or 'increase'");
         }
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, pqty);
-            stmt.setInt(2, id);
-            stmt.executeUpdate();
+
+        try (Connection conn = DBConnection.getConnection()) {
+            // Bắt đầu một transaction mới
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, pqty);
+                stmt.setInt(2, id);
+                stmt.executeUpdate();
+            }
+
+            // Kết thúc transaction
+            conn.commit();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.print("Transaction is being rolled back");
         }
     }
 

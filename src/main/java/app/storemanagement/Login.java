@@ -1,7 +1,6 @@
 package app.storemanagement;
 
 import app.storemanagement.model.Connection.DBConnection;
-import app.storemanagement.utils.Util;
 import java.awt.HeadlessException;
 import java.awt.event.ItemEvent;
 import java.sql.Connection;

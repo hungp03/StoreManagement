@@ -1,6 +1,7 @@
 package app.storemanagement.view;
 
 import app.storemanagement.model.Connection.DBConnection;
+import app.storemanagement.utils.Util;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.sql.Connection;
@@ -12,6 +13,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -19,7 +21,11 @@ import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.DateTickUnit;
 import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -36,7 +42,9 @@ public class Overview extends javax.swing.JPanel {
      */
     public Overview() {
         initComponents();
+        getOverviewData();
         generateWeekChart();
+        generateMonthChart();
     }
 
     /**
@@ -51,120 +59,88 @@ public class Overview extends javax.swing.JPanel {
         overviewChart = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        totalInvoice = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        todayRevenue = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
+        totalRevenue = new javax.swing.JLabel();
 
         jPanel4.setLayout(new java.awt.BorderLayout());
         overviewChart.addTab("Doanh thu tuần", jPanel4);
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 982, Short.MAX_VALUE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 415, Short.MAX_VALUE)
-        );
+        jPanel5.setLayout(new java.awt.BorderLayout());
+        overviewChart.addTab("4 Tuần gần đây", jPanel5);
 
-        overviewChart.addTab("Tháng", jPanel5);
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 982, Short.MAX_VALUE)
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 415, Short.MAX_VALUE)
-        );
-
-        overviewChart.addTab("Năm", jPanel6);
-
-        jPanel1.setBackground(new java.awt.Color(21, 96, 100));
+        jPanel1.setBackground(new java.awt.Color(6, 214, 160));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/order.png"))); // NOI18N
         jLabel1.setText("Tổng số đơn hàng");
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("0 đơn hàng");
+        totalInvoice.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        totalInvoice.setForeground(new java.awt.Color(255, 255, 255));
+        totalInvoice.setText("0 đơn hàng");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 213, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(5, 5, 5)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel1)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGap(38, 38, 38)
-                            .addComponent(jLabel2)))
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(totalInvoice)))
+                .addContainerGap(114, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(28, 28, 28)
-                    .addComponent(jLabel1)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jLabel2)
-                    .addContainerGap(29, Short.MAX_VALUE)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(totalInvoice)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(251, 86, 7));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/products.png"))); // NOI18N
-        jLabel7.setText("Số lượng sản phẩm");
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cash.png"))); // NOI18N
+        jLabel7.setText("Doanh thu hôm nay");
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("0 sản phẩm");
+        todayRevenue.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        todayRevenue.setForeground(new java.awt.Color(255, 255, 255));
+        todayRevenue.setText("0");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 213, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(5, 5, 5)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel7)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addGap(38, 38, 38)
-                            .addComponent(jLabel8)))
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel7)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(todayRevenue)))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 132, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(28, 28, 28)
-                    .addComponent(jLabel7)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jLabel8)
-                    .addContainerGap(29, Short.MAX_VALUE)))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(todayRevenue)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel3.setBackground(new java.awt.Color(33, 158, 188));
@@ -174,35 +150,31 @@ public class Overview extends javax.swing.JPanel {
         jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cash.png"))); // NOI18N
         jLabel9.setText("Tổng doanh thu");
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel10.setText("0");
+        totalRevenue.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        totalRevenue.setForeground(new java.awt.Color(255, 255, 255));
+        totalRevenue.setText("0");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 201, Short.MAX_VALUE)
-            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel3Layout.createSequentialGroup()
-                    .addGap(5, 5, 5)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel9)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGap(38, 38, 38)
-                            .addComponent(jLabel10)))
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(totalRevenue)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel3Layout.createSequentialGroup()
-                    .addGap(28, 28, 28)
-                    .addComponent(jLabel9)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jLabel10)
-                    .addContainerGap(41, Short.MAX_VALUE)))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(totalRevenue)
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -210,60 +182,72 @@ public class Overview extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(overviewChart, javax.swing.GroupLayout.PREFERRED_SIZE, 982, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addComponent(overviewChart, javax.swing.GroupLayout.PREFERRED_SIZE, 982, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(65, 65, 65)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(46, 46, 46)
+                .addGap(42, 42, 42)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(32, 32, 32)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(36, 36, 36)
                 .addComponent(overviewChart, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-    public void refreshData(){
+    public void refreshData() {
         generateWeekChart();
+        generateMonthChart();
     }
-    private void generateWeekChart() {
+
+    private void getOverviewData() {
         String query = """
-                       SELECT Date, SUM(Total_Amount) as Revenue FROM Invoice 
-                       WHERE Date >= DATEADD(day, -7, GETDATE()) 
-                       GROUP BY Date ORDER BY Date
+                       SELECT 
+                           Count(Invoice_ID) as numberInvoice, 
+                           SUM(Total_Amount) as total,
+                           ISNULL((SELECT SUM(Total_Amount) FROM Invoice WHERE CAST(Date AS DATE) = CAST(GETDATE() AS DATE)), 0) as totalToday
+                       FROM Invoice
                        """;
+        
+        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(query)) {
+            if (Rs.next()){
+                int count = Rs.getInt("numberInvoice");
+                double total = Rs.getDouble("total");
+                double totalToday = Rs.getDouble("totalToday");
+                totalInvoice.setText(String.valueOf(count));
+                todayRevenue.setText(Util.convertToVND(totalToday));
+                totalRevenue.setText(Util.convertToVND(total));
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+        }
+    }
+
+    private void generateChart(String query, String chartTitle, String xAxisLabel, JPanel panel, DateTickUnitType tickUnitType, int tickUnitValue, String revenueCol, String dateCol) {
         try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(query)) {
             TimeSeries series = new TimeSeries("Revenue");
 
             while (Rs.next()) {
-                double revenue = Rs.getDouble("Revenue");
-                SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date date = fromFormat.parse(Rs.getString("Date"));
+                double revenue = Rs.getDouble(revenueCol);
+                Date date = Rs.getDate(dateCol);
                 series.add(new Day(date), revenue);
             }
+
             TimeSeriesCollection dataset = new TimeSeriesCollection();
             dataset.addSeries(series);
-            JFreeChart chart = ChartFactory.createTimeSeriesChart("Doanh thu 7 ngày", // title
-                    "Date", // x-axis label
-                    "Revenue",
-                    (XYDataset) dataset, // data
-                    true, // create legend?
-                    true, // generate tooltips?
-                    false // generate URLs?
-            );
+            JFreeChart chart = ChartFactory.createTimeSeriesChart(chartTitle, xAxisLabel, "Revenue", (XYDataset) dataset, true, true, false);
 
             NumberFormat customFormat = new NumberFormat() {
                 @Override
@@ -295,46 +279,47 @@ public class Overview extends javax.swing.JPanel {
                 }
             };
 
-            // Lấy đối tượng XYPlot
             XYPlot plot = (XYPlot) chart.getPlot();
-            // Lấy đối tượng NumberAxis
             NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-            // Đặt định dạng số
             rangeAxis.setNumberFormatOverride(customFormat);
-
-            // Thay đổi màu sắc của đường
             plot.getRenderer().setSeriesPaint(0, Color.RED);
 
-            // Tạo DateAxis cho trục x
             DateAxis dateAxis = new DateAxis("Date");
-            dateAxis.setDateFormatOverride(new SimpleDateFormat("dd-MM-yyyy")); // Định dạng ngày tháng
-            // Chỉ định đơn vị (ví dụ: mỗi 1 ngày)
-            dateAxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY, 1)); // Mỗi ngày
-
+            dateAxis.setDateFormatOverride(new SimpleDateFormat("dd-MM-yyyy"));
+            dateAxis.setTickUnit(new DateTickUnit(tickUnitType, tickUnitValue));
             plot.setDomainAxis(dateAxis);
-            ChartPanel chartPanel = new ChartPanel(chart);
 
-            jPanel4.add(chartPanel, BorderLayout.CENTER);
-            jPanel4.validate();
-            jPanel4.repaint();
+            ChartPanel chartPanel = new ChartPanel(chart);
+            panel.add(chartPanel, BorderLayout.CENTER);
+            panel.validate();
+            panel.repaint();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    private void generateWeekChart() {
+        String query = "EXEC GetRevenueForLast7Days";
+        generateChart(query, "Doanh thu 7 ngày", "Date", jPanel4, DateTickUnitType.DAY, 1, "Revenue", "Date");
+    }
+
+    private void generateMonthChart() {
+        String query = "EXEC GetRevenueForLast4Cycles";
+        generateChart(query, "Doanh thu 4 tuần", "Date", jPanel5, DateTickUnitType.DAY, 7, "Total_Revenue", "CycleStart");
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JTabbedPane overviewChart;
+    private javax.swing.JLabel todayRevenue;
+    private javax.swing.JLabel totalInvoice;
+    private javax.swing.JLabel totalRevenue;
     // End of variables declaration//GEN-END:variables
 }

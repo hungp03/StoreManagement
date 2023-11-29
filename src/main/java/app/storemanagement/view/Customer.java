@@ -265,11 +265,11 @@ public class Customer extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     private void displayCustomer(String sortMethod) {
-        displayCustomerTable(cus.displayQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
+        displayCustomerTable(cus.generateQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
     }
 
     private void searchCustomer(String keyword) {
-        displayCustomerTable(cus.displayQuery((String) customerSortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
+        displayCustomerTable(cus.generateQuery((String) customerSortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
     }
     private void editButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editButton1MouseClicked
         if (customerTable.getSelectedRow() >= 0) {

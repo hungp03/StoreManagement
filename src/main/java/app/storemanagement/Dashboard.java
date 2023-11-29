@@ -2,9 +2,9 @@ package app.storemanagement;
 
 import app.storemanagement.view.Category;
 import app.storemanagement.view.Customer;
+import app.storemanagement.view.Employee;
 import app.storemanagement.view.Overview;
 import app.storemanagement.view.Product;
-import app.storemanagement.view.Employee;
 import app.storemanagement.view.Sell;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -100,6 +100,7 @@ public class Dashboard extends javax.swing.JFrame {
             public void windowClosing(WindowEvent e) {
                 int confirmed = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn thoát chứ?", "Xác nhận thoát", JOptionPane.YES_NO_OPTION);
                 if (confirmed == JOptionPane.YES_OPTION) {
+                    sellPanel.clearCart();
                     // Thực hiện hành động khi người dùng đồng ý đóng cửa sổ
                     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 } else {
@@ -131,6 +132,7 @@ public class Dashboard extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Quản lý cửa hàng");
         setFocusable(false);
+        setPreferredSize(new java.awt.Dimension(1280, 720));
         setResizable(false);
 
         jPanel1.setPreferredSize(new java.awt.Dimension(1024, 720));
