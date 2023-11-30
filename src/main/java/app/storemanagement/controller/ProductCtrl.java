@@ -16,7 +16,7 @@ public class ProductCtrl implements BaseController<ProductModel> {
 
     public ProductCtrl() {
     }
-    
+
     public ProductCtrl(Connection conn) {
         this.conn = conn;
     }
@@ -72,15 +72,18 @@ public class ProductCtrl implements BaseController<ProductModel> {
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            System.out.print(e.getErrorCode());
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            if (e.getSQLState().equals("23000")) {
+                JOptionPane.showMessageDialog(null, "Không thể xóa sản phẩm vì đã có hóa đơn mua sản phẩm này", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
             return false;
         }
     }
 
     public String generateQuery(String sortMethod, String keyword, String searchMethod) {
         String tmp = "";
-        if (keyword.trim().isEmpty() == false) {
+        if (!keyword.trim().isEmpty()) {
             switch (searchMethod) {
                 case "Mã" ->
                     tmp = " WHERE Product_ID LIKE N'%" + keyword.trim() + "%' ";

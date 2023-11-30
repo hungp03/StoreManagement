@@ -65,7 +65,11 @@ public class CustomerCtrl implements BaseController<CustomerModel> {
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            if (e.getSQLState().equals("23000")) {
+                JOptionPane.showMessageDialog(null, "Không thể xóa khách hàng vì đã có hóa đơn liên quan đến khách hàng này", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
             return false;
         }
     }

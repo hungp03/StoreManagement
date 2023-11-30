@@ -37,10 +37,6 @@ public class Sell extends javax.swing.JPanel {
         this.uid = uid;
     }
 
-    public boolean isCartEmpty() {
-        return cart.isEmpty();
-    }
-
     public void clearCart() {
         for (int i = 0; i < cart.size(); i++) {
             int id = Integer.parseInt(cartTb.getValueAt(i, 0).toString());
@@ -88,7 +84,7 @@ public class Sell extends javax.swing.JPanel {
         cancelBtn = new javax.swing.JButton();
         newEntry = new javax.swing.JButton();
         confirmBtn = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
+        printBtn = new javax.swing.JButton();
         invoiceID = new javax.swing.JTextField();
         totalTxt = new javax.swing.JTextField();
         paidMoney = new javax.swing.JTextField();
@@ -196,7 +192,8 @@ public class Sell extends javax.swing.JPanel {
             }
         });
 
-        jButton9.setText("In");
+        printBtn.setText("In");
+        printBtn.setEnabled(false);
 
         invoiceID.setEditable(false);
         invoiceID.setBackground(new java.awt.Color(255, 255, 255));
@@ -237,7 +234,7 @@ public class Sell extends javax.swing.JPanel {
                             .addComponent(invoiceID)
                             .addComponent(paymentMethod, javax.swing.GroupLayout.Alignment.TRAILING, 0, 120, Short.MAX_VALUE)
                             .addComponent(newEntry, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(printBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cusMoney))
                         .addGap(52, 52, 52))))
         );
@@ -275,7 +272,7 @@ public class Sell extends javax.swing.JPanel {
                 .addGap(29, 29, 29)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(confirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(printBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(134, Short.MAX_VALUE))
         );
 
@@ -483,6 +480,7 @@ public class Sell extends javax.swing.JPanel {
         confirmBtn.setEnabled(b);
         cancelBtn.setEnabled(b);
         newEntry.setEnabled(!b);
+        printBtn.setEnabled(!b);
     }
 
     private double totalAmount() {
@@ -831,7 +829,6 @@ public class Sell extends javax.swing.JPanel {
     private javax.swing.JButton deleteProduct;
     private javax.swing.JTextField invoiceID;
     private javax.swing.JLabel invoiceLb;
-    private javax.swing.JButton jButton9;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
@@ -850,6 +847,7 @@ public class Sell extends javax.swing.JPanel {
     private javax.swing.JButton newEntry;
     private javax.swing.JTextField paidMoney;
     private javax.swing.JComboBox<String> paymentMethod;
+    private javax.swing.JButton printBtn;
     private javax.swing.JTable productTb;
     private javax.swing.JTextField searchBox;
     private javax.swing.JButton selectCustomer;

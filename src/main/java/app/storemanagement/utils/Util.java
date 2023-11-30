@@ -92,15 +92,15 @@ public class Util {
 
     //Kiểm tra đầu vào của Customer
     public static boolean validateCustomerInput(String name, String address, String phone, String email) {
-        if (name.isEmpty() || address.isEmpty() || phone.isEmpty() || email.isEmpty()) {
+        if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        if (checkEmail(email) == false) {
+        if (!email.isEmpty() && !checkEmail(email)) {
             JOptionPane.showMessageDialog(null, "Email không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        if (isValidPhoneNumber(phone) == false) {
+        if (!isValidPhoneNumber(phone)) {
             JOptionPane.showMessageDialog(null, "SĐT không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -113,7 +113,7 @@ public class Util {
             JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        if (isValidUsername(uname) == false) {
+        if (!isValidUsername(uname)) {
             JOptionPane.showMessageDialog(null, "Username không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
