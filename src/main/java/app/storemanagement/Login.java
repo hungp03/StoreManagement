@@ -1,27 +1,23 @@
 package app.storemanagement;
 
-import app.storemanagement.model.Connection.DBConnection;
-import java.awt.HeadlessException;
+import app.storemanagement.controller.LoginCtrl;
 import java.awt.event.ItemEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.swing.JOptionPane;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
  * @author Hung Pham
  */
 public class Login extends javax.swing.JFrame {
-    
+
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
     }
+    
+    LoginCtrl login = new LoginCtrl();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -234,44 +230,6 @@ public class Login extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_showPWItemStateChanged
 
-    private void checkLogin(String user, String pw, String role, String query) {
-        // Không cần băm lại mật khẩu
-        // String hashed = Util.hashPw(pw);
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
-            pst.setString(1, user);
-            // Không cần truyền hashed vào câu truy vấn
-            // pst.setString(2, hashed);
-            try (ResultSet rs = pst.executeQuery()) {
-                if (rs.next()) {
-                    // Lấy chuỗi băm từ cơ sở dữ liệu
-                    String dbhash = rs.getString("Password");
-                    // So sánh mật khẩu với chuỗi băm bằng BCrypt.checkpw
-                    // Bắt các ngoại lệ có thể xảy ra
-                    try {
-                        if (BCrypt.checkpw(pw, dbhash)) {
-                            int uid = rs.getInt(1);
-                            Dashboard db = new Dashboard(uid, role);
-                            db.setInfoLabel(user);
-                            db.setVisible(true);
-                            this.dispose();
-                        } else {
-                            JOptionPane.showMessageDialog(this, "Thông tin không chính xác", "Wrong", JOptionPane.WARNING_MESSAGE);
-                        }
-                    } catch (IllegalArgumentException e) {
-                        // Xử lý ngoại lệ khi mật khẩu hoặc chuỗi băm không hợp lệ
-                        System.out.println("Mật khẩu hoặc chuỗi băm không hợp lệ: " + e.getMessage());
-                        JOptionPane.showMessageDialog(this, "Có lỗi xảy ra, vui lòng thử lại sau ", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Thông tin không chính xác", "Wrong", JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        } catch (HeadlessException | SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         if (checkInfo()) {
             String user = userName.getText();
@@ -291,7 +249,9 @@ public class Login extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Chọn chức vụ của bạn", "Missing information", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            checkLogin(user, pw, role, query);
+            if (login.checkLogin(user, pw, role, query)) {
+                this.dispose();
+            }
         }
     }//GEN-LAST:event_loginBtnActionPerformed
 

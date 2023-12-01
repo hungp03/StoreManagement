@@ -23,6 +23,10 @@ import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 /**
  *
@@ -37,15 +41,10 @@ public class Sell extends javax.swing.JPanel {
         this.uid = uid;
     }
 
-    public void clearCart() {
-        for (int i = 0; i < cart.size(); i++) {
-            int id = Integer.parseInt(cartTb.getValueAt(i, 0).toString());
-            int pqty = Integer.parseInt(cartTb.getValueAt(i, 3).toString());
-            sell.updateProductQuantity(id, pqty, "increase");
-        }
-        cart.clear();
-        displayCartTable();
+    public boolean isCartEmpty() {
+        return cart.isEmpty();
     }
+
     SellCtrl sell = new SellCtrl();
 
     /**
@@ -194,6 +193,11 @@ public class Sell extends javax.swing.JPanel {
 
         printBtn.setText("In");
         printBtn.setEnabled(false);
+        printBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printBtnActionPerformed(evt);
+            }
+        });
 
         invoiceID.setEditable(false);
         invoiceID.setBackground(new java.awt.Color(255, 255, 255));
@@ -203,6 +207,12 @@ public class Sell extends javax.swing.JPanel {
 
         paidMoney.setEditable(false);
         paidMoney.setBackground(new java.awt.Color(255, 255, 255));
+
+        cusMoney.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cusMoneyActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -275,6 +285,22 @@ public class Sell extends javax.swing.JPanel {
                     .addComponent(printBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(134, Short.MAX_VALUE))
         );
+
+        ((AbstractDocument) cusMoney.getDocument()).setDocumentFilter(new DocumentFilter() {
+            @Override
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+                if (string.matches("\\d*")) {
+                    super.insertString(fb, offset, string, attr);
+                }
+            }
+
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                if (text.matches("\\d*")) {
+                    super.replace(fb, offset, length, text, attrs);
+                }
+            }
+        });
 
         add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(658, 32, -1, 630));
 
@@ -483,6 +509,16 @@ public class Sell extends javax.swing.JPanel {
         printBtn.setEnabled(!b);
     }
 
+    public void clearCart() {
+        for (int i = 0; i < cart.size(); i++) {
+            int id = Integer.parseInt(cartTb.getValueAt(i, 0).toString());
+            int pqty = Integer.parseInt(cartTb.getValueAt(i, 3).toString());
+            sell.updateProductQuantity(id, pqty, "increase");
+        }
+        cart.clear();
+        displayCartTable();
+    }
+
     private double totalAmount() {
         double total_amount = 0;
         for (productInCart product : cart) {
@@ -628,6 +664,8 @@ public class Sell extends javax.swing.JPanel {
     private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
         clearCart();
         totalTxt.setText("");
+        cusMoney.setText("");
+        paidMoney.setText("");
         displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
         clearCustomerInfo();
     }//GEN-LAST:event_cancelBtnActionPerformed
@@ -636,6 +674,8 @@ public class Sell extends javax.swing.JPanel {
         createTime.setText("");
         invoiceID.setText(String.valueOf(Util.getNextID("Invoice_ID", "Invoice")));
         totalTxt.setText("");
+        cusMoney.setText("");
+        paidMoney.setText("");
         forceButton(true);
         clearCustomerInfo();
     }//GEN-LAST:event_newEntryActionPerformed
@@ -677,20 +717,22 @@ public class Sell extends javax.swing.JPanel {
         searchBox.setText("");
     }//GEN-LAST:event_jComboBox1ItemStateChanged
 
-    private void addInvoice(int invoiceId, int customerId, double amount, String payment_Method) {
+    private void addInvoice(int invoiceId, int customerId, double amount, double customerCash, double paid, String payment_Method) {
         // Thực hiện thêm hóa đơn
         try (Connection conn = DBConnection.getConnection()) {
             // Bắt đầu một giao dịch
             conn.setAutoCommit(false);
             // Thêm một hóa đơn mới vào bảng Invoice
-            String sql = "INSERT INTO Invoice (Invoice_ID, Date, Total_Amount, Payment_Method, Employee_ID, Customer_ID) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Invoice (Invoice_ID, Date, Total_Amount, Customer_Cash, Return_Money , Payment_Method, Employee_ID, Customer_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setInt(1, invoiceId);
                 stmt.setDate(2, new java.sql.Date(System.currentTimeMillis())); // Ngày hiện tại
                 stmt.setDouble(3, amount); // Tổng tiền
-                stmt.setString(4, payment_Method); // Phương thức thanh toán
-                stmt.setInt(5, uid); // ID nhân viên
-                stmt.setInt(6, customerId); // ID khách hàng
+                stmt.setDouble(4, customerCash); // Tổng tiền
+                stmt.setDouble(5, paid); // Tổng tiền
+                stmt.setString(6, payment_Method); // Phương thức thanh toán
+                stmt.setInt(7, uid); // ID nhân viên
+                stmt.setInt(8, customerId); // ID khách hàng
                 stmt.executeUpdate();
                 // Thêm từng sản phẩm trong giỏ hàng vào bảng Contain
                 sql = "INSERT INTO Contain (Invoice_ID, Product_ID, Quantity) VALUES (?, ?, ?)";
@@ -734,10 +776,20 @@ public class Sell extends javax.swing.JPanel {
             int customerId = Integer.parseInt(customerID.getText());
             double amount = Double.parseDouble(Util.vndConvertToNumber(totalTxt.getText()));
             String payment_Method = (String) paymentMethod.getSelectedItem();
+            double customerCash = 0;
+            if (payment_Method.equals("Chuyen khoan") || payment_Method.equals("The")) {
+                customerCash = amount;
+            } else {
+                if (cusMoney.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(null, "Chưa nhập tiền khách gửi", "Notification", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                customerCash = Double.parseDouble(cusMoney.getText());
+            }
             int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm hóa đơn không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 // Sử dụng phương thức addInvoice
-                addInvoice(invoiceId, customerId, amount, payment_Method);
+                addInvoice(invoiceId, customerId, amount, customerCash, customerCash - amount, payment_Method);
             }
         } catch (ParseException ex) {
             Logger.getLogger(Sell.class.getName()).log(Level.SEVERE, null, ex);
@@ -748,14 +800,34 @@ public class Sell extends javax.swing.JPanel {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             String selectedMethod = (String) evt.getItem(); // Lấy phương thức thanh toán
             if (selectedMethod.equals("Chuyen khoan") || selectedMethod.equals("The")) {
-                cusMoney.setEnabled(false);
-                paidMoney.setEnabled(false);
+                cusMoney.setEditable(false);
+                cusMoney.setText("");
+                paidMoney.setText("");
             } else if (selectedMethod.equals("Tien mat")) {
-                cusMoney.setEnabled(true);
-                paidMoney.setEnabled(true);
+                cusMoney.setEditable(true);
             }
         }
     }//GEN-LAST:event_paymentMethodItemStateChanged
+
+    private void printBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBtnActionPerformed
+        PrintInvoice pi = new PrintInvoice(Integer.parseInt(invoiceID.getText()));
+//        pi.setVisible(true);
+    }//GEN-LAST:event_printBtnActionPerformed
+
+    private void cusMoneyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cusMoneyActionPerformed
+        try {
+            double totalMoney = Double.parseDouble(Util.vndConvertToNumber(totalTxt.getText()));
+            double customerCash = Double.parseDouble(cusMoney.getText());
+            if (customerCash < totalMoney) {
+                JOptionPane.showMessageDialog(null, "Tiền khách đưa không đủ", "Notification", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            double res = customerCash - totalMoney;
+            paidMoney.setText(Util.convertToVND(res));
+        } catch (ParseException ex) {
+            Logger.getLogger(Sell.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_cusMoneyActionPerformed
 
     private void displayCartTable() {
         DefaultTableModel model = new DefaultTableModel() {
