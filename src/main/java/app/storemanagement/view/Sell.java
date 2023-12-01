@@ -209,11 +209,20 @@ public class Sell extends javax.swing.JPanel {
         paidMoney.setEditable(false);
         paidMoney.setBackground(new java.awt.Color(255, 255, 255));
 
-
         cusMoney.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cusMoneyActionPerformed(evt);
-
+            }
+        });
+        cusMoney.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                cusMoneyKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                cusMoneyKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                cusMoneyKeyTyped(evt);
             }
         });
 
@@ -538,11 +547,7 @@ public class Sell extends javax.swing.JPanel {
         clearCart();
         totalTxt.setText("");
         displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
-        try {
-            calculatePaidMoney(cusMoney.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(Sell.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        calculatePaidMoney(cusMoney.getText());
     }//GEN-LAST:event_deleteAllActionPerformed
 
     // Phương thức lấy sản phẩm được chọn từ bảng productTb
@@ -604,10 +609,9 @@ public class Sell extends javax.swing.JPanel {
         } else {
             JOptionPane.showMessageDialog(null, "Chưa chọn sản phẩm", "Warning", JOptionPane.WARNING_MESSAGE);
         }
-        try {
-            calculatePaidMoney(cusMoney.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(Sell.class.getName()).log(Level.SEVERE, null, ex);
+        calculatePaidMoney(cusMoney.getText());
+        if(paidMoney.getText().isBlank()){
+            cusMoney.setText("");
         }
     }//GEN-LAST:event_addToCartActionPerformed
 
@@ -672,11 +676,7 @@ public class Sell extends javax.swing.JPanel {
         } else {
             JOptionPane.showMessageDialog(null, "Chưa chọn sản phẩm để xóa", "Alert", JOptionPane.WARNING_MESSAGE);
         }
-        try {
-            calculatePaidMoney(cusMoney.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(Sell.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        calculatePaidMoney(cusMoney.getText());
     }//GEN-LAST:event_deleteProductActionPerformed
 
     private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
@@ -799,7 +799,7 @@ public class Sell extends javax.swing.JPanel {
             if (payment_Method.equals("Chuyen khoan") || payment_Method.equals("The")) {
                 customerCash = amount;
             } else {
-                if (cusMoney.getText().isEmpty()){
+                if (cusMoney.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Chưa nhập tiền khách gửi", "Notification", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
@@ -852,6 +852,46 @@ public class Sell extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_cusMoneyActionPerformed
 
+    private void cusMoneyKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cusMoneyKeyPressed
+        if (evt.isControlDown() && (evt.getKeyCode() == KeyEvent.VK_V)) {
+            cusMoneyKeyTyped(evt);
+            JOptionPane.showMessageDialog(this, "Không thể ctrl+v", "Lỗi về nhập dữ liệu", JOptionPane.ERROR_MESSAGE);
+        }
+        calculatePaidMoney(cusMoney.getText());
+    }//GEN-LAST:event_cusMoneyKeyPressed
+
+    private void cusMoneyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cusMoneyKeyTyped
+        if (!(evt.getKeyChar() >= '0' && evt.getKeyChar() <= '9')) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_cusMoneyKeyTyped
+
+    private void cusMoneyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cusMoneyKeyReleased
+            calculatePaidMoney(cusMoney.getText());
+    }//GEN-LAST:event_cusMoneyKeyReleased
+
+    private void calculatePaidMoney(String string_cus_money) {
+        try {
+            if (cusMoney.getText().isBlank()) {
+                paidMoney.setText("");
+            } else if (!cusMoney.getText().trim().isBlank() && !totalTxt.getText().trim().isBlank()) {
+                int totalMoney = Integer.valueOf(Util.vndConvertToNumber(totalTxt.getText()));
+                int cus_money = Integer.valueOf(string_cus_money.trim());
+
+                if (cus_money - totalMoney >= 0) {
+                    int paid_money = cus_money - totalMoney;
+                    paidMoney.setText(Util.convertToVND(Double.valueOf(String.valueOf(paid_money))));
+                }else{
+                    paidMoney.setText("");
+                }
+            } else if (totalTxt.getText().isBlank() && !cusMoney.getText().isBlank()) {
+                Double paid_money = Double.valueOf(string_cus_money.trim());
+                paidMoney.setText(Util.convertToVND(paid_money));
+            }
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Lỗi tính tổng số tiền", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     private void displayCartTable() {
         DefaultTableModel model = new DefaultTableModel() {
