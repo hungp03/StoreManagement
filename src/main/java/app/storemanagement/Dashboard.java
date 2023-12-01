@@ -100,7 +100,9 @@ public class Dashboard extends javax.swing.JFrame {
             public void windowClosing(WindowEvent e) {
                 int confirmed = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn thoát chứ?", "Xác nhận thoát", JOptionPane.YES_NO_OPTION);
                 if (confirmed == JOptionPane.YES_OPTION) {
-                    sellPanel.clearCart();
+                    if (!sellPanel.isCartEmpty()) {
+                        sellPanel.clearCart();
+                    }
                     // Thực hiện hành động khi người dùng đồng ý đóng cửa sổ
                     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 } else {
@@ -316,7 +318,15 @@ public class Dashboard extends javax.swing.JFrame {
 
     private void overviewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_overviewBtnActionPerformed
         cardLayout.show(jPanel1, "overview");
-        overviewPanel.refreshData();
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+            @Override
+            public void run() {
+                overviewPanel.refreshData();
+            }
+        },
+                500
+        );
     }//GEN-LAST:event_overviewBtnActionPerformed
 
     private void invoiceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceBtnActionPerformed
@@ -342,7 +352,9 @@ public class Dashboard extends javax.swing.JFrame {
     private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
         int confirmed = JOptionPane.showConfirmDialog(null, "Xác nhận đăng xuất?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
-            sellPanel.clearCart();
+            if (!sellPanel.isCartEmpty()) {
+                sellPanel.clearCart();
+            }
             this.dispose();
             new Login().setVisible(true);
         }
