@@ -39,6 +39,17 @@
         </dependency>
     </dependencies>
     <build>
+        <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version> <!-- hoặc một phiên bản tương thích với JDK bạn đang sử dụng -->
+            <configuration>
+                <source>15</source> <!-- hoặc phiên bản ngôn ngữ Java bạn đang sử dụng -->
+                <target>15</target> <!-- hoặc phiên bản ngôn ngữ Java bạn đang sử dụng -->
+            </configuration>
+        </plugin>
+    </plugins>
         <resources>
             <resource>
                 <directory>src/main/java</directory>
