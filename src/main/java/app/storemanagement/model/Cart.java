@@ -1,16 +1,16 @@
 
 package app.storemanagement.model;
 
-public class productInCart extends BaseEntity{
+public class Cart extends BaseEntity{
     private String pName;
     private int qty;
     private double unitPrice;
 
-    public productInCart(int id) {
+    public Cart(int id) {
         super(id);
     }
        
-    public productInCart(int id, String pName,double unitPrice, int qty) {
+    public Cart(int id, String pName,double unitPrice, int qty) {
         super(id);
         this.pName = pName;
         this.qty = qty;

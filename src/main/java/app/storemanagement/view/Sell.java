@@ -2,7 +2,7 @@ package app.storemanagement.view;
 
 import app.storemanagement.controller.SellCtrl;
 import app.storemanagement.model.Connection.DBConnection;
-import app.storemanagement.model.productInCart;
+import app.storemanagement.model.Cart;
 import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -35,7 +35,7 @@ import javax.swing.text.DocumentFilter;
  */
 public class Sell extends javax.swing.JPanel {
 
-    private List<productInCart> cart = new ArrayList<>();
+    private List<Cart> cart = new ArrayList<>();
     private int uid;
 
     public void setUid(int uid) {
@@ -138,14 +138,17 @@ public class Sell extends javax.swing.JPanel {
 
         customerPhone.setEditable(false);
         customerPhone.setBackground(new java.awt.Color(255, 255, 255));
+        customerPhone.setFocusable(false);
         jPanel4.add(customerPhone, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 90, 150, -1));
 
         customerName.setEditable(false);
         customerName.setBackground(new java.awt.Color(255, 255, 255));
+        customerName.setFocusable(false);
         jPanel4.add(customerName, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 150, -1));
 
         customerID.setEditable(false);
         customerID.setBackground(new java.awt.Color(255, 255, 255));
+        customerID.setFocusable(false);
         jPanel4.add(customerID, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 50, 150, -1));
 
         invoiceLb.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -202,12 +205,15 @@ public class Sell extends javax.swing.JPanel {
 
         invoiceID.setEditable(false);
         invoiceID.setBackground(new java.awt.Color(255, 255, 255));
+        invoiceID.setFocusable(false);
 
         totalTxt.setEditable(false);
         totalTxt.setBackground(new java.awt.Color(255, 255, 255));
+        totalTxt.setFocusable(false);
 
         paidMoney.setEditable(false);
         paidMoney.setBackground(new java.awt.Color(255, 255, 255));
+        paidMoney.setFocusable(false);
 
         cusMoney.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -514,7 +520,7 @@ public class Sell extends javax.swing.JPanel {
         customerPhone.setText("");
     }
 
-    private void forceButton(boolean b) {
+    private void handleButton(boolean b) {
         confirmBtn.setEnabled(b);
         cancelBtn.setEnabled(b);
         newEntry.setEnabled(!b);
@@ -533,7 +539,7 @@ public class Sell extends javax.swing.JPanel {
 
     private double totalAmount() {
         double total_amount = 0;
-        for (productInCart product : cart) {
+        for (Cart product : cart) {
             total_amount += product.getUnitPrice() * product.getQty();
         }
         return total_amount;
@@ -551,7 +557,7 @@ public class Sell extends javax.swing.JPanel {
     }//GEN-LAST:event_deleteAllActionPerformed
 
     // Phương thức lấy sản phẩm được chọn từ bảng productTb
-    private productInCart getSelectedProduct() {
+    private Cart getSelectedProduct() {
         int selectedRow = productTb.getSelectedRow();
         int id = Integer.parseInt(productTb.getValueAt(selectedRow, 0).toString());
         String name = productTb.getValueAt(selectedRow, 1).toString();
@@ -562,7 +568,7 @@ public class Sell extends javax.swing.JPanel {
             Logger.getLogger(Sell.class.getName()).log(Level.SEVERE, null, ex);
         }
         int qtyInStock = Integer.parseInt(productTb.getValueAt(selectedRow, 3).toString());
-        return new productInCart(id, name, unitPrice, qtyInStock);
+        return new Cart(id, name, unitPrice, qtyInStock);
     }
 
     private void addToCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToCartActionPerformed
@@ -571,7 +577,7 @@ public class Sell extends javax.swing.JPanel {
             return;
         }
         if (productTb.getSelectedRow() >= 0) {
-            productInCart selectedProduct = getSelectedProduct();
+            Cart selectedProduct = getSelectedProduct();
             // Đổi tên biến value thành quantityInput
             String quantityInput = JOptionPane.showInputDialog(null, "Nhập số lượng sản phẩm");
             if (Objects.isNull(quantityInput) || quantityInput.trim().isEmpty()) {
@@ -598,7 +604,7 @@ public class Sell extends javax.swing.JPanel {
                             });
                 } else {
                     // Thêm sản phẩm mới vào danh sách
-                    cart.add(new productInCart(selectedProduct.getId(), selectedProduct.getpName(), selectedProduct.getUnitPrice(), quantity));
+                    cart.add(new Cart(selectedProduct.getId(), selectedProduct.getpName(), selectedProduct.getUnitPrice(), quantity));
                     sell.updateProductQuantity(selectedProduct.getId(), quantity, "reduce");
                 }
                 // Hiển thị bảng giỏ hàng và bảng sản phẩm
@@ -694,7 +700,7 @@ public class Sell extends javax.swing.JPanel {
         totalTxt.setText("");
         cusMoney.setText("");
         paidMoney.setText("");
-        forceButton(true);
+        handleButton(true);
         clearCustomerInfo();
     }//GEN-LAST:event_newEntryActionPerformed
 
@@ -755,7 +761,7 @@ public class Sell extends javax.swing.JPanel {
                 // Thêm từng sản phẩm trong giỏ hàng vào bảng Contain
                 sql = "INSERT INTO Contain (Invoice_ID, Product_ID, Quantity) VALUES (?, ?, ?)";
                 try (PreparedStatement stmt2 = conn.prepareStatement(sql)) {
-                    for (productInCart product : cart) {
+                    for (Cart product : cart) {
                         stmt2.setInt(1, invoiceId);
                         stmt2.setInt(2, product.getId());
                         stmt2.setInt(3, product.getQty());
@@ -769,7 +775,7 @@ public class Sell extends javax.swing.JPanel {
                 //Xóa giỏ hàng
                 cart.clear();
                 displayCartTable();
-                forceButton(false);
+                handleButton(false);
                 createTime.setText("Thời gian tạo: " + Util.getCurrentDateTime());
             } catch (SQLException e) {
                 // Xử lý lỗi
@@ -820,11 +826,9 @@ public class Sell extends javax.swing.JPanel {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             String selectedMethod = (String) evt.getItem(); // Lấy phương thức thanh toán
             if (selectedMethod.equals("Chuyen khoan") || selectedMethod.equals("The")) {
-
                 cusMoney.setEditable(false);
                 cusMoney.setText("");
                 paidMoney.setText("");
-
             } else if (selectedMethod.equals("Tien mat")) {
                 cusMoney.setEditable(true);
             }
@@ -904,7 +908,7 @@ public class Sell extends javax.swing.JPanel {
         String[] columnNames = {"Mã SP", "Tên SP", "Đơn giá", "Số lượng"};
         model.setColumnIdentifiers(columnNames);
         // Thêm dữ liệu vào model
-        for (productInCart pic : cart) {
+        for (Cart pic : cart) {
             String vnd = Util.convertToVND(pic.getUnitPrice());
             Object[] row = new Object[]{pic.getId(), pic.getpName(), vnd, pic.getQty()};
             model.addRow(row);

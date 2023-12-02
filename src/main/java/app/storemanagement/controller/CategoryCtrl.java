@@ -24,11 +24,18 @@ public class CategoryCtrl implements BaseController<CategoryModel> {
 
     @Override
     public boolean add(CategoryModel category) {
-        String sql = "INSERT INTO Category VALUES (?,?)";
+        String sql = "INSERT INTO Category (Category_ID, Category_Name)"
+                + "SELECT ?, ? WHERE NOT EXISTS (SELECT 1 FROM Category WHERE Category_Name = ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, category.getId());
             stmt.setString(2, category.getCategoryName());
-            stmt.executeUpdate();
+            stmt.setString(3, category.getCategoryName());
+            int affectedRows = stmt.executeUpdate();
+            //Bắt lỗi nếu tìm trong cơ sở dữ liệu đã thấy tồn tại phân loại => trả về lỗi và không có hàng nào được thêm
+            if (affectedRows == 0) {
+                JOptionPane.showMessageDialog(null, "Phân loại đã tồn tại", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
             return true;
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -38,11 +45,18 @@ public class CategoryCtrl implements BaseController<CategoryModel> {
 
     @Override
     public boolean update(CategoryModel category) {
-        String sql = "update Category set Category_Name=? where Category_ID=?";
+        String sql = "UPDATE Category SET Category_Name=?"
+                + "WHERE Category_ID=? AND NOT EXISTS (SELECT 1 FROM Category WHERE Category_Name = ? AND Category_ID <> ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(2, category.getId());
             stmt.setString(1, category.getCategoryName());
-            stmt.executeUpdate();
+            stmt.setString(3, category.getCategoryName());
+            stmt.setInt(4, category.getId());
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                JOptionPane.showMessageDialog(null, "Phân loại đã tồn tại", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
             return true;
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

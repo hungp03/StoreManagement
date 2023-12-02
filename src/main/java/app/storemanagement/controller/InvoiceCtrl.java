@@ -1,10 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package app.storemanagement.controller;
 
-import app.storemanagement.model.InvoiceModel;
 import java.sql.Connection;
 
 /**
@@ -48,11 +43,11 @@ public class InvoiceCtrl {
         if (keyword.trim().isEmpty() == false) {
             switch (searchMethod) {
                 case "Mã hóa đơn" ->
-                    tmp = " WHERE i.Invoice_ID =" + keyword.trim();
+                    tmp = " WHERE i.Invoice_ID LIKE N'%" + keyword.trim() + "%'";
                 case "Ngày" ->
                     tmp = " WHERE CONVERT(VARCHAR, i.Date, 23) LIKE N'%" + keyword.trim() + "%'";
                 case "Khách hàng" ->
-                    tmp = " WHERE c.Full_name LIKE N'%" + keyword.trim() + "%' ";
+                    tmp = " WHERE c.Full_name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI";
                 default -> {
                 }
             }

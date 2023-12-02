@@ -17,16 +17,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
  * @author Hung Pham
  */
 public class Util {
-
-    //Dùng để lấy vai trò của người dùng (admin, nhân viên bán hàng, nhân viên kho)
-    public static int eid = 0;
     //Tạo ID tiếp theo
     public static int getNextID(String idName, String tableName) {
         int nextID = 1;
@@ -40,7 +36,6 @@ public class Util {
         }
         return nextID;
     }
-    
     
     //Ràng buộc ngày tháng của sản phẩm
     public static boolean checkDate(Date manufactureDate, Date expiryDate, Date entry) {
@@ -142,24 +137,6 @@ public class Util {
         return matcher.matches();
     }
 
-    //Ngăn chặn nhân viên bán hàng sử dụng các thao tác họ không được phép (Phân quyền)
-    public static boolean authorizationNVBH(String role) {
-        if (role.equals("NVBH")) {
-            JOptionPane.showMessageDialog(null, "Bạn không có quyền sử dụng thao tác này");
-            return false;
-        }
-        return true;
-    }
-
-    //Ngăn chặn nhân viên kho sử dụng các thao tác họ không được phép (Phân quyền)
-    public static boolean authorizationNVK(String role) {
-        if (role.equals("NVK")) {
-            JOptionPane.showMessageDialog(null, "Bạn không có quyền sử dụng thao tác này");
-            return false;
-        }
-        return true;
-    }
-
     //Kiểm tra nhân viên có đủ 18 tuổi hay không
     public static boolean isUnder18(LocalDate birthDate) {
         LocalDate today = LocalDate.now();
@@ -192,20 +169,6 @@ public class Util {
             }
         }
         return formattedNameBuilder.toString().trim();
-    }
-
-    //Mã hóa mật khẩu
-    public static String hashPw(String pw) {
-        String salt = BCrypt.gensalt(10);
-        String hashed = null;
-        try {
-            hashed = BCrypt.hashpw(pw, salt);
-        } catch (IllegalArgumentException e) {
-            // Xử lý ngoại lệ khi mật khẩu hoặc muối là null hoặc không hợp lệ
-            System.out.println("Mật khẩu hoặc muối không hợp lệ: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, "Có lỗi xảy ra trong quá trình mã hóa mật khẩu", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return hashed;
     }
 
     //Chuyển đổi giá từ số sang VND

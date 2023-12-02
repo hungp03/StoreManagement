@@ -451,9 +451,6 @@ public class Invoice extends javax.swing.JPanel {
             String[] columnNames = {"Mã hóa đơn", "Tên khách hàng", "Thanh toán", "Ngày"};
             tableModel.setColumnIdentifiers(columnNames);
             InvoiceTable.setModel(tableModel);
-            Rs.close();
-            St.close();
-            conn.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }

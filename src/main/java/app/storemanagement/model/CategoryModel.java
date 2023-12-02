@@ -54,4 +54,11 @@ public class CategoryModel extends BaseEntity {
         CategoryModel that = (CategoryModel) obj;
         return id == that.id && Objects.equals(categoryName, that.categoryName);
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.categoryName);
+        return hash;
+    }
 }

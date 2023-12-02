@@ -240,10 +240,10 @@ public class Login extends javax.swing.JFrame {
                 role = "admin";
                 query = "select Admin_ID, Username, Password from Admin where Username = ?";
             } else if (nvbhRd.isSelected()) {
-                role = "NVBH";
+                role = "banhang";
                 query = "select Employee_ID, Username, Password from Employee where (Username = ? and Role = 'Bán hàng')";
             } else if (nvkRd.isSelected()) {
-                role = "NVK";
+                role = "kho";
                 query = "select Employee_ID, Username, Password from Employee where (Username = ? and Role = 'Kho')";
             } else {
                 JOptionPane.showMessageDialog(this, "Chọn chức vụ của bạn", "Missing information", JOptionPane.WARNING_MESSAGE);

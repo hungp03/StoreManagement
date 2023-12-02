@@ -37,6 +37,14 @@ public class Dashboard extends javax.swing.JFrame {
         initComponents();
         this.userRole = role;
         this.uid = uid;
+        setupPanels();
+        setupButtons();
+        setupWindowListener();
+    }
+
+    CardLayout cardLayout = new CardLayout();
+
+    private void setupPanels() {
         cardLayout = (CardLayout) (jPanel1.getLayout());
         jPanel1.add(productPanel, "product");
         jPanel1.add(employeePanel, "employee");
@@ -46,9 +54,31 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel1.add(sellPanel, "sell");
         jPanel1.add(invoicePanel, "invoice");
         cardLayout.show(jPanel1, "overview");
-        productPanel.setUserRole(role);
-        categoryPanel.setUserRole(role);
-        sellPanel.setUid(uid);
+        productPanel.setUserRole(userRole);
+        categoryPanel.setUserRole(userRole);
+        if (userRole.equals("NVBH")) {
+            sellPanel.setUid(uid);
+        }
+    }
+
+    private void setupWindowListener() {
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int confirmed = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn thoát chứ?", "Xác nhận thoát", JOptionPane.YES_NO_OPTION);
+                if (confirmed == JOptionPane.YES_OPTION) {
+                    if (!sellPanel.isCartEmpty()) {
+                        sellPanel.clearCart();
+                    }
+                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                } else {
+                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                }
+            }
+        });
+    }
+
+    private void setupButtons() {
         switch (userRole) {
             case "NVBH" ->
                 employeeBtn.setVisible(false);
@@ -65,8 +95,10 @@ public class Dashboard extends javax.swing.JFrame {
         }
         overviewBtn.setForeground(Color.black);
         overviewBtn.setBackground(Color.decode("#F2F2F2"));
+        setupButtonActionListener();
+    }
 
-        // Tạo ActionListener chung
+    private void setupButtonActionListener() {
         ActionListener actionListener = (ActionEvent e) -> {
             overviewBtn.setBackground(Color.decode("#4C956C"));
             employeeBtn.setBackground(Color.decode("#4C956C"));
@@ -89,7 +121,6 @@ public class Dashboard extends javax.swing.JFrame {
             source.setForeground(Color.black);
         };
 
-        // Thêm ActionListener vào mỗi nút
         overviewBtn.addActionListener(actionListener);
         employeeBtn.addActionListener(actionListener);
         categoryBtn.addActionListener(actionListener);
@@ -97,26 +128,7 @@ public class Dashboard extends javax.swing.JFrame {
         customerBtn.addActionListener(actionListener);
         sellBtn.addActionListener(actionListener);
         invoiceBtn.addActionListener(actionListener);
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int confirmed = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn thoát chứ?", "Xác nhận thoát", JOptionPane.YES_NO_OPTION);
-                if (confirmed == JOptionPane.YES_OPTION) {
-                    if (!sellPanel.isCartEmpty()) {
-                        sellPanel.clearCart();
-                    }
-                    // Thực hiện hành động khi người dùng đồng ý đóng cửa sổ
-                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                } else {
-                    // Ngăn chặn cửa sổ từ việc đóng
-                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                }
-            }
-        });
     }
-
-    CardLayout cardLayout = new CardLayout();
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

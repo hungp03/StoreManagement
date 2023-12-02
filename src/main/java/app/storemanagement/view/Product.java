@@ -1,6 +1,7 @@
 package app.storemanagement.view;
 
 import app.storemanagement.controller.ProductCtrl;
+import app.storemanagement.middleware.VerifyAccess;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
 import app.storemanagement.utils.Util;
@@ -31,6 +32,7 @@ public class Product extends javax.swing.JPanel {
         this.userRole = userRole;
     }
     ProductCtrl productCtrl = new ProductCtrl();
+    VerifyAccess verifyAccess = new VerifyAccess();
     /**
      * Creates new form Product
      */
@@ -503,7 +505,7 @@ public class Product extends javax.swing.JPanel {
     private void productTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_productTableMouseClicked
         DefaultTableModel model = (DefaultTableModel) productTable.getModel();
         int my_idx = productTable.getSelectedRow();
-        if (my_idx != -1) {
+        if (my_idx > -1) {
             // Lấy ID từ hàng được chọn
             key = Integer.parseInt(model.getValueAt(my_idx, 0).toString());
         }
@@ -567,7 +569,7 @@ public class Product extends javax.swing.JPanel {
     }//GEN-LAST:event_refreshMouseClicked
 
     private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed
-        if (Util.authorizationNVBH(userRole)) {
+        if (verifyAccess.authorizationNVBH(userRole)) {
             AddProduct detail = new AddProduct();
             detail.setVisible(true);
             detail.addWindowListener(new WindowAdapter() {
@@ -583,7 +585,7 @@ public class Product extends javax.swing.JPanel {
     }//GEN-LAST:event_addProductActionPerformed
 
     private void deleteProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteProductActionPerformed
-        if (Util.authorizationNVBH(userRole)) {
+        if (verifyAccess.authorizationNVBH(userRole)) {
             if (deleteProduct.isEnabled() == true) {
                 if (productTable.getSelectedRow() < 0) {
                     JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xóa!");

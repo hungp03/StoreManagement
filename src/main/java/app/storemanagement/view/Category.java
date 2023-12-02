@@ -1,6 +1,7 @@
 package app.storemanagement.view;
 
 import app.storemanagement.controller.CategoryCtrl;
+import app.storemanagement.middleware.VerifyAccess;
 import app.storemanagement.model.CategoryModel;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.utils.Util;
@@ -28,7 +29,10 @@ public class Category extends javax.swing.JPanel {
     public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
+    
     CategoryCtrl ctg = new CategoryCtrl();
+    VerifyAccess verifyAccess = new VerifyAccess();
+    
     /**
      * Creates new form Category
      */
@@ -332,7 +336,7 @@ public class Category extends javax.swing.JPanel {
 
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        if (Util.authorizationNVBH(userRole)) {
+        if (verifyAccess.authorizationNVBH(userRole)) {
             if (categoryTable.getSelectedRow() >= 0) {
                 String name = categoryName.getText();
                 if (verifyInput()) {
@@ -357,7 +361,7 @@ public class Category extends javax.swing.JPanel {
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        if (Util.authorizationNVBH(userRole)) {
+        if (verifyAccess.authorizationNVBH(userRole)) {
             int id = Util.getNextID("Category_ID", "Category");
             String name = categoryName.getText();
             if (verifyInput()) {
@@ -379,7 +383,7 @@ public class Category extends javax.swing.JPanel {
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        if (Util.authorizationNVBH(userRole)) {
+        if (verifyAccess.authorizationNVBH(userRole)) {
             if (categoryTable.getSelectedRow() < 0) {
                 JOptionPane.showMessageDialog(null, "Chọn một phân loại để xóa!");
             } else {

@@ -1,6 +1,7 @@
 package app.storemanagement.view;
 
 import app.storemanagement.controller.ProductCtrl;
+import app.storemanagement.middleware.VerifyAccess;
 import app.storemanagement.model.CategoryModel;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
@@ -440,7 +441,8 @@ public class ProductDetail extends javax.swing.JFrame {
         }
     }
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        if (Util.authorizationNVBH(userRole)) {
+        VerifyAccess verifyAccess = new VerifyAccess();
+        if (verifyAccess.authorizationNVBH(userRole)) {
             for (KeyListener keyListener : productName.getKeyListeners()) {
                 productName.removeKeyListener(keyListener);
             }
