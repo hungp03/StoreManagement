@@ -3,6 +3,7 @@ package app.storemanagement;
 import app.storemanagement.view.Category;
 import app.storemanagement.view.Customer;
 import app.storemanagement.view.Employee;
+import app.storemanagement.view.Invoice;
 import app.storemanagement.view.Overview;
 import app.storemanagement.view.Product;
 import app.storemanagement.view.Sell;
@@ -28,6 +29,7 @@ public class Dashboard extends javax.swing.JFrame {
     Overview overviewPanel = new Overview();
     Category categoryPanel = new Category();
     Sell sellPanel = new Sell();
+    Invoice invoicePanel = new Invoice();
     private int uid;
     private String userRole;
 
@@ -42,6 +44,7 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel1.add(overviewPanel, "overview");
         jPanel1.add(categoryPanel, "category");
         jPanel1.add(sellPanel, "sell");
+        jPanel1.add(invoicePanel, "invoice");
         cardLayout.show(jPanel1, "overview");
         productPanel.setUserRole(role);
         categoryPanel.setUserRole(role);
@@ -331,6 +334,16 @@ public class Dashboard extends javax.swing.JFrame {
 
     private void invoiceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceBtnActionPerformed
         // TODO add your handling code here:
+        cardLayout.show(jPanel1, "invoice");
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+            @Override
+            public void run() {
+                invoicePanel.refreshData();
+            }
+        },
+                500
+        );
     }//GEN-LAST:event_invoiceBtnActionPerformed
 
     private void categoryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryBtnActionPerformed

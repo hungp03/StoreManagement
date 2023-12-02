@@ -875,12 +875,12 @@ public class Sell extends javax.swing.JPanel {
             if (cusMoney.getText().isBlank()) {
                 paidMoney.setText("");
             } else if (!cusMoney.getText().trim().isBlank() && !totalTxt.getText().trim().isBlank()) {
-                int totalMoney = Integer.valueOf(Util.vndConvertToNumber(totalTxt.getText()));
-                int cus_money = Integer.valueOf(string_cus_money.trim());
+                int totalMoney = Integer.parseInt(Util.vndConvertToNumber(totalTxt.getText()));
+                int cus_money = Integer.parseInt(string_cus_money.trim());
 
                 if (cus_money - totalMoney >= 0) {
                     int paid_money = cus_money - totalMoney;
-                    paidMoney.setText(Util.convertToVND(Double.valueOf(String.valueOf(paid_money))));
+                    paidMoney.setText(Util.convertToVND(Double.parseDouble(String.valueOf(paid_money))));
                 }else{
                     paidMoney.setText("");
                 }
