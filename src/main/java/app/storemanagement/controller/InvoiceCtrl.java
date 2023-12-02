@@ -22,23 +22,24 @@ public class InvoiceCtrl {
         this.conn = conn;
     }
 
-    public String getDetailProductTable(String invoiceId) {
+    public String getDetailProductTable(int invoiceId) {
         String query = """
                        select p.Product_Name, p.Unit_Price, c.Quantity
                        from Contain c 
                        join Product p on c.Product_ID=p.Product_ID 
-                       where c.Invoice_ID=""" + invoiceId;
+                       where c.Invoice_ID = """ + invoiceId;
         return query;
     }
 
-    public String getDetailInvoiceData(String invoiceId) {
+    public String getDetailInvoiceData(int invoiceId) {
         String query = """
-                        select i.Invoice_ID, i.Created_At, c.Full_Name as Customer_Name, e.Full_Name as Employee_Name, 
-                        i.Total_Amount, i.Payment_Method
-                       	from Invoice i
-                       	join Customer c on i.Customer_ID=c.Customer_ID
-                       	join Employee e on e.Employee_ID=i.Employee_ID
-                        where i.Invoice_ID=""" + invoiceId;
+                        SELECT FORMAT(Created_At, 'HH:mm dd/MM/yyyy') as Created_Time, c.Full_Name AS Customer_Name, 
+                               ISNULL(e.Full_Name, ' ') AS Employee_Name, 
+                               i.Total_Amount, i.Payment_Method
+                        FROM Invoice i
+                        JOIN Customer c ON i.Customer_ID = c.Customer_ID
+                        LEFT JOIN Employee e ON e.Employee_ID = i.Employee_ID
+                        WHERE i.Invoice_ID = """ + invoiceId;
         return query;
     }
 
@@ -56,7 +57,7 @@ public class InvoiceCtrl {
                 }
             }
         }
-        String query = "select i.Invoice_ID, c.Full_name, i.Payment_Method, i.Date, i.Total_Amount"
+        String query = "select i.Invoice_ID, c.Full_name, i.Payment_Method, i.Date"
                 + " from Invoice as i join Customer as c "
                 + "on i.Customer_ID=c.Customer_ID" + tmp;
         switch (sortMethod) {

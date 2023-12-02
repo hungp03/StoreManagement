@@ -335,6 +335,15 @@ public class Dashboard extends javax.swing.JFrame {
     private void invoiceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceBtnActionPerformed
         // TODO add your handling code here:
         cardLayout.show(jPanel1, "invoice");
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+            @Override
+            public void run() {
+                invoicePanel.refreshData();
+            }
+        },
+                500
+        );
     }//GEN-LAST:event_invoiceBtnActionPerformed
 
     private void categoryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryBtnActionPerformed

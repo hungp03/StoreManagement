@@ -74,6 +74,7 @@ public class PrintInvoice extends javax.swing.JFrame {
         cusMoney = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
+        invID = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -180,6 +181,10 @@ public class PrintInvoice extends javax.swing.JFrame {
         jLabel13.setFont(new java.awt.Font("Consolas", 0, 13)); // NOI18N
         jLabel13.setText("---------------------------------------------------------");
 
+        invID.setFont(new java.awt.Font("Consolas", 0, 13)); // NOI18N
+        invID.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        invID.setText("id");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -209,8 +214,11 @@ public class PrintInvoice extends javax.swing.JFrame {
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(returnMoney)))))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel12)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(invID)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel12))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(customerName)
                                     .addComponent(employeeName)
@@ -250,7 +258,9 @@ public class PrintInvoice extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel12)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(invID))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel5)
                 .addGap(5, 5, 5)
@@ -297,6 +307,7 @@ public class PrintInvoice extends javax.swing.JFrame {
                      WHERE Invoice_ID = """ + id;
         try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
             if (Rs.next()) {
+                invID.setText("Mã đơn hàng: " + id);
                 jLabel12.setText(Rs.getString("Created_Time"));
                 customerName.setText("Khách hàng: " + Rs.getString("Customer_Name"));
                 employeeName.setText("Nhân viên bán hàng: " + Rs.getString("Employee_Name"));
@@ -387,6 +398,7 @@ public class PrintInvoice extends javax.swing.JFrame {
     private javax.swing.JLabel cusMoney;
     private javax.swing.JLabel customerName;
     private javax.swing.JLabel employeeName;
+    private javax.swing.JLabel invID;
     private javax.swing.JTable invoiceTable;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
