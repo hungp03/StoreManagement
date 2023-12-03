@@ -77,10 +77,10 @@
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="162" max="-2" attributes="0"/>
-                      <Component id="addButton" min="-2" pref="200" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="212" max="-2" attributes="0"/>
+                      <Component id="addButton" min="-2" pref="150" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="72" max="-2" attributes="0"/>
-                      <Component id="cancelButton" min="-2" pref="200" max="-2" attributes="0"/>
+                      <Component id="cancelButton" min="-2" pref="150" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace pref="38" max="32767" attributes="0"/>

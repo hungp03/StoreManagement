@@ -13,9 +13,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  *
@@ -23,20 +28,42 @@ import javax.swing.JOptionPane;
  */
 public class Dashboard extends javax.swing.JFrame {
 
-    Product productPanel = new Product();
-    Employee employeePanel = new Employee();
-    Customer customerPanel = new Customer();
-    Overview overviewPanel = new Overview();
-    Category categoryPanel = new Category();
-    Sell sellPanel = new Sell();
-    Invoice invoicePanel = new Invoice();
     private int uid;
     private String userRole;
+
+    Product productPanel = null;
+    Employee employeePanel = null;
+    Customer customerPanel = null;
+    Overview overviewPanel = null;
+    Category categoryPanel = null;
+    Sell sellPanel = null;
+    Invoice invoicePanel = null;
 
     public Dashboard(int uid, String role) {
         initComponents();
         this.userRole = role;
         this.uid = uid;
+        
+        //3 panel chắc chắn user nào cũng dùng
+        overviewPanel = new Overview();
+        productPanel = new Product();
+        categoryPanel = new Category();
+        
+        // Khởi tạo các panel tùy thuộc vào vai trò người dùng
+        switch (userRole) {
+            case "banhang" -> {
+                customerPanel = new Customer();
+                sellPanel = new Sell();
+                invoicePanel = new Invoice();
+            }
+            case "admin" -> {
+                employeePanel = new Employee();
+            }
+            default -> {
+                // Không làm gì hết
+            }
+        }
+
         setupPanels();
         setupButtons();
         setupWindowListener();
@@ -46,18 +73,44 @@ public class Dashboard extends javax.swing.JFrame {
 
     private void setupPanels() {
         cardLayout = (CardLayout) (jPanel1.getLayout());
-        jPanel1.add(productPanel, "product");
-        jPanel1.add(employeePanel, "employee");
-        jPanel1.add(customerPanel, "customer");
-        jPanel1.add(overviewPanel, "overview");
-        jPanel1.add(categoryPanel, "category");
-        jPanel1.add(sellPanel, "sell");
-        jPanel1.add(invoicePanel, "invoice");
+
+        Map<String, JPanel> roleToPanelsMap = new HashMap<>();
+        roleToPanelsMap.put("overview", overviewPanel);
+        roleToPanelsMap.put("category", categoryPanel);
+        roleToPanelsMap.put("product", productPanel);
+
+        for (Map.Entry<String, JPanel> entry : roleToPanelsMap.entrySet()) {
+            if (entry.getValue() != null) {
+                jPanel1.add(entry.getValue(), entry.getKey());
+            }
+        }
+
+        if (productPanel != null) {
+            productPanel.setUserRole(userRole);
+        }
+        if (categoryPanel != null) {
+            categoryPanel.setUserRole(userRole);
+        }
+
         cardLayout.show(jPanel1, "overview");
-        productPanel.setUserRole(userRole);
-        categoryPanel.setUserRole(userRole);
-        if (userRole.equals("banhang")) {
-            sellPanel.setUid(uid);
+
+        if (!userRole.equals("kho")) {
+            if (customerPanel != null) {
+                jPanel1.add(customerPanel, "customer");
+            }
+            if (invoicePanel != null) {
+                jPanel1.add(invoicePanel, "invoice");
+            }
+            if (userRole.equals("banhang")) {
+                if (sellPanel != null) {
+                    jPanel1.add(sellPanel, "sell");
+                    sellPanel.setUid(uid);
+                }
+            } else if (userRole.equals("admin")) {
+                if (employeePanel != null) {
+                    jPanel1.add(employeePanel, "employee");
+                }
+            }
         }
     }
 
@@ -67,7 +120,7 @@ public class Dashboard extends javax.swing.JFrame {
             public void windowClosing(WindowEvent e) {
                 int confirmed = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn thoát chứ?", "Xác nhận thoát", JOptionPane.YES_NO_OPTION);
                 if (confirmed == JOptionPane.YES_OPTION) {
-                    if (!sellPanel.isCartEmpty()) {
+                    if (sellPanel != null && !sellPanel.isCartEmpty()) {
                         sellPanel.clearCart();
                     }
                     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,55 +132,39 @@ public class Dashboard extends javax.swing.JFrame {
     }
 
     private void setupButtons() {
-        switch (userRole) {
-            case "banhang" ->
-                employeeBtn.setVisible(false);
-            case "kho" -> {
-                employeeBtn.setVisible(false);
-                customerBtn.setVisible(false);
-                sellBtn.setVisible(false);
-                invoiceBtn.setVisible(false);
-            }
-            case "admin" ->
-                sellBtn.setVisible(false);
-            default -> {
+        Map<String, List<JButton>> roleToButtons = new HashMap<>();
+        roleToButtons.put("banhang", Arrays.asList(employeeBtn));
+        roleToButtons.put("kho", Arrays.asList(employeeBtn, customerBtn, sellBtn, invoiceBtn));
+        roleToButtons.put("admin", Arrays.asList(sellBtn));
+
+        if (roleToButtons.containsKey(userRole)) {
+            for (JButton button : roleToButtons.get(userRole)) {
+                button.setVisible(false);
             }
         }
+
         overviewBtn.setForeground(Color.black);
         overviewBtn.setBackground(Color.decode("#F2F2F2"));
         setupButtonActionListener();
     }
 
     private void setupButtonActionListener() {
-        ActionListener actionListener = (ActionEvent e) -> {
-            overviewBtn.setBackground(Color.decode("#4C956C"));
-            employeeBtn.setBackground(Color.decode("#4C956C"));
-            categoryBtn.setBackground(Color.decode("#4C956C"));
-            productBtn.setBackground(Color.decode("#4C956C"));
-            customerBtn.setBackground(Color.decode("#4C956C"));
-            sellBtn.setBackground(Color.decode("#4C956C"));
-            invoiceBtn.setBackground(Color.decode("#4C956C"));
+        JButton[] buttons = {overviewBtn, employeeBtn, categoryBtn, productBtn, customerBtn, sellBtn, invoiceBtn};
 
-            overviewBtn.setForeground(Color.WHITE);
-            employeeBtn.setForeground(Color.WHITE);
-            categoryBtn.setForeground(Color.WHITE);
-            productBtn.setForeground(Color.WHITE);
-            customerBtn.setForeground(Color.WHITE);
-            sellBtn.setForeground(Color.WHITE);
-            invoiceBtn.setForeground(Color.WHITE);
+        ActionListener actionListener = (ActionEvent e) -> {
+            for (JButton button : buttons) {
+                button.setBackground(Color.decode("#4C956C"));
+                button.setForeground(Color.WHITE);
+            }
 
             JButton source = (JButton) e.getSource();
             source.setBackground(Color.decode("#F2F2F2"));
             source.setForeground(Color.black);
         };
 
-        overviewBtn.addActionListener(actionListener);
-        employeeBtn.addActionListener(actionListener);
-        categoryBtn.addActionListener(actionListener);
-        productBtn.addActionListener(actionListener);
-        customerBtn.addActionListener(actionListener);
-        sellBtn.addActionListener(actionListener);
-        invoiceBtn.addActionListener(actionListener);
+        for (JButton button : buttons) {
+            button.addActionListener(actionListener);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -337,7 +374,9 @@ public class Dashboard extends javax.swing.JFrame {
                 new java.util.TimerTask() {
             @Override
             public void run() {
-                overviewPanel.refreshData();
+                if (overviewPanel != null) {
+                    overviewPanel.refreshData();
+                }
             }
         },
                 500
@@ -351,7 +390,9 @@ public class Dashboard extends javax.swing.JFrame {
                 new java.util.TimerTask() {
             @Override
             public void run() {
-                invoicePanel.refreshData();
+                if (invoicePanel != null) {
+                    invoicePanel.refreshData();
+                }
             }
         },
                 500
@@ -377,7 +418,7 @@ public class Dashboard extends javax.swing.JFrame {
     private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
         int confirmed = JOptionPane.showConfirmDialog(null, "Xác nhận đăng xuất?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
-            if (!sellPanel.isCartEmpty()) {
+            if (sellPanel != null && !sellPanel.isCartEmpty()) {
                 sellPanel.clearCart();
             }
             this.dispose();
