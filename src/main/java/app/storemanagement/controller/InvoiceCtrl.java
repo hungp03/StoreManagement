@@ -1,6 +1,7 @@
 package app.storemanagement.controller;
 
 import app.storemanagement.model.Connection.DBConnection;
+import app.storemanagement.utils.Util;
 import java.sql.Connection;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class InvoiceCtrl {
     }
     public boolean exportInvoiceDataToExcel(String fileName) {
         try {
-            String query = "SELECT T1.Invoice_ID, T1.Created_At, T1.CusName, T1.EmployName, T1.Total_Amount, T1.Payment_Method, " +
+            String query = "SELECT T1.Invoice_ID, FORMAT(Created_At, 'HH:mm dd/MM/yyyy') as Created_Time, T1.CusName, T1.EmployName, T1.Total_Amount, T1.Payment_Method, " +
                     "T2.Product_Name, T2.Unit_Price, T2.Quantity " +
                     "FROM (SELECT i.Invoice_ID, i.Created_At, c.Full_Name AS CusName, ISNULL(e.Full_Name, ' ') AS EmployName, " +
                     "i.Total_Amount, i.Payment_Method FROM Invoice i " +
@@ -66,7 +67,7 @@ public class InvoiceCtrl {
             
             Map<String, String> columnMapping = new HashMap<>();
             columnMapping.put("Invoice_ID", "Mã hóa đơn");
-            columnMapping.put("Created_At", "Ngày tạo");
+            columnMapping.put("Created_Time", "Thời gian");
             columnMapping.put("CusName", "Tên khách hàng");
             columnMapping.put("EmployName", "Tên nhân viên");
             columnMapping.put("Total_Amount", "Tổng giá trị");
@@ -89,7 +90,13 @@ public class InvoiceCtrl {
                 for (int i = 1; i <= columnCount; i++) {
                     Cell cell = row.createCell(i - 1);
                     String columnName = metaData.getColumnName(i);
-                    cell.setCellValue(resultSet.getString(i));
+                    if (i == 5 || i == 8){
+                    cell.setCellValue(Util.convertToVND(resultSet.getDouble(i)));
+                    }
+                    else{
+                        cell.setCellValue(resultSet.getString(i));
+                    }
+                    
                 }
             }
 

@@ -192,6 +192,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="productName">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) productName.getDocument()).setDocumentFilter(new LimitDocumentFilter(100));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel42">
       <Properties>
@@ -226,6 +229,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="unitPrice">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) unitPrice.getDocument()).setDocumentFilter(new LimitDocumentFilter(10));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel46">
       <Properties>
@@ -239,8 +245,14 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="qtyInStock">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) qtyInStock.getDocument()).setDocumentFilter(new LimitDocumentFilter(10));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JTextField" name="des">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) des.getDocument()).setDocumentFilter(new LimitDocumentFilter(200));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel41">
       <Properties>
@@ -319,6 +331,9 @@
     <Component class="javax.swing.JTextField" name="productID">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
         <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>

@@ -15,6 +15,7 @@ import java.awt.event.ItemEvent;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
 
 /**
  *
@@ -263,6 +264,11 @@ public class Customer extends javax.swing.JPanel {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
+
+        ((AbstractDocument) fullName.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));
+        ((AbstractDocument) address.getDocument()).setDocumentFilter(new LimitDocumentFilter(100));
+        ((AbstractDocument) email.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));
+        ((AbstractDocument) phone.getDocument()).setDocumentFilter(new LimitDocumentFilter(15));
     }// </editor-fold>//GEN-END:initComponents
     private void displayCustomer(String sortMethod) {
         displayCustomerTable(cus.generateQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));

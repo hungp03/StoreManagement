@@ -9,15 +9,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.JFileChooser;
-import javax.swing.JTable;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.io.File;
 
@@ -36,10 +32,11 @@ public class Invoice extends javax.swing.JPanel {
         initComponents();
         displayInvoice((String) sortCb.getSelectedItem());
     }
-    
-    public void refreshData(){
+
+    public void refreshData() {
         displayInvoice((String) sortCb.getSelectedItem());
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -76,6 +73,7 @@ public class Invoice extends javax.swing.JPanel {
         jLabel16 = new javax.swing.JLabel();
         payMethodTxt = new javax.swing.JTextField();
         ExportEx = new javax.swing.JButton();
+        printInv = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(76, 149, 108));
@@ -115,6 +113,7 @@ public class Invoice extends javax.swing.JPanel {
         InvoiceTable.setRowHeight(28);
         InvoiceTable.setSelectionBackground(new java.awt.Color(76, 149, 108));
         InvoiceTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        InvoiceTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         InvoiceTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 InvoiceTableMouseClicked(evt);
@@ -244,10 +243,18 @@ public class Invoice extends javax.swing.JPanel {
         payMethodTxt.setFocusable(false);
 
         ExportEx.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        ExportEx.setText("In hóa đơn");
+        ExportEx.setText("Xuất Excel");
         ExportEx.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ExportExActionPerformed(evt);
+            }
+        });
+
+        printInv.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        printInv.setText("In hóa đơn");
+        printInv.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printInvActionPerformed(evt);
             }
         });
 
@@ -281,20 +288,22 @@ public class Invoice extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(totalMoneyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(payMethodTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(totalMoneyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(payMethodTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(88, 88, 88)
+                        .addComponent(ExportEx, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(printInv, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(201, 201, 201)
-                .addComponent(ExportEx, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,9 +338,11 @@ public class Invoice extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(payMethodTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
-                .addComponent(ExportEx, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23))
+                .addGap(31, 31, 31)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ExportEx, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(printInv, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -427,24 +438,31 @@ public class Invoice extends javax.swing.JPanel {
     private void ExportExActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExportExActionPerformed
         exportInvoiceToExcel();
     }//GEN-LAST:event_ExportExActionPerformed
-    private void exportInvoiceToExcel() {
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setDialogTitle("Chọn vị trí lưu file");
-    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-    int userSelection = fileChooser.showSaveDialog(this);
-    if (userSelection == JFileChooser.APPROVE_OPTION) {
-        File fileToSave = fileChooser.getSelectedFile();
-        String fileName = fileToSave.getAbsolutePath() + ".xlsx";
-
-        InvoiceCtrl invoiceCtrl = new InvoiceCtrl(DBConnection.getConnection());
-        if (invoiceCtrl.exportInvoiceDataToExcel(fileName)) {
-            JOptionPane.showMessageDialog(this, "Xuất file thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+    private void printInvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printInvActionPerformed
+        if (InvoiceTable.getSelectedRow() >= 0) {
+            PrintInvoice pi = new PrintInvoice(Integer.parseInt(invoiceIdTxt.getText()));
         } else {
-            JOptionPane.showMessageDialog(this, "Xuất file thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Chưa chọn hóa đơn để in", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_printInvActionPerformed
+    private void exportInvoiceToExcel() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Lưu vào");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String fileName = fileToSave.getAbsolutePath() + ".xlsx";
+            InvoiceCtrl invoiceCtrl = new InvoiceCtrl(DBConnection.getConnection());
+            if (invoiceCtrl.exportInvoiceDataToExcel(fileName)) {
+                JOptionPane.showMessageDialog(null, "Xuất file thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Xuất file thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
-}
 
     private void searchInvoice(String keyword) {
         displayInvoiceTable(invc.generateQuery((String) sortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
@@ -456,7 +474,12 @@ public class Invoice extends javax.swing.JPanel {
 
     private void displayInvoiceTable(String sql) {
         try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
-            DefaultTableModel tableModel = new DefaultTableModel();
+            DefaultTableModel tableModel = new DefaultTableModel() {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
             int columnCount = Rs.getMetaData().getColumnCount();
             for (int i = 1; i <= columnCount; i++) {
                 tableModel.addColumn(Rs.getMetaData().getColumnName(i));
@@ -565,6 +588,7 @@ public class Invoice extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField payMethodTxt;
+    private javax.swing.JButton printInv;
     private javax.swing.JComboBox<String> searchCb;
     private javax.swing.JTextField searchInvoiceTxt;
     private javax.swing.JComboBox<String> sortCb;

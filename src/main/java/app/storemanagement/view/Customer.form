@@ -124,6 +124,9 @@
   </Layout>
   <SubComponents>
     <Component class="javax.swing.JTextField" name="fullName">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) fullName.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel22">
       <Properties>
@@ -148,6 +151,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="address">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) address.getDocument()).setDocumentFilter(new LimitDocumentFilter(100));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel27">
       <Properties>
@@ -172,6 +178,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="email">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) email.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="editButton1">
       <Properties>
@@ -317,6 +326,9 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JTextField" name="phone">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) phone.getDocument()).setDocumentFilter(new LimitDocumentFilter(15));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="searchCb">
       <Properties>

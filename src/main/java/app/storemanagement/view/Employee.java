@@ -22,6 +22,7 @@ import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
 
 /**
  *
@@ -329,6 +330,10 @@ public class Employee extends javax.swing.JPanel {
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
+
+        ((AbstractDocument) uname.getDocument()).setDocumentFilter(new LimitDocumentFilter(20));
+        ((AbstractDocument) fname.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));
+        ((AbstractDocument) salaryText.getDocument()).setDocumentFilter(new LimitDocumentFilter(15));
     }// </editor-fold>//GEN-END:initComponents
 
     private void employeeTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_employeeTableMouseClicked

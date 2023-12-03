@@ -16,6 +16,7 @@ import java.sql.Statement;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.text.AbstractDocument;
 
 /**
  *
@@ -157,6 +158,7 @@ public class AddProduct extends javax.swing.JFrame {
         });
 
         productID.setEditable(false);
+        productID.setBackground(new java.awt.Color(255, 255, 255));
         productID.setFocusable(false);
 
         jLabel47.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -269,6 +271,10 @@ public class AddProduct extends javax.swing.JFrame {
                 .addGap(48, 48, 48))
         );
 
+        ((AbstractDocument) productName.getDocument()).setDocumentFilter(new LimitDocumentFilter(100));
+        ((AbstractDocument) unitPrice.getDocument()).setDocumentFilter(new LimitDocumentFilter(10));
+        ((AbstractDocument) qtyInStock.getDocument()).setDocumentFilter(new LimitDocumentFilter(10));
+        ((AbstractDocument) des.getDocument()).setDocumentFilter(new LimitDocumentFilter(200));
         JTextFieldDateEditor _nsx = ((JTextFieldDateEditor) nsx.getDateEditor());
         _nsx.setEnabled(true);
         _nsx.addKeyListener(new KeyAdapter() {

@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.text.AbstractDocument;
 
 /**
  *
@@ -345,6 +346,10 @@ public class ProductDetail extends javax.swing.JFrame {
                 .addGap(55, 55, 55))
         );
 
+        ((AbstractDocument) qtyInStock.getDocument()).setDocumentFilter(new LimitDocumentFilter(10));
+        ((AbstractDocument) des.getDocument()).setDocumentFilter(new LimitDocumentFilter(200));
+        ((AbstractDocument) unitPrice.getDocument()).setDocumentFilter(new LimitDocumentFilter(10));
+        ((AbstractDocument) productName.getDocument()).setDocumentFilter(new LimitDocumentFilter(100));
         productName.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {

@@ -16,6 +16,7 @@ import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
 
 /**
  *
@@ -220,6 +221,8 @@ public class Category extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(58, Short.MAX_VALUE))
         );
+
+        ((AbstractDocument) categoryName.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));
     }// </editor-fold>//GEN-END:initComponents
     private void displayCategory(String sortMethod) {
         displayCategoryTable(ctg.generateQuery(sortMethod, searchTextField.getText()));

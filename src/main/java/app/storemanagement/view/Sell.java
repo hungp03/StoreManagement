@@ -859,13 +859,12 @@ public class Sell extends javax.swing.JPanel {
     private void cusMoneyKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cusMoneyKeyPressed
         if (evt.isControlDown() && (evt.getKeyCode() == KeyEvent.VK_V)) {
             cusMoneyKeyTyped(evt);
-            JOptionPane.showMessageDialog(this, "Không thể ctrl+v", "Lỗi về nhập dữ liệu", JOptionPane.ERROR_MESSAGE);
         }
         calculatePaidMoney(cusMoney.getText());
     }//GEN-LAST:event_cusMoneyKeyPressed
 
     private void cusMoneyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cusMoneyKeyTyped
-        if (!(evt.getKeyChar() >= '0' && evt.getKeyChar() <= '9')) {
+        if (cusMoney.getText().length() > 9 ||!(evt.getKeyChar() >= '0' && evt.getKeyChar() <= '9')) {
             evt.consume();
         }
     }//GEN-LAST:event_cusMoneyKeyTyped

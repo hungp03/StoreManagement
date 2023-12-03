@@ -46,31 +46,13 @@ public class EmployeeCtrl implements BaseController<EmployeeModel> {
             }
             return true;
         } catch (SQLException e) {
+            System.out.println(e.getSQLState());
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
 
     @Override
-//    public boolean update(EmployeeModel employee) {
-//        String sql = "UPDATE Employee SET Username=?, Password=?, Full_Name=?, Date_of_Birth=?, Gender=?, Role=?, Salary=?"
-//                + "WHERE Employee_ID=?";
-//        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-//            stmt.setInt(8, employee.getId());
-//            stmt.setString(1, employee.getUsername());
-//            stmt.setString(2, verifyAccess.hashPw(employee.getPassword()));
-//            stmt.setString(3, employee.getFullname());
-//            stmt.setDate(4, new java.sql.Date(employee.getDateOfBirth().getTime()));
-//            stmt.setString(5, employee.getGender());
-//            stmt.setString(6, employee.getRole());
-//            stmt.setInt(7, employee.getSalary());
-//            stmt.executeUpdate();
-//            return true;
-//        } catch (SQLException e) {
-//            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-//            return false;
-//        }
-//    }
     public boolean update(EmployeeModel employee) {
         String sql = "UPDATE Employee SET Username=?, Password=?, Full_Name=?, Date_of_Birth=?, Gender=?, Role=?, Salary=?"
                 + "WHERE Employee_ID=? AND NOT EXISTS (SELECT 1 FROM Employee WHERE Username = ? AND Employee_ID <> ?)";

@@ -151,6 +151,9 @@
   </Layout>
   <SubComponents>
     <Component class="javax.swing.JTextField" name="uname">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) uname.getDocument()).setDocumentFilter(new LimitDocumentFilter(20));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel31">
       <Properties>
@@ -188,6 +191,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="fname">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) fname.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel34">
       <Properties>
@@ -277,6 +283,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="salaryText">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) salaryText.getDocument()).setDocumentFilter(new LimitDocumentFilter(15));"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="editButton2">
       <Properties>

@@ -131,7 +131,7 @@ public class Util {
 
     //Kiểm tra số điện thoại hợp lệ (VD: Khu vực Việt Nam sẽ có dạng +8412345678 hoặc 012345678)
     public static boolean isValidPhoneNumber(String phoneNumber) {
-        String regex = "^(\\+\\d{1,11}|\\d{9})$";
+        String regex = "^(\\+\\d{1,12}|\\d{10})$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(phoneNumber);
         return matcher.matches();

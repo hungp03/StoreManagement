@@ -56,7 +56,7 @@ public class Dashboard extends javax.swing.JFrame {
         cardLayout.show(jPanel1, "overview");
         productPanel.setUserRole(userRole);
         categoryPanel.setUserRole(userRole);
-        if (userRole.equals("NVBH")) {
+        if (userRole.equals("banhang")) {
             sellPanel.setUid(uid);
         }
     }
