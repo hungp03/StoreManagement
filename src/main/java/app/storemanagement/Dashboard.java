@@ -80,9 +80,9 @@ public class Dashboard extends javax.swing.JFrame {
 
     private void setupButtons() {
         switch (userRole) {
-            case "NVBH" ->
+            case "banhang" ->
                 employeeBtn.setVisible(false);
-            case "NVK" -> {
+            case "kho" -> {
                 employeeBtn.setVisible(false);
                 customerBtn.setVisible(false);
                 sellBtn.setVisible(false);
