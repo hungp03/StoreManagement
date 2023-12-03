@@ -15,6 +15,11 @@ import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JFileChooser;
+import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import java.io.File;
 
 /**
  *
@@ -70,7 +75,7 @@ public class Invoice extends javax.swing.JPanel {
         totalMoneyTxt = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         payMethodTxt = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        ExportEx = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(76, 149, 108));
@@ -238,11 +243,11 @@ public class Invoice extends javax.swing.JPanel {
 
         payMethodTxt.setFocusable(false);
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        jButton1.setText("In hóa đơn");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        ExportEx.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        ExportEx.setText("In hóa đơn");
+        ExportEx.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                ExportExActionPerformed(evt);
             }
         });
 
@@ -288,7 +293,7 @@ public class Invoice extends javax.swing.JPanel {
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(201, 201, 201)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ExportEx, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -325,7 +330,7 @@ public class Invoice extends javax.swing.JPanel {
                     .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(payMethodTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ExportEx, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23))
         );
 
@@ -419,9 +424,27 @@ public class Invoice extends javax.swing.JPanel {
         });
     }//GEN-LAST:event_searchInvoiceTxtKeyTyped
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        PrintInvoice printInvoice = new PrintInvoice(Integer.parseInt(invoiceIdTxt.getText()));
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void ExportExActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExportExActionPerformed
+        exportInvoiceToExcel();
+    }//GEN-LAST:event_ExportExActionPerformed
+    private void exportInvoiceToExcel() {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Chọn vị trí lưu file");
+    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+    int userSelection = fileChooser.showSaveDialog(this);
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+        File fileToSave = fileChooser.getSelectedFile();
+        String fileName = fileToSave.getAbsolutePath() + ".xlsx";
+
+        InvoiceCtrl invoiceCtrl = new InvoiceCtrl(DBConnection.getConnection());
+        if (invoiceCtrl.exportInvoiceDataToExcel(fileName)) {
+            JOptionPane.showMessageDialog(this, "Xuất file thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Xuất file thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
 
     private void searchInvoice(String keyword) {
         displayInvoiceTable(invc.generateQuery((String) sortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
@@ -519,13 +542,13 @@ public class Invoice extends javax.swing.JPanel {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ExportEx;
     private javax.swing.JTable InvoiceTable;
     private javax.swing.JTable ProductTable;
     private javax.swing.JTextField cusNameTxt;
     private javax.swing.JTextField datetimeTxt;
     private javax.swing.JTextField employNameTxt;
     private javax.swing.JTextField invoiceIdTxt;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
