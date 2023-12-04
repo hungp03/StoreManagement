@@ -31,7 +31,7 @@ import javax.swing.text.AbstractDocument;
 public class Employee extends javax.swing.JPanel {
 
     private int key = 0;
-    EmployeeCtrl emp = new EmployeeCtrl();
+    private EmployeeCtrl emp = new EmployeeCtrl();
     /**
      * Creates new form Employee
      */
@@ -327,8 +327,8 @@ public class Employee extends javax.swing.JPanel {
                         .addComponent(jLabel38)
                         .addComponent(refresh)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
         );
 
         ((AbstractDocument) uname.getDocument()).setDocumentFilter(new LimitDocumentFilter(20));

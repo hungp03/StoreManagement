@@ -46,7 +46,7 @@ public class Sell extends javax.swing.JPanel {
         return cart.isEmpty();
     }
 
-    SellCtrl sell = new SellCtrl();
+    private SellCtrl sell = new SellCtrl();
 
     /**
      * Creates new form Invoice
@@ -301,7 +301,7 @@ public class Sell extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(confirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(printBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(134, Short.MAX_VALUE))
+                .addContainerGap(164, Short.MAX_VALUE))
         );
 
         ((AbstractDocument) cusMoney.getDocument()).setDocumentFilter(new DocumentFilter() {
@@ -320,7 +320,7 @@ public class Sell extends javax.swing.JPanel {
             }
         });
 
-        add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(658, 32, -1, 630));
+        add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(658, 32, -1, 660));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -503,7 +503,7 @@ public class Sell extends javax.swing.JPanel {
                 .addGap(16, 16, 16))
         );
 
-        add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 308, -1, 353));
+        add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 308, -1, 380));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setText("Chi tiết đơn hàng");

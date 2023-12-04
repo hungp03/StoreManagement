@@ -24,7 +24,7 @@ import javax.swing.text.AbstractDocument;
 public class Customer extends javax.swing.JPanel {
 
     private int key = 0;
-    CustomerCtrl cus = new CustomerCtrl();
+    private CustomerCtrl cus = new CustomerCtrl();
     /**
      * Creates new form Customer
      */
@@ -261,8 +261,8 @@ public class Customer extends javax.swing.JPanel {
                         .addComponent(searchCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         ((AbstractDocument) fullName.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));

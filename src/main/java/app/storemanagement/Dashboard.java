@@ -32,13 +32,14 @@ public class Dashboard extends javax.swing.JFrame {
     private int uid;
     private String userRole;
 
-    Product productPanel = null;
-    Employee employeePanel = null;
-    Customer customerPanel = null;
-    Overview overviewPanel = null;
-    Category categoryPanel = null;
-    Sell sellPanel = null;
-    Invoice invoicePanel = null;
+    private Product productPanel = null;
+    private Employee employeePanel = null;
+    private Customer customerPanel = null;
+    private Overview overviewPanel = null;
+    private Category categoryPanel = null;
+    private Sell sellPanel = null;
+    private Invoice invoicePanel = null;
+    private UserInfo userinfo = null;
 
     public Dashboard(int uid, String role) {
         initComponents();
@@ -59,6 +60,8 @@ public class Dashboard extends javax.swing.JFrame {
             }
             case "admin" -> {
                 employeePanel = new Employee();
+                invoicePanel = new Invoice();
+                customerPanel = new Customer();
             }
             default -> {
                 // Không làm gì hết
@@ -173,8 +176,9 @@ public class Dashboard extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
         infoLabel = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         overviewBtn = new javax.swing.JButton();
         employeeBtn = new javax.swing.JButton();
         categoryBtn = new javax.swing.JButton();
@@ -187,14 +191,12 @@ public class Dashboard extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Quản lý cửa hàng");
         setFocusable(false);
-        setPreferredSize(new java.awt.Dimension(1280, 720));
         setResizable(false);
 
         jPanel1.setPreferredSize(new java.awt.Dimension(1024, 720));
         jPanel1.setLayout(new java.awt.CardLayout());
 
-        jPanel2.setBackground(new java.awt.Color(76, 149, 108));
-        jPanel2.setForeground(new java.awt.Color(76, 149, 108));
+        jPanel3.setBackground(new java.awt.Color(76, 149, 108));
 
         infoLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         infoLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -205,6 +207,9 @@ public class Dashboard extends javax.swing.JFrame {
                 infoLabelMouseClicked(evt);
             }
         });
+
+        jPanel2.setBackground(new java.awt.Color(76, 149, 108));
+        jPanel2.setForeground(new java.awt.Color(76, 149, 108));
 
         overviewBtn.setBackground(new java.awt.Color(76, 149, 108));
         overviewBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -297,45 +302,22 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
-        logoutBtn.setBackground(new java.awt.Color(76, 149, 108));
-        logoutBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        logoutBtn.setForeground(new java.awt.Color(255, 255, 255));
-        logoutBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logout.png"))); // NOI18N
-        logoutBtn.setText("Đăng xuất");
-        logoutBtn.setBorder(null);
-        logoutBtn.setFocusPainted(false);
-        logoutBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logoutBtnActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(infoLabel))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(56, 56, 56)
-                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(customerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(sellBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(customerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(sellBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(infoLabel)
-                .addGap(6, 6, 6)
-                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(143, 143, 143)
+                .addGap(130, 130, 130)
                 .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6)
                 .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -351,63 +333,110 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        logoutBtn.setBackground(new java.awt.Color(76, 149, 108));
+        logoutBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        logoutBtn.setForeground(new java.awt.Color(255, 255, 255));
+        logoutBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logout.png"))); // NOI18N
+        logoutBtn.setText("Đăng xuất");
+        logoutBtn.setBorder(null);
+        logoutBtn.setFocusPainted(false);
+        logoutBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(infoLabel))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(61, 61, 61)
+                        .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(infoLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void productBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productBtnActionPerformed
-        cardLayout.show(jPanel1, "product");
-    }//GEN-LAST:event_productBtnActionPerformed
+    private void infoLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_infoLabelMouseClicked
+        if (userinfo == null) {
+            userinfo = new UserInfo(uid, userRole);
+            userinfo.setVisible(true);
+            userinfo.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    if (userinfo.isInfoChanged()) {
+                        infoLabel.setText("Xin chào, " + userinfo.getNewUserName());
+                    }
+                    userinfo = null; // Đặt lại userinfo thành null khi cửa sổ đóng
+                }
+            });
+        } else {
+            userinfo.toFront(); // Đưa frame đã tồn tại lên trước mặt
+        }
+    }//GEN-LAST:event_infoLabelMouseClicked
 
     private void overviewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_overviewBtnActionPerformed
         cardLayout.show(jPanel1, "overview");
         new java.util.Timer().schedule(
-                new java.util.TimerTask() {
-            @Override
-            public void run() {
-                if (overviewPanel != null) {
-                    overviewPanel.refreshData();
+            new java.util.TimerTask() {
+                @Override
+                public void run() {
+                    if (overviewPanel != null) {
+                        overviewPanel.refreshData();
+                    }
                 }
-            }
-        },
-                500
+            },
+            500
         );
     }//GEN-LAST:event_overviewBtnActionPerformed
 
-    private void invoiceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceBtnActionPerformed
-        // TODO add your handling code here:
-        cardLayout.show(jPanel1, "invoice");
-        new java.util.Timer().schedule(
-                new java.util.TimerTask() {
-            @Override
-            public void run() {
-                if (invoicePanel != null) {
-                    invoicePanel.refreshData();
-                }
-            }
-        },
-                500
-        );
-    }//GEN-LAST:event_invoiceBtnActionPerformed
+    private void employeeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeeBtnActionPerformed
+        cardLayout.show(jPanel1, "employee");
+    }//GEN-LAST:event_employeeBtnActionPerformed
 
     private void categoryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryBtnActionPerformed
         cardLayout.show(jPanel1, "category");
     }//GEN-LAST:event_categoryBtnActionPerformed
+
+    private void productBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productBtnActionPerformed
+        cardLayout.show(jPanel1, "product");
+    }//GEN-LAST:event_productBtnActionPerformed
 
     private void customerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customerBtnActionPerformed
         cardLayout.show(jPanel1, "customer");
@@ -417,9 +446,21 @@ public class Dashboard extends javax.swing.JFrame {
         cardLayout.show(jPanel1, "sell");
     }//GEN-LAST:event_sellBtnActionPerformed
 
-    private void employeeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeeBtnActionPerformed
-        cardLayout.show(jPanel1, "employee");
-    }//GEN-LAST:event_employeeBtnActionPerformed
+    private void invoiceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceBtnActionPerformed
+        // TODO add your handling code here:
+        cardLayout.show(jPanel1, "invoice");
+        new java.util.Timer().schedule(
+            new java.util.TimerTask() {
+                @Override
+                public void run() {
+                    if (invoicePanel != null) {
+                        invoicePanel.refreshData();
+                    }
+                }
+            },
+            500
+        );
+    }//GEN-LAST:event_invoiceBtnActionPerformed
 
     private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
         int confirmed = JOptionPane.showConfirmDialog(null, "Xác nhận đăng xuất?", "Xác nhận", JOptionPane.YES_NO_OPTION);
@@ -431,19 +472,6 @@ public class Dashboard extends javax.swing.JFrame {
             new Login().setVisible(true);
         }
     }//GEN-LAST:event_logoutBtnActionPerformed
-
-    private void infoLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_infoLabelMouseClicked
-        UserInfo userinfo = new UserInfo(uid, userRole);
-        userinfo.setVisible(true);
-        userinfo.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                if (userinfo.isInfoChanged()) {
-                    infoLabel.setText("Xin chào, " + userinfo.getNewUserName());
-                }
-            }
-        });
-    }//GEN-LAST:event_infoLabelMouseClicked
 
     public void setInfoLabel(String user) {
         this.infoLabel.setText("Xin chào, " + user);
@@ -457,6 +485,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JButton invoiceBtn;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JButton logoutBtn;
     private javax.swing.JButton overviewBtn;
     private javax.swing.JButton productBtn;

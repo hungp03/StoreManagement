@@ -1,21 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package app.storemanagement.view;
 
 import app.storemanagement.controller.UserCtrl;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.UserModel;
 import app.storemanagement.utils.Util;
+import com.toedter.calendar.JTextFieldDateEditor;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +38,8 @@ public class UserInfo extends javax.swing.JFrame {
 
     /**
      * Creates new form UserInfo
+     * @param id
+     * @param role
      */
     public UserInfo(int id, String role) {
         this.uid = id;
@@ -99,9 +100,11 @@ public class UserInfo extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thông tin tài khoản");
+        setFocusTraversalPolicyProvider(true);
         setResizable(false);
         getContentPane().setLayout(new java.awt.CardLayout());
 
+        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jPanel1.setPreferredSize(new java.awt.Dimension(360, 300));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -161,6 +164,7 @@ public class UserInfo extends javax.swing.JFrame {
         jPanel1.add(updateInfoLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 190, -1, -1));
 
         updateBtn.setText("Cập nhật");
+        updateBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         updateBtn.setEnabled(false);
         updateBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,6 +174,7 @@ public class UserInfo extends javax.swing.JFrame {
         jPanel1.add(updateBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 246, -1, -1));
 
         cancelBtn.setText("Hủy");
+        cancelBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelBtn.setEnabled(false);
         cancelBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -179,7 +184,26 @@ public class UserInfo extends javax.swing.JFrame {
         jPanel1.add(cancelBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(216, 246, -1, -1));
 
         birthday.setBackground(new java.awt.Color(255, 255, 255));
+        birthday.setEnabled(false);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        birthday.setDateFormatString(sdf.toPattern());
         jPanel1.add(birthday, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 162, 230, -1));
+        JTextFieldDateEditor _birthday = ((JTextFieldDateEditor) birthday.getDateEditor());
+        _birthday.setEnabled(true);
+        _birthday.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                e.consume(); // Chặn sự kiện phím
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
+                    e.consume(); // Chặn sự kiện phím
+                }
+            }
+        });
 
         getContentPane().add(jPanel1, "card2");
 
@@ -201,6 +225,7 @@ public class UserInfo extends javax.swing.JFrame {
         jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 164, -1, -1));
 
         updatePW.setText("Cập nhật");
+        updatePW.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         updatePW.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updatePWActionPerformed(evt);
@@ -209,6 +234,7 @@ public class UserInfo extends javax.swing.JFrame {
         jPanel2.add(updatePW, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 250, -1, -1));
 
         cancelPw.setText("Hủy");
+        cancelPw.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelPw.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelPwActionPerformed(evt);
@@ -217,6 +243,7 @@ public class UserInfo extends javax.swing.JFrame {
         jPanel2.add(cancelPw, new org.netbeans.lib.awtextra.AbsoluteConstraints(216, 250, -1, -1));
 
         showPw.setText("Hiện mật khẩu");
+        showPw.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         showPw.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 showPwItemStateChanged(evt);
@@ -307,6 +334,7 @@ public class UserInfo extends javax.swing.JFrame {
         fullName.setEditable(b);
         updateBtn.setEnabled(b);
         cancelBtn.setEnabled(b);
+        birthday.getCalendarButton().setEnabled(b);
     }
     private void updateInfoLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateInfoLabelMouseClicked
         handleInput(true);

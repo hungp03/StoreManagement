@@ -42,7 +42,7 @@ public class Overview extends javax.swing.JPanel {
         generateWeekChart();
         generateMonthChart();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -198,8 +198,8 @@ public class Overview extends javax.swing.JPanel {
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
-                .addComponent(overviewChart, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addComponent(overviewChart, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(36, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     public void refreshData() {
@@ -216,9 +216,9 @@ public class Overview extends javax.swing.JPanel {
                            ISNULL((SELECT SUM(Total_Amount) FROM Invoice WHERE CAST(Date AS DATE) = CAST(GETDATE() AS DATE)), 0) as totalToday
                        FROM Invoice
                        """;
-        
+
         try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(query)) {
-            if (Rs.next()){
+            if (Rs.next()) {
                 int count = Rs.getInt("numberInvoice");
                 double total = Rs.getDouble("total");
                 double totalToday = Rs.getDouble("totalToday");
@@ -286,6 +286,9 @@ public class Overview extends javax.swing.JPanel {
             dateAxis.setTickUnit(new DateTickUnit(tickUnitType, tickUnitValue));
             plot.setDomainAxis(dateAxis);
 
+            // Xóa tất cả các thành phần khỏi panel
+            panel.removeAll();
+            
             ChartPanel chartPanel = new ChartPanel(chart);
             panel.add(chartPanel, BorderLayout.CENTER);
             panel.validate();

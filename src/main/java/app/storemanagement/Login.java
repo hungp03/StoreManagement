@@ -17,7 +17,7 @@ public class Login extends javax.swing.JFrame {
         initComponents();
     }
     
-    LoginCtrl login = new LoginCtrl();
+    private final LoginCtrl login = new LoginCtrl();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -47,6 +47,7 @@ public class Login extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Đăng nhập");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         setResizable(false);
 
         jPanel9.setBackground(new java.awt.Color(76, 149, 108));

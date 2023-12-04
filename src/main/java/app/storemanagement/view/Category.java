@@ -31,8 +31,8 @@ public class Category extends javax.swing.JPanel {
         this.userRole = userRole;
     }
     
-    CategoryCtrl ctg = new CategoryCtrl();
-    VerifyAccess verifyAccess = new VerifyAccess();
+    private CategoryCtrl ctg = new CategoryCtrl();
+    private VerifyAccess verifyAccess = new VerifyAccess();
     
     /**
      * Creates new form Category
@@ -218,8 +218,8 @@ public class Category extends javax.swing.JPanel {
                         .addComponent(jLabel21))
                     .addComponent(refresh))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         ((AbstractDocument) categoryName.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));

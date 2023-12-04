@@ -4,7 +4,6 @@ import app.storemanagement.controller.ProductCtrl;
 import app.storemanagement.middleware.VerifyAccess;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
-import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
@@ -31,8 +30,10 @@ public class Product extends javax.swing.JPanel {
     public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
-    ProductCtrl productCtrl = new ProductCtrl();
-    VerifyAccess verifyAccess = new VerifyAccess();
+    private final ProductCtrl productCtrl = new ProductCtrl();
+    private final VerifyAccess verifyAccess = new VerifyAccess();
+    private AddProduct ap = null;
+    private ProductDetail pd = null;
 
     /**
      * Creates new form Product
@@ -440,8 +441,8 @@ public class Product extends javax.swing.JPanel {
                         .addComponent(jLabel48)
                         .addComponent(searchCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58))
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -571,20 +572,24 @@ public class Product extends javax.swing.JPanel {
 
     private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed
         if (verifyAccess.authorizationNVBH(userRole)) {
-            AddProduct ap = new AddProduct();
-            ap.setVisible(true);
-            ap.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    if (ap.isDataAdded()) {
-                        // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
-                        displayProduct((String) productSort.getSelectedItem());
-                        searchTextField.setText("");
-                        showMetrics();
+            if (ap == null) {
+                ap = new AddProduct();
+                ap.setVisible(true);
+                ap.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        if (ap.isDataAdded()) {
+                            // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
+                            displayProduct((String) productSort.getSelectedItem());
+                            searchTextField.setText("");
+                            showMetrics();
+                        }
+                        ap = null; //// Đặt lại thành null khi cửa sổ đóng
                     }
-
-                }
-            });
+                });
+            } else {
+                ap.toFront(); // Đưa frame đã tồn tại lên trước mặt
+            }
         }
     }//GEN-LAST:event_addProductActionPerformed
 
@@ -612,22 +617,26 @@ public class Product extends javax.swing.JPanel {
     }//GEN-LAST:event_deleteProductActionPerformed
 
     private void detailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailButtonActionPerformed
-        //System.out.print(key);
         if (detailButton.isEnabled() == true) {
             if (productTable.getSelectedRow() >= 0) {
-                ProductDetail pd = new ProductDetail(key);
-                pd.setVisible(true);
-                pd.setUserRole(userRole);
-                pd.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        if (pd.isDataChanged()) {
-                            // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
-                            showMetrics();
-                            displayProduct((String) productSort.getSelectedItem());
+                if (pd == null) {
+                    pd = new ProductDetail(key);
+                    pd.setVisible(true);
+                    pd.setUserRole(userRole);
+                    pd.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                            if (pd.isDataChanged()) {
+                                // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
+                                showMetrics();
+                                displayProduct((String) productSort.getSelectedItem());
+                            }
+                            pd = null; //Đặt lại thành null khi đóng
                         }
-                    }
-                });
+                    });
+                } else {
+                    pd.toFront();
+                }
             } else {
                 JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xem!");
             }
