@@ -24,6 +24,12 @@ import javax.swing.text.AbstractDocument;
  */
 public class AddProduct extends javax.swing.JFrame {
 
+    private boolean dataAdded = false;
+
+    public boolean isDataAdded() {
+        return dataAdded;
+    }
+
     /**
      * Creates new form ProductDetail
      */
@@ -348,13 +354,14 @@ public class AddProduct extends javax.swing.JFrame {
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Đã thêm sản phẩm");
                         productID.setText(String.valueOf(Util.getNextID("Product_ID", "Product")));
+                        dataAdded = true;
                         clearTextField();
                     }
                 }
             }
         } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Đầu vào không hợp lệ", "Error", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_addButtonActionPerformed

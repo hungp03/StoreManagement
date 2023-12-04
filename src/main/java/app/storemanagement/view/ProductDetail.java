@@ -33,11 +33,17 @@ public class ProductDetail extends javax.swing.JFrame {
 
     private int id;
     private String userRole;
+    private boolean dataChanged = false;
 
     public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
 
+    public boolean isDataChanged() {
+        return dataChanged;
+    }
+    
+    
     /**
      * Creates new form ProductDetail
      *
@@ -511,6 +517,7 @@ public class ProductDetail extends javax.swing.JFrame {
                         double unit_Tmp = Double.parseDouble(unitPrice.getText());
                         unitPrice.setText(Util.convertToVND(unit_Tmp));
                         preventChange();
+                        dataChanged = true;
                     }
                 }
             }

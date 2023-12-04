@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
  * @author Hung Pham
  */
 public class Util {
+
     //Tạo ID tiếp theo
     public static int getNextID(String idName, String tableName) {
         int nextID = 1;
@@ -36,7 +37,7 @@ public class Util {
         }
         return nextID;
     }
-    
+
     //Ràng buộc ngày tháng của sản phẩm
     public static boolean checkDate(Date manufactureDate, Date expiryDate, Date entry) {
         Date today = new Date();
@@ -185,4 +186,20 @@ public class Util {
         return String.valueOf(currencyFormat.parse(amount).intValue());
     }
 
+    public static boolean validateUserInfo(String username, String fullName, Date dob) {
+        boolean accept = true;
+        if (username.trim().isEmpty() || fullName.trim().isEmpty() || dob == null) {
+            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ", "Warning", JOptionPane.WARNING_MESSAGE);
+            accept = false;
+        }
+        if (!isValidUsername(username)) {
+            JOptionPane.showMessageDialog(null, "Username không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
+            accept = false;
+        }
+        if (dob != null && isUnder18(dob.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) {
+            JOptionPane.showMessageDialog(null, "Không được dưới 18 tuổi", "Warning", JOptionPane.WARNING_MESSAGE);
+            accept = false;
+        }
+        return accept;
+    }
 }

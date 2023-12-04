@@ -7,6 +7,7 @@ import app.storemanagement.view.Invoice;
 import app.storemanagement.view.Overview;
 import app.storemanagement.view.Product;
 import app.storemanagement.view.Sell;
+import app.storemanagement.view.UserInfo;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -43,12 +44,12 @@ public class Dashboard extends javax.swing.JFrame {
         initComponents();
         this.userRole = role;
         this.uid = uid;
-        
+
         //3 panel chắc chắn user nào cũng dùng
         overviewPanel = new Overview();
         productPanel = new Product();
         categoryPanel = new Category();
-        
+
         // Khởi tạo các panel tùy thuộc vào vai trò người dùng
         switch (userRole) {
             case "banhang" -> {
@@ -199,6 +200,11 @@ public class Dashboard extends javax.swing.JFrame {
         infoLabel.setForeground(new java.awt.Color(255, 255, 255));
         infoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/user.png"))); // NOI18N
         infoLabel.setText("Xin chào, username");
+        infoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                infoLabelMouseClicked(evt);
+            }
+        });
 
         overviewBtn.setBackground(new java.awt.Color(76, 149, 108));
         overviewBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -425,6 +431,19 @@ public class Dashboard extends javax.swing.JFrame {
             new Login().setVisible(true);
         }
     }//GEN-LAST:event_logoutBtnActionPerformed
+
+    private void infoLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_infoLabelMouseClicked
+        UserInfo userinfo = new UserInfo(uid, userRole);
+        userinfo.setVisible(true);
+        userinfo.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (userinfo.isInfoChanged()) {
+                    infoLabel.setText("Xin chào, " + userinfo.getNewUserName());
+                }
+            }
+        });
+    }//GEN-LAST:event_infoLabelMouseClicked
 
     public void setInfoLabel(String user) {
         this.infoLabel.setText("Xin chào, " + user);

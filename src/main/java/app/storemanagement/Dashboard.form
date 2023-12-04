@@ -122,6 +122,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Xin ch&#xe0;o, username"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="infoLabelMouseClicked"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="overviewBtn">
           <Properties>

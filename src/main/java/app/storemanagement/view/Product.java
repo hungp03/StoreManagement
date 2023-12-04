@@ -33,12 +33,13 @@ public class Product extends javax.swing.JPanel {
     }
     ProductCtrl productCtrl = new ProductCtrl();
     VerifyAccess verifyAccess = new VerifyAccess();
+
     /**
      * Creates new form Product
      */
     public Product() {
         initComponents();
-        dp();
+        showMetrics();
         displayProduct((String) productSort.getSelectedItem());
     }
 
@@ -452,7 +453,7 @@ public class Product extends javax.swing.JPanel {
         displayProductTable(productCtrl.generateQuery((String) productSort.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
     }
 
-    private void dp() {
+    private void showMetrics() {
         String query = """
                        SELECT COUNT(Product_ID) AS totalProduct, SUM(Quantity_In_Stock) AS totalQuantity,
                        (SELECT SUM(Quantity) FROM Contain) AS totalSold FROM Product
@@ -565,20 +566,23 @@ public class Product extends javax.swing.JPanel {
         searchTextField.setText("");
         productSort.setSelectedIndex(0);
         searchCb.setSelectedIndex(0);
-        dp();
+        showMetrics();
     }//GEN-LAST:event_refreshMouseClicked
 
     private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed
         if (verifyAccess.authorizationNVBH(userRole)) {
-            AddProduct detail = new AddProduct();
-            detail.setVisible(true);
-            detail.addWindowListener(new WindowAdapter() {
+            AddProduct ap = new AddProduct();
+            ap.setVisible(true);
+            ap.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                    // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
-                    displayProduct((String) productSort.getSelectedItem());
-                    searchTextField.setText("");
-                    dp();
+                    if (ap.isDataAdded()) {
+                        // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
+                        displayProduct((String) productSort.getSelectedItem());
+                        searchTextField.setText("");
+                        showMetrics();
+                    }
+
                 }
             });
         }
@@ -602,7 +606,7 @@ public class Product extends javax.swing.JPanel {
                     }
                 }
                 displayProduct((String) productSort.getSelectedItem());
-                dp();
+                showMetrics();
             }
         }
     }//GEN-LAST:event_deleteProductActionPerformed
@@ -617,9 +621,11 @@ public class Product extends javax.swing.JPanel {
                 pd.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
-                        dp();
-                        displayProduct((String) productSort.getSelectedItem());
+                        if (pd.isDataChanged()) {
+                            // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
+                            showMetrics();
+                            displayProduct((String) productSort.getSelectedItem());
+                        }
                     }
                 });
             } else {
