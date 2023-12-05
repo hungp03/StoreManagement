@@ -2,6 +2,7 @@ package app.storemanagement.controller;
 
 import app.storemanagement.Dashboard;
 import app.storemanagement.model.Connection.DBConnection;
+import app.storemanagement.utils.Util;
 import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +16,7 @@ import org.mindrot.jbcrypt.BCrypt;
  * @author Hung Pham
  */
 public class LoginCtrl {
+
     public boolean checkLogin(String user, String pw, String role, String query) {
         boolean isLoggedIn = false;
         try (Connection conn = DBConnection.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
@@ -23,13 +25,19 @@ public class LoginCtrl {
                 if (rs.next()) {
                     // Lấy chuỗi băm từ cơ sở dữ liệu
                     String dbhash = rs.getString("Password");
+                    String fullName = rs.getString("Full_Name");
                     // So sánh mật khẩu với chuỗi băm bằng BCrypt.checkpw
                     // Bắt các ngoại lệ có thể xảy ra
                     try {
                         if (BCrypt.checkpw(pw, dbhash)) {
                             int uid = rs.getInt(1);
                             Dashboard db = new Dashboard(uid, role);
-                            db.setInfoLabel(user);
+                            db.setInfoLabel(Util.truncateString(fullName));
+                            switch (role) {
+                                case "admin" -> db.setRoleLabel("Admin");
+                                case "banhang" -> db.setRoleLabel("Nhân viên bán hàng");
+                                case "kho" -> db.setRoleLabel("Nhân viên kho");
+                            }
                             db.setVisible(true);
                             isLoggedIn = true;
                         } else {

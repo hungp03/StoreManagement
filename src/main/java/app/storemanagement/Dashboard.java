@@ -1,5 +1,6 @@
 package app.storemanagement;
 
+import app.storemanagement.utils.Util;
 import app.storemanagement.view.Category;
 import app.storemanagement.view.Customer;
 import app.storemanagement.view.Employee;
@@ -177,7 +178,6 @@ public class Dashboard extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        infoLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         overviewBtn = new javax.swing.JButton();
         employeeBtn = new javax.swing.JButton();
@@ -186,7 +186,10 @@ public class Dashboard extends javax.swing.JFrame {
         customerBtn = new javax.swing.JButton();
         sellBtn = new javax.swing.JButton();
         invoiceBtn = new javax.swing.JButton();
+        userImg = new javax.swing.JLabel();
+        infoLabel = new javax.swing.JLabel();
         logoutBtn = new javax.swing.JButton();
+        roleLB = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Quản lý cửa hàng");
@@ -197,16 +200,6 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.CardLayout());
 
         jPanel3.setBackground(new java.awt.Color(76, 149, 108));
-
-        infoLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        infoLabel.setForeground(new java.awt.Color(255, 255, 255));
-        infoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/user.png"))); // NOI18N
-        infoLabel.setText("Xin chào, username");
-        infoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                infoLabelMouseClicked(evt);
-            }
-        });
 
         jPanel2.setBackground(new java.awt.Color(76, 149, 108));
         jPanel2.setForeground(new java.awt.Color(76, 149, 108));
@@ -306,7 +299,7 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(overviewBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(customerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -316,8 +309,8 @@ public class Dashboard extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(130, 130, 130)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(124, Short.MAX_VALUE)
                 .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6)
                 .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -330,47 +323,80 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGap(6, 6, 6)
                 .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6)
-                .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
+
+        userImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/user.png"))); // NOI18N
+        userImg.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                userImgMouseClicked(evt);
+            }
+        });
+
+        infoLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        infoLabel.setForeground(new java.awt.Color(255, 255, 255));
+        infoLabel.setText("fname");
 
         logoutBtn.setBackground(new java.awt.Color(76, 149, 108));
         logoutBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         logoutBtn.setForeground(new java.awt.Color(255, 255, 255));
         logoutBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logout.png"))); // NOI18N
-        logoutBtn.setText("Đăng xuất");
+        logoutBtn.setText("   Đăng xuất");
         logoutBtn.setBorder(null);
+        logoutBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         logoutBtn.setFocusPainted(false);
+        logoutBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                logoutBtnMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                logoutBtnMouseExited(evt);
+            }
+        });
         logoutBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 logoutBtnActionPerformed(evt);
             }
         });
 
+        roleLB.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        roleLB.setForeground(new java.awt.Color(255, 255, 255));
+        roleLB.setText("role");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(userImg)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(infoLabel)
+                    .addComponent(roleLB))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(infoLabel))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(61, 61, 61)
-                        .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(logoutBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(infoLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(userImg))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(infoLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(roleLB)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -393,36 +419,18 @@ public class Dashboard extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void infoLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_infoLabelMouseClicked
-        if (userinfo == null) {
-            userinfo = new UserInfo(uid, userRole);
-            userinfo.setVisible(true);
-            userinfo.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    if (userinfo.isInfoChanged()) {
-                        infoLabel.setText("Xin chào, " + userinfo.getNewUserName());
-                    }
-                    userinfo = null; // Đặt lại userinfo thành null khi cửa sổ đóng
-                }
-            });
-        } else {
-            userinfo.toFront(); // Đưa frame đã tồn tại lên trước mặt
-        }
-    }//GEN-LAST:event_infoLabelMouseClicked
-
     private void overviewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_overviewBtnActionPerformed
         cardLayout.show(jPanel1, "overview");
         new java.util.Timer().schedule(
-            new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    if (overviewPanel != null) {
-                        overviewPanel.refreshData();
-                    }
+                new java.util.TimerTask() {
+            @Override
+            public void run() {
+                if (overviewPanel != null) {
+                    overviewPanel.refreshData();
                 }
-            },
-            500
+            }
+        },
+                500
         );
     }//GEN-LAST:event_overviewBtnActionPerformed
 
@@ -450,15 +458,15 @@ public class Dashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
         cardLayout.show(jPanel1, "invoice");
         new java.util.Timer().schedule(
-            new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    if (invoicePanel != null) {
-                        invoicePanel.refreshData();
-                    }
+                new java.util.TimerTask() {
+            @Override
+            public void run() {
+                if (invoicePanel != null) {
+                    invoicePanel.refreshData();
                 }
-            },
-            500
+            }
+        },
+                500
         );
     }//GEN-LAST:event_invoiceBtnActionPerformed
 
@@ -473,8 +481,40 @@ public class Dashboard extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_logoutBtnActionPerformed
 
+    private void userImgMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_userImgMouseClicked
+        if (userinfo == null) {
+            userinfo = new UserInfo(uid, userRole);
+            userinfo.setVisible(true);
+            userinfo.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    if (userinfo.isInfoChanged()) {
+                        infoLabel.setText(Util.truncateString(userinfo.getNewUserName()));
+                    }
+                    userinfo = null; // Đặt lại userinfo thành null khi cửa sổ đóng
+                }
+            });
+        } else {
+            userinfo.toFront(); // Đưa frame đã tồn tại lên trước mặt
+        }
+    }//GEN-LAST:event_userImgMouseClicked
+
+    private void logoutBtnMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutBtnMouseEntered
+        logoutBtn.setBackground(Color.decode("#F2F2F2"));
+        logoutBtn.setForeground(Color.BLACK);
+    }//GEN-LAST:event_logoutBtnMouseEntered
+
+    private void logoutBtnMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutBtnMouseExited
+         logoutBtn.setBackground(Color.decode("#4C956C"));
+         logoutBtn.setForeground(Color.WHITE);
+    }//GEN-LAST:event_logoutBtnMouseExited
+
     public void setInfoLabel(String user) {
-        this.infoLabel.setText("Xin chào, " + user);
+        this.infoLabel.setText(user);
+    }
+
+    public void setRoleLabel(String role) {
+        this.roleLB.setText(role);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -489,6 +529,8 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JButton logoutBtn;
     private javax.swing.JButton overviewBtn;
     private javax.swing.JButton productBtn;
+    private javax.swing.JLabel roleLB;
     private javax.swing.JButton sellBtn;
+    private javax.swing.JLabel userImg;
     // End of variables declaration//GEN-END:variables
 }

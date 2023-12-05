@@ -84,7 +84,7 @@ public class CategoryCtrl implements BaseController<CategoryModel> {
     public String generateQuery(String sortMethod, String keyword) {
         String tmp = "";
         if (keyword.trim().isEmpty() == false) {
-            tmp = "where Category_Name like N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI";
+            tmp = "where Category_Name like N'%" + keyword.trim() + "%' COLLATE SQL_Latin1_General_CP1253_CI_AI ";
         }
         String query = "select * from Category " + tmp;
         if (sortMethod.equals("Mã phân loại")) {

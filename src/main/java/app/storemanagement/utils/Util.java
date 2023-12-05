@@ -202,4 +202,14 @@ public class Util {
         }
         return accept;
     }
+
+    public static String truncateString(String input) {
+        int maxLength = 22;
+
+        if (input.length() > maxLength) {
+            return input.substring(0, maxLength - 3) + "...";
+        }
+
+        return input;
+    }
 }

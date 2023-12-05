@@ -385,7 +385,7 @@ public class UserInfo extends javax.swing.JFrame {
     }//GEN-LAST:event_showPwItemStateChanged
     
     public String getNewUserName(){
-        return userName.getText();
+        return fullName.getText();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -99,7 +99,7 @@ public class EmployeeCtrl implements BaseController<EmployeeModel> {
                 case "Mã NV" ->
                     tmp = " WHERE Employee_ID LIKE N'%" + keyword.trim() + "%' ";
                 case "Tên NV" ->
-                    tmp = " WHERE Full_Name LIKE N'%" + keyword + "%' COLLATE Vietnamese_CI_AI ";
+                    tmp = " WHERE Full_Name LIKE N'%" + keyword + "%' COLLATE SQL_Latin1_General_CP1253_CI_AI ";
                 default -> {
                 }
             }
