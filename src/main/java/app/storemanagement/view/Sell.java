@@ -864,7 +864,7 @@ public class Sell extends javax.swing.JPanel {
     }//GEN-LAST:event_cusMoneyKeyPressed
 
     private void cusMoneyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cusMoneyKeyTyped
-        if (cusMoney.getText().length() > 9 ||!(evt.getKeyChar() >= '0' && evt.getKeyChar() <= '9')) {
+        if (cusMoney.getText().length() > 8 ||!(evt.getKeyChar() >= '0' && evt.getKeyChar() <= '9')) {
             evt.consume();
         }
     }//GEN-LAST:event_cusMoneyKeyTyped
