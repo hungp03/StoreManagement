@@ -667,8 +667,11 @@ public class Product extends javax.swing.JPanel {
     private void exportProductToExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProductToExcelActionPerformed
         Object options[] = {"Sản phẩm còn bán được ", "Sản phẩm hết hạn sử dụng", "Tất cả sản phẩm"};
         int choice = JOptionPane.showOptionDialog(null, "Chọn kiểu xuất danh sách", "Xuất danh sách", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                ExportProductToExcel tmp = new ExportProductToExcel(DBConnection.getConnection());
-                tmp.exportProductToExcel(choice);
+        if (choice == JOptionPane.CLOSED_OPTION) {
+            return;
+        }
+        ExportProductToExcel tmp = new ExportProductToExcel(DBConnection.getConnection());
+        tmp.exportProductToExcel(choice);
     }//GEN-LAST:event_exportProductToExcelActionPerformed
 
 
