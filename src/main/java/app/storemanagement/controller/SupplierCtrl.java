@@ -24,7 +24,7 @@ public class SupplierCtrl implements BaseController<SupplierModel> {
     @Override
     public boolean add(SupplierModel supplier) {
         String sql = "INSERT INTO Supplier (Supplier_ID, Supplier_Name, Address, Phone, Email)"
-                + "SELECT ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM Supplier WHERE Supplier_Name = ? OR Phone = ?)";
+                + "SELECT ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM Supplier WHERE Supplier_Name = ? OR Phone = ? OR Email = ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, supplier.getId());
             stmt.setString(2, supplier.getFullName());
@@ -33,9 +33,10 @@ public class SupplierCtrl implements BaseController<SupplierModel> {
             stmt.setString(5, supplier.getEmail());
             stmt.setString(6, supplier.getFullName());
             stmt.setString(7, supplier.getPhone());
+            stmt.setString(8, supplier.getEmail());
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                JOptionPane.showMessageDialog(null, "Tên hoặc số điện thoại nhà cung cấp đã tồn tại", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Tên,số điện thoại hoặc email đã tồn tại", "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
             return true;
@@ -62,7 +63,7 @@ public class SupplierCtrl implements BaseController<SupplierModel> {
             return true;
         } catch (SQLException e) {
             if (e.getErrorCode() == 2627) {
-                JOptionPane.showMessageDialog(null, "Tên hoặc số điện thoại nhà cung cấp đã tồn tại", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Tên, số điện thoại hoặc email nhà cung cấp đã tồn tại", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
