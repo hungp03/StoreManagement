@@ -7,18 +7,16 @@ public class CustomerModel extends BaseEntity {
     private String fullName;
     private String address;
     private String phone;
-    private String email;
     
     public CustomerModel(int id) {
         super(id);
     }
 
-    public CustomerModel(int id, String fullName, String address, String phone, String email) {
+    public CustomerModel(int id, String fullName, String address, String phone) {
         super(id);
         this.fullName = fullName;
         this.address = address;
         this.phone = phone;
-        this.email = email;
     }
 
     public String getFullName() {
@@ -43,14 +41,6 @@ public class CustomerModel extends BaseEntity {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
     
     @Override

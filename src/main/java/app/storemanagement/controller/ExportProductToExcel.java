@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package app.storemanagement.controller;
 
 import java.io.File;
@@ -42,22 +38,18 @@ public class ExportProductToExcel {
             String query = """
                           SELECT Product_ID,Product_Name,
                           Category_ID,Unit_Price,Quantity_In_Stock,
-                          Description,Manufacture_Date,Expiry_Date,Entry_Date FROM Product
+                          Manufacture_Date,Expiry_Date,Entry_Date FROM Product
                                    """;
             switch (condition) {
-                case 0: {
+                case 0 ->  {
                     query += "WHERE Quantity_In_Stock >0 AND GETDATE() < Expiry_Date";
-                    break;
                 }
-                case 1: {
+                case 1 ->  {
                     query += "WHERE GETDATE() > Expiry_Date";
-                    break;
                 }
-                case 2: {
-                    break;
+                case 2 ->  {
                 }
-                default: {
-                    break;
+                default ->  {
                 }
             }
 
@@ -118,23 +110,6 @@ public class ExportProductToExcel {
             return false;
         }
     }
-
-//    public void exportProductToExcel(int condition) {
-//        JFileChooser fileChooser = new JFileChooser();
-//        fileChooser.setDialogTitle("Lưu vào");
-//        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-//        int userSelection = fileChooser.showSaveDialog(null);
-//        if (userSelection == JFileChooser.APPROVE_OPTION) {
-//            File fileToSave = fileChooser.getSelectedFile();
-//            String fileName = fileToSave.getAbsolutePath() +".xlsx";
-//            if (exportProductDatatoExcel(fileName, condition)) {
-//                JOptionPane.showMessageDialog(null, "Xuất file thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-//            } else {
-//                JOptionPane.showMessageDialog(null, "Xuất file thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-//            }
-//        }
-//    }
-
     
     public void exportProductToExcel(int condition) {
         JFileChooser fileChooser = new JFileChooser();
@@ -146,7 +121,7 @@ public class ExportProductToExcel {
         String name = "";
         switch (condition) {
             case 0 ->
-                name = "Product_availabel  ";
+                name = "Product_available ";
             case 1 ->
                 name = "Expire_Product ";
             case 2 ->

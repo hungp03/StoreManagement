@@ -87,13 +87,9 @@ public class Util {
     }
 
     //Kiểm tra đầu vào của Customer
-    public static boolean validateCustomerInput(String name, String address, String phone, String email) {
+    public static boolean validateCustomerInput(String name, String address, String phone) {
         if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ", "Warning", JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        if (!email.isEmpty() && !checkEmail(email)) {
-            JOptionPane.showMessageDialog(null, "Email không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (!isValidPhoneNumber(phone)) {
@@ -125,9 +121,9 @@ public class Util {
     }
 
     //Kiểm tra đầu vào đã nhập hay chưa (thêm Product)
-    public static boolean checkExistInput(String name, Date manufactureDate, Date expiryDate, Date entry, String unitP, String quantityInStock, String description) {
+    public static boolean checkExistInput(String name, Date manufactureDate, Date expiryDate, Date entry, String unitP, String quantityInStock) {
         // Kiểm tra xem có ít nhất một giá trị tồn tại hay không
-        return !name.isEmpty() || manufactureDate != null || expiryDate != null || entry != null || !unitP.isEmpty() || !quantityInStock.isEmpty() || !description.isEmpty();
+        return !name.isEmpty() || manufactureDate != null || expiryDate != null || entry != null || !unitP.isEmpty() || !quantityInStock.isEmpty();
     }
 
     //Kiểm tra số điện thoại hợp lệ (VD: Khu vực Việt Nam sẽ có dạng +8412345678 hoặc 012345678)
@@ -209,7 +205,23 @@ public class Util {
         if (input.length() > maxLength) {
             return input.substring(0, maxLength - 3) + "...";
         }
-
         return input;
+    }
+    
+     //Kiểm tra đầu vào của Supplier
+    public static boolean validateSupplierInput(String name, String address, String phone, String email) {
+        if (name.isEmpty() || address.isEmpty() || phone.isEmpty() || email.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Thông tin không đầy đủ", "Warning", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (!email.isEmpty() && !checkEmail(email)) {
+            JOptionPane.showMessageDialog(null, "Email không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (!isValidPhoneNumber(phone)) {
+            JOptionPane.showMessageDialog(null, "SĐT không hợp lệ", "Warning", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
     }
 }

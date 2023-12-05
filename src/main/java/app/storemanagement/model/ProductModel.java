@@ -10,7 +10,7 @@ public class ProductModel extends BaseEntity{
     private int categoryId;
     private double unitPrice;
     private int quantityInStock;
-    private String description;
+    private int supplierId;
     private Date manufactureDate;
     private Date expiryDate;
     private Date entryDate;
@@ -19,13 +19,13 @@ public class ProductModel extends BaseEntity{
         super(id);
     }
 
-    public ProductModel(int id, String name, int categoryId, double unitPrice, int quantityInStock, String description, Date manufactureDate, Date expiryDate, Date entryDate) {
+    public ProductModel(int id, String name, int categoryId, double unitPrice, int quantityInStock, int supplierId, Date manufactureDate, Date expiryDate, Date entryDate) {
         super(id);
         this.name = name;
         this.categoryId = categoryId;
         this.unitPrice = unitPrice;
         this.quantityInStock = quantityInStock;
-        this.description = description;
+        this.supplierId = supplierId;
         this.manufactureDate = manufactureDate;
         this.expiryDate = expiryDate;
         this.entryDate = entryDate;
@@ -63,13 +63,14 @@ public class ProductModel extends BaseEntity{
         this.quantityInStock = quantityInStock;
     }
 
-    public String getDescription() {
-        return description;
+    public int getSupplierId() {
+        return supplierId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSupplierId(int supplierId) {
+        this.supplierId = supplierId;
     }
+
 
     public Date getManufactureDate() {
         return manufactureDate;

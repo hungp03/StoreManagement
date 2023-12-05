@@ -460,10 +460,9 @@
     <Component class="javax.swing.JComboBox" name="searchCb">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="3">
+          <StringArray count="2">
             <StringItem index="0" value="M&#xe3;"/>
             <StringItem index="1" value="T&#xea;n"/>
-            <StringItem index="2" value="Ph&#xe2;n lo&#x1ea1;i"/>
           </StringArray>
         </Property>
       </Properties>

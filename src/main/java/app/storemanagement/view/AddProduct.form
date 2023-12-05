@@ -37,8 +37,8 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel47" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="productID" alignment="0" min="-2" pref="200" max="-2" attributes="0"/>
-                                  <Component id="unitPrice" min="-2" pref="200" max="-2" attributes="0"/>
-                                  <Component id="jLabel45" min="-2" max="-2" attributes="0"/>
+                                  <Component id="supplierCb" alignment="0" min="-2" pref="199" max="-2" attributes="0"/>
+                                  <Component id="jLabel48" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
@@ -57,12 +57,12 @@
                                   <Component id="jLabel43" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="nsx" min="-2" pref="199" max="-2" attributes="0"/>
-                                  <Component id="productName" pref="200" max="32767" attributes="0"/>
+                                  <Component id="productName" min="-2" pref="200" max="-2" attributes="0"/>
                                   <Component id="jLabel40" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel41" min="-2" max="-2" attributes="0"/>
-                                  <Component id="des" pref="200" max="32767" attributes="0"/>
+                                  <Component id="unitPrice" min="-2" pref="200" max="-2" attributes="0"/>
+                                  <Component id="jLabel45" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -105,42 +105,53 @@
                   <Component id="productID" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel49" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel44" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel45" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="hsd" max="32767" attributes="0"/>
-                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel46" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel41" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel43" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel49" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel44" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="hsd" pref="33" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="nsx" min="-2" pref="35" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel46" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel43" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="qtyInStock" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                                      <Component id="unitPrice" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="entryDate" min="-2" pref="35" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Component id="jLabel45" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="addButton" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                          <Component id="cancelButton" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Component id="nsx" min="-2" pref="35" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="unitPrice" min="-2" pref="35" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
+                      <Component id="jLabel48" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="supplierCb" min="-2" pref="35" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="qtyInStock" min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="des" min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="entryDate" min="-2" pref="35" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="addButton" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="cancelButton" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -249,22 +260,6 @@
         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) qtyInStock.getDocument()).setDocumentFilter(new LimitDocumentFilter(10));"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JTextField" name="des">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="((AbstractDocument) des.getDocument()).setDocumentFilter(new LimitDocumentFilter(200));"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLabel41">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Segoe UI" size="18" style="1"/>
-        </Property>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="6c" green="95" red="4c" type="rgb"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="Mi&#xea;u t&#x1ea3;"/>
-      </Properties>
-    </Component>
     <Component class="javax.swing.JLabel" name="jLabel43">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -370,6 +365,27 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel48">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="18" style="1"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="6c" green="95" red="4c" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Nh&#xe0; cung c&#x1ea5;p"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="supplierCb">
+      <Properties>
+        <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+          <Color id="Default Cursor"/>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;SupplierCbx&gt;"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

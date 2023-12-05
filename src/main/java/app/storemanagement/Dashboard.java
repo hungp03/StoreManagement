@@ -8,6 +8,7 @@ import app.storemanagement.view.Invoice;
 import app.storemanagement.view.Overview;
 import app.storemanagement.view.Product;
 import app.storemanagement.view.Sell;
+import app.storemanagement.view.Supplier;
 import app.storemanagement.view.UserInfo;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -41,6 +42,7 @@ public class Dashboard extends javax.swing.JFrame {
     private Sell sellPanel = null;
     private Invoice invoicePanel = null;
     private UserInfo userinfo = null;
+    private Supplier supplierPanel = null;
 
     public Dashboard(int uid, String role) {
         initComponents();
@@ -63,6 +65,7 @@ public class Dashboard extends javax.swing.JFrame {
                 employeePanel = new Employee();
                 invoicePanel = new Invoice();
                 customerPanel = new Customer();
+                supplierPanel = new Supplier();
             }
             default -> {
                 // Không làm gì hết
@@ -106,16 +109,24 @@ public class Dashboard extends javax.swing.JFrame {
             if (invoicePanel != null) {
                 jPanel1.add(invoicePanel, "invoice");
             }
-            if (userRole.equals("banhang")) {
-                if (sellPanel != null) {
-                    jPanel1.add(sellPanel, "sell");
-                    sellPanel.setUid(uid);
+            switch (userRole) {
+                case "banhang" -> {
+                    if (sellPanel != null) {
+                        jPanel1.add(sellPanel, "sell");
+                        sellPanel.setUid(uid);
+                    }
                 }
-            } else if (userRole.equals("admin")) {
-                if (employeePanel != null) {
-                    jPanel1.add(employeePanel, "employee");
+                case "admin" -> {
+                    if (employeePanel != null) {
+                        jPanel1.add(employeePanel, "employee");
+                    }
+                    if (supplierPanel != null) {
+                        jPanel1.add(supplierPanel, "supplier");
+                    }
                 }
-            }
+                default -> {
+                }
+            } 
         }
     }
 
@@ -138,8 +149,8 @@ public class Dashboard extends javax.swing.JFrame {
 
     private void setupButtons() {
         Map<String, List<JButton>> roleToButtons = new HashMap<>();
-        roleToButtons.put("banhang", Arrays.asList(employeeBtn));
-        roleToButtons.put("kho", Arrays.asList(employeeBtn, customerBtn, sellBtn, invoiceBtn));
+        roleToButtons.put("banhang", Arrays.asList(employeeBtn, supplierBtn));
+        roleToButtons.put("kho", Arrays.asList(employeeBtn, customerBtn, sellBtn, invoiceBtn, supplierBtn));
         roleToButtons.put("admin", Arrays.asList(sellBtn));
 
         if (roleToButtons.containsKey(userRole)) {
@@ -154,7 +165,7 @@ public class Dashboard extends javax.swing.JFrame {
     }
 
     private void setupButtonActionListener() {
-        JButton[] buttons = {overviewBtn, employeeBtn, categoryBtn, productBtn, customerBtn, sellBtn, invoiceBtn};
+        JButton[] buttons = {overviewBtn, employeeBtn, categoryBtn, productBtn, customerBtn, sellBtn, invoiceBtn, supplierBtn};
 
         ActionListener actionListener = (ActionEvent e) -> {
             for (JButton button : buttons) {
@@ -186,6 +197,7 @@ public class Dashboard extends javax.swing.JFrame {
         customerBtn = new javax.swing.JButton();
         sellBtn = new javax.swing.JButton();
         invoiceBtn = new javax.swing.JButton();
+        supplierBtn = new javax.swing.JButton();
         userImg = new javax.swing.JLabel();
         infoLabel = new javax.swing.JLabel();
         logoutBtn = new javax.swing.JButton();
@@ -295,24 +307,43 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
+        supplierBtn.setBackground(new java.awt.Color(76, 149, 108));
+        supplierBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        supplierBtn.setForeground(new java.awt.Color(255, 255, 255));
+        supplierBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/supplier.png"))); // NOI18N
+        supplierBtn.setText("   Nhà cung cấp");
+        supplierBtn.setBorder(null);
+        supplierBtn.setFocusable(false);
+        supplierBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                supplierBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(overviewBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(customerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(sellBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(supplierBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sellBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(invoiceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(employeeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(124, Short.MAX_VALUE)
+                .addContainerGap(61, Short.MAX_VALUE)
                 .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(supplierBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(categoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6)
                 .addComponent(productBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -396,7 +427,7 @@ public class Dashboard extends javax.swing.JFrame {
                         .addComponent(roleLB)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -505,9 +536,13 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_logoutBtnMouseEntered
 
     private void logoutBtnMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutBtnMouseExited
-         logoutBtn.setBackground(Color.decode("#4C956C"));
-         logoutBtn.setForeground(Color.WHITE);
+        logoutBtn.setBackground(Color.decode("#4C956C"));
+        logoutBtn.setForeground(Color.WHITE);
     }//GEN-LAST:event_logoutBtnMouseExited
+
+    private void supplierBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_supplierBtnActionPerformed
+        cardLayout.show(jPanel1, "supplier");
+    }//GEN-LAST:event_supplierBtnActionPerformed
 
     public void setInfoLabel(String user) {
         this.infoLabel.setText(user);
@@ -531,6 +566,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JButton productBtn;
     private javax.swing.JLabel roleLB;
     private javax.swing.JButton sellBtn;
+    private javax.swing.JButton supplierBtn;
     private javax.swing.JLabel userImg;
     // End of variables declaration//GEN-END:variables
 }

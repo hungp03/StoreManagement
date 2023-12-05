@@ -23,15 +23,14 @@ public class CustomerCtrl implements BaseController<CustomerModel> {
 
     @Override
     public boolean add(CustomerModel customer) {
-        String sql = "INSERT INTO Customer (Customer_ID, Full_Name, Address, Phone, Email)"
-                + "SELECT ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM Customer WHERE Phone = ?)";
+        String sql = "INSERT INTO Customer (Customer_ID, Full_Name, Address, Phone)"
+                + "SELECT ?, ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM Customer WHERE Phone = ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, customer.getId());
             stmt.setString(2, customer.getFullName());
             stmt.setString(3, customer.getAddress());
             stmt.setString(4, customer.getPhone());
-            stmt.setString(5, customer.getEmail());
-            stmt.setString(6, customer.getPhone());
+            stmt.setString(5, customer.getPhone());
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
                 JOptionPane.showMessageDialog(null, "Số điện thoại đã tồn tại", "Error", JOptionPane.ERROR_MESSAGE);
@@ -46,16 +45,15 @@ public class CustomerCtrl implements BaseController<CustomerModel> {
 
     @Override
     public boolean update(CustomerModel customer) {
-        String sql = "UPDATE Customer SET Full_Name=?, Address=?, Phone=?, Email=?"
+        String sql = "UPDATE Customer SET Full_Name=?, Address=?, Phone=?"
                 + "WHERE Customer_ID=? AND NOT EXISTS (SELECT 1 FROM Customer WHERE Phone = ? AND Customer_ID <> ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(6, customer.getId());
+            stmt.setInt(4, customer.getId());
             stmt.setString(1, customer.getFullName());
             stmt.setString(2, customer.getAddress());
             stmt.setString(3, customer.getPhone());
-            stmt.setString(4, customer.getEmail());
             stmt.setString(5, customer.getPhone());
-            stmt.setInt(7, customer.getId());
+            stmt.setInt(6, customer.getId());
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
                 JOptionPane.showMessageDialog(null, "Số điện thoại đã tồn tại", "Error", JOptionPane.ERROR_MESSAGE);

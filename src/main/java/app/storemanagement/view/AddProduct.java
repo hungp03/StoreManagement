@@ -2,19 +2,14 @@ package app.storemanagement.view;
 
 import app.storemanagement.controller.ProductCtrl;
 import app.storemanagement.model.CategoryModel;
-import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
+import app.storemanagement.model.SupplierCbx;
 import app.storemanagement.utils.Util;
 import com.toedter.calendar.JTextFieldDateEditor;
 import java.awt.HeadlessException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Date;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
 
@@ -29,13 +24,22 @@ public class AddProduct extends javax.swing.JFrame {
     public boolean isDataAdded() {
         return dataAdded;
     }
+    private ProductCtrl pc = null;
 
     /**
      * Creates new form ProductDetail
      */
     public AddProduct() {
         initComponents();
-        getCategories();
+        try {
+            pc = new ProductCtrl();
+            pc.getCategories(cateCb);
+            pc.getSuppliers(supplierCb);
+        } finally {
+            if (pc != null) {
+                pc.close();
+            }
+        }
         productID.setText(String.valueOf(Util.getNextID("Product_ID", "Product")));
     }
 
@@ -58,8 +62,6 @@ public class AddProduct extends javax.swing.JFrame {
         unitPrice = new javax.swing.JTextField();
         jLabel46 = new javax.swing.JLabel();
         qtyInStock = new javax.swing.JTextField();
-        des = new javax.swing.JTextField();
-        jLabel41 = new javax.swing.JLabel();
         jLabel43 = new javax.swing.JLabel();
         entryDate = new com.toedter.calendar.JDateChooser();
         jLabel44 = new javax.swing.JLabel();
@@ -69,6 +71,8 @@ public class AddProduct extends javax.swing.JFrame {
         productID = new javax.swing.JTextField();
         jLabel47 = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
+        jLabel48 = new javax.swing.JLabel();
+        supplierCb = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thêm sản phẩm");
@@ -108,10 +112,6 @@ public class AddProduct extends javax.swing.JFrame {
         jLabel46.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel46.setForeground(new java.awt.Color(76, 149, 108));
         jLabel46.setText("Số lượng trong kho");
-
-        jLabel41.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel41.setForeground(new java.awt.Color(76, 149, 108));
-        jLabel41.setText("Miêu tả");
 
         jLabel43.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel43.setForeground(new java.awt.Color(76, 149, 108));
@@ -183,6 +183,12 @@ public class AddProduct extends javax.swing.JFrame {
             }
         });
 
+        jLabel48.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel48.setForeground(new java.awt.Color(76, 149, 108));
+        jLabel48.setText("Nhà cung cấp");
+
+        supplierCb.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -196,8 +202,9 @@ public class AddProduct extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel47)
                                     .addComponent(productID, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(unitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel45))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(supplierCb, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel48)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(92, 92, 92)
@@ -210,12 +217,12 @@ public class AddProduct extends javax.swing.JFrame {
                                     .addComponent(entryDate, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel43))
                                 .addGap(57, 57, 57)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(nsx, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(productName, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                                    .addComponent(productName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel40)
-                                    .addComponent(jLabel41)
-                                    .addComponent(des, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
+                                    .addComponent(unitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel45))
                                 .addGap(77, 77, 77)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel49)
@@ -247,40 +254,45 @@ public class AddProduct extends javax.swing.JFrame {
                     .addComponent(cateCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(productID, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel49)
-                    .addComponent(jLabel44)
-                    .addComponent(jLabel45))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(hsd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(26, 26, 26)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel46)
-                            .addComponent(jLabel41)
-                            .addComponent(jLabel43)))
+                            .addComponent(jLabel49)
+                            .addComponent(jLabel44))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(hsd, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+                                .addGap(26, 26, 26))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(nsx, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel46)
+                                    .addComponent(jLabel43))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(qtyInStock, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(unitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(entryDate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel45))
+                        .addGap(63, 63, 63)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(48, 48, 48))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(nsx, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(unitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(49, 49, 49)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(qtyInStock, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(des, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(entryDate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(63, 63, 63)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(48, 48, 48))
+                        .addComponent(jLabel48)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(supplierCb, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         ((AbstractDocument) productName.getDocument()).setDocumentFilter(new LimitDocumentFilter(100));
         ((AbstractDocument) unitPrice.getDocument()).setDocumentFilter(new LimitDocumentFilter(10));
         ((AbstractDocument) qtyInStock.getDocument()).setDocumentFilter(new LimitDocumentFilter(10));
-        ((AbstractDocument) des.getDocument()).setDocumentFilter(new LimitDocumentFilter(200));
         JTextFieldDateEditor _nsx = ((JTextFieldDateEditor) nsx.getDateEditor());
         _nsx.setEnabled(true);
         _nsx.addKeyListener(new KeyAdapter() {
@@ -302,26 +314,6 @@ public class AddProduct extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void getCategories() {
-        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery("SELECT * FROM Category")) {
-            // Tạo một DefaultComboBoxModel để lưu trữ các mục category
-            DefaultComboBoxModel<CategoryModel> model = new DefaultComboBoxModel<>();
-
-            while (Rs.next()) {
-                int id = Rs.getInt("Category_ID");
-                String name = Rs.getString("Category_Name");
-
-                // Tạo một đối tượng CategoryItem và thêm nó vào model
-                model.addElement(new CategoryModel(id, name));
-            }
-
-            // Đặt model cho ComboBox
-            cateCb.setModel(model);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-    }
-
     private boolean isExpired(Date hsd) {
         Date today = new Date();
         if (hsd.before(today)) {
@@ -331,33 +323,44 @@ public class AddProduct extends javax.swing.JFrame {
         return false;
     }
 
+    private void addProduct(ProductModel product) {
+        try {
+            pc = new ProductCtrl();
+            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm sản phẩm này?", "Alert",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (response == JOptionPane.YES_OPTION) {
+                boolean success = pc.add(product);
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "Đã thêm sản phẩm");
+                    productID.setText(String.valueOf(Util.getNextID("Product_ID", "Product")));
+                    dataAdded = true;
+                    clearTextField();
+                }
+            }
+        } finally {
+            if (pc != null) {
+                pc.close();
+            }
+        }
+    }
+    
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        int id = Util.getNextID("Product_ID", "Product");
+        int id = Integer.parseInt(productID.getText());
         String name = productName.getText().trim();
         CategoryModel categoryItem = (CategoryModel) cateCb.getSelectedItem();
+        SupplierCbx supcbx = (SupplierCbx) supplierCb.getSelectedItem();
         int categoryId = categoryItem.getId();
+        int supId = supcbx.getId();
         Date manufactureDate = nsx.getDate();
         Date expiryDate = hsd.getDate();
         Date entry = entryDate.getDate();
         try {
             double unitP = Double.parseDouble(unitPrice.getText().trim());
             int quantityInStock = Integer.parseInt(qtyInStock.getText().trim());
-            String description = des.getText().trim();
 
-            if (Util.validateProductInput(name, manufactureDate, expiryDate, entry, unitP, quantityInStock) && isExpired(expiryDate) == false) {
-                ProductModel product = new ProductModel(id, name, categoryId, unitP, quantityInStock, description, manufactureDate, expiryDate, entry);
-                ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
-                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm sản phẩm này?", "Alert",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION) {
-                    boolean success = tmp.add(product);
-                    if (success) {
-                        JOptionPane.showMessageDialog(null, "Đã thêm sản phẩm");
-                        productID.setText(String.valueOf(Util.getNextID("Product_ID", "Product")));
-                        dataAdded = true;
-                        clearTextField();
-                    }
-                }
+            if (Util.validateProductInput(name, manufactureDate, expiryDate, entry, unitP, quantityInStock) && !isExpired(expiryDate)) {
+                ProductModel product = new ProductModel(id, name, categoryId, unitP, quantityInStock, supId, manufactureDate, expiryDate, entry);
+                addProduct(product);
             }
         } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -369,12 +372,12 @@ public class AddProduct extends javax.swing.JFrame {
     private void clearTextField() {
         productName.setText("");
         cateCb.setSelectedIndex(0);
+        supplierCb.setSelectedIndex(0);
         nsx.setDate(null);
         hsd.setDate(null);
         entryDate.setDate(null);
         unitPrice.setText("");
         qtyInStock.setText("");
-        des.setText("");
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -384,8 +387,7 @@ public class AddProduct extends javax.swing.JFrame {
         Date entry = entryDate.getDate();
         String unitP = unitPrice.getText().trim();
         String quantityInStock = qtyInStock.getText().trim();
-        String description = des.getText().trim();
-        if (Util.checkExistInput(name, manufactureDate, expiryDate, entry, unitP, quantityInStock, description)) {
+        if (Util.checkExistInput(name, manufactureDate, expiryDate, entry, unitP, quantityInStock)) {
             int response = JOptionPane.showConfirmDialog(null, "Bạn muốn hủy thao tác này?", "Alert",
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (response == JOptionPane.YES_OPTION) {
@@ -398,22 +400,22 @@ public class AddProduct extends javax.swing.JFrame {
     private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JComboBox<CategoryModel> cateCb;
-    private javax.swing.JTextField des;
     private com.toedter.calendar.JDateChooser entryDate;
     private com.toedter.calendar.JDateChooser hsd;
     private javax.swing.JLabel jLabel40;
-    private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel42;
     private javax.swing.JLabel jLabel43;
     private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
     private javax.swing.JLabel jLabel47;
+    private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel49;
     private com.toedter.calendar.JDateChooser nsx;
     private javax.swing.JTextField productID;
     private javax.swing.JTextField productName;
     private javax.swing.JTextField qtyInStock;
+    private javax.swing.JComboBox<SupplierCbx> supplierCb;
     private javax.swing.JLabel topLabel;
     private javax.swing.JTextField unitPrice;
     // End of variables declaration//GEN-END:variables

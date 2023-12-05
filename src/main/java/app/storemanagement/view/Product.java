@@ -275,7 +275,7 @@ public class Product extends javax.swing.JPanel {
             }
         });
 
-        searchCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã", "Tên", "Phân loại" }));
+        searchCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã", "Tên" }));
         searchCb.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 searchCbItemStateChanged(evt);
@@ -586,7 +586,7 @@ public class Product extends javax.swing.JPanel {
         searchCb.setSelectedIndex(0);
         showMetrics();
     }//GEN-LAST:event_refreshMouseClicked
-
+   
     private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed
         if (verifyAccess.authorizationNVBH(userRole)) {
             if (ap == null) {
@@ -615,20 +615,27 @@ public class Product extends javax.swing.JPanel {
             if (deleteProduct.isEnabled() == true) {
                 if (productTable.getSelectedRow() < 0) {
                     JOptionPane.showMessageDialog(null, "Chọn một sản phẩm để xóa!");
-                } else {
-                    ProductModel product = new ProductModel(key);
-                    ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
+                    return;
+                }
+                ProductModel product = new ProductModel(key);
+                ProductCtrl tmp = null;
+                try {
+                    tmp = new ProductCtrl();
                     int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa sản phẩm này?", "Alert",
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (response == JOptionPane.YES_OPTION) {
                         boolean success = tmp.delete(product);
                         if (success) {
                             JOptionPane.showMessageDialog(null, "Đã xóa sản phẩm");
+                            displayProduct((String) productSort.getSelectedItem());
+                            showMetrics();
                         }
                     }
+                } finally {
+                    if (tmp != null) {
+                        tmp.close();
+                    }
                 }
-                displayProduct((String) productSort.getSelectedItem());
-                showMetrics();
             }
         }
     }//GEN-LAST:event_deleteProductActionPerformed
@@ -667,8 +674,8 @@ public class Product extends javax.swing.JPanel {
     private void exportProductToExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProductToExcelActionPerformed
         Object options[] = {"Sản phẩm còn bán được ", "Sản phẩm hết hạn sử dụng", "Tất cả sản phẩm"};
         int choice = JOptionPane.showOptionDialog(null, "Chọn kiểu xuất danh sách", "Xuất danh sách", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                ExportProductToExcel tmp = new ExportProductToExcel(DBConnection.getConnection());
-                tmp.exportProductToExcel(choice);
+        ExportProductToExcel tmp = new ExportProductToExcel(DBConnection.getConnection());
+        tmp.exportProductToExcel(choice);
     }//GEN-LAST:event_exportProductToExcelActionPerformed
 
 
