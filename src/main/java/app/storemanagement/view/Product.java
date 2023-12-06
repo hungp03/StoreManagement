@@ -5,6 +5,8 @@ import app.storemanagement.controller.ExportProductToExcel;
 import app.storemanagement.middleware.VerifyAccess;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
+import app.storemanagement.model.ProductTableModel;
+import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
@@ -13,6 +15,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
@@ -31,7 +34,6 @@ public class Product extends javax.swing.JPanel {
     public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
-    private ProductCtrl productCtrl = new ProductCtrl();
     private final VerifyAccess verifyAccess = new VerifyAccess();
     private AddProduct ap = null;
     private ProductDetail pd = null;
@@ -42,7 +44,7 @@ public class Product extends javax.swing.JPanel {
     public Product() {
         initComponents();
         showMetrics();
-        displayProduct((String) productSort.getSelectedItem());
+        displayProduct();
     }
 
     /**
@@ -465,12 +467,8 @@ public class Product extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void displayProduct(String sortMethod) {
-        displayProductTable(productCtrl.generateQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
-    }
-
-    private void searchProduct(String keyword) {
-        displayProductTable(productCtrl.generateQuery((String) productSort.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
+    private void displayProduct() {
+        displayProductTable((String) productSort.getSelectedItem(), searchTextField.getText(), (String) searchCb.getSelectedItem());
     }
 
     private void showMetrics() {
@@ -492,35 +490,31 @@ public class Product extends javax.swing.JPanel {
         }
     }
 
-    private void displayProductTable(String sql) {
-        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
-            DefaultTableModel tableModel = new DefaultTableModel() {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-            int columnCount = Rs.getMetaData().getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
-            }
+    private void displayProductTable(String sortMethod, String keyword, String searchMethod) {
+        ProductCtrl product = new ProductCtrl(DBConnection.getConnection());
+        List<ProductTableModel> products = product.searchAndSort(keyword, searchMethod, sortMethod);
 
-            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
-            while (Rs.next()) {
-                Object[] row = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    row[i - 1] = Rs.getObject(i);
-                }
-                tableModel.addRow(row);
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
-            // Đặt tên cột theo thiết kế
-            String[] columnNames = {"Mã SP", "Tên SP", "Phân loại", "Ngày nhập hàng"};
-            tableModel.setColumnIdentifiers(columnNames);
+        };
 
-            productTable.setModel(tableModel);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+        String[] columnNames = {"Mã SP", "Tên SP", "Tên phân loại", "Đơn giá", "Số lượng"};
+        tableModel.setColumnIdentifiers(columnNames);
+
+        for (ProductTableModel p : products) {
+            Object[] row = new Object[5];
+            row[0] = p.getId();
+            row[1] = p.getName();
+            row[2] = p.getCategoryName();
+            row[3] = Util.convertToVND(p.getUnitprice());
+            row[4] = p.getQty();
+            tableModel.addRow(row);
         }
+
+        productTable.setModel(tableModel);
     }
 
     private void productTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_productTableMouseClicked
@@ -535,20 +529,14 @@ public class Product extends javax.swing.JPanel {
     private void productSortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_productSortItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
-            displayProduct(selectedMethod); // Gọi hàm displayCategory với phương thức sắp xếp được chọn
+            // Gọi hàm display với phương thức sắp xếp được chọn
+            displayProductTable(selectedMethod, searchTextField.getText(), (String) searchCb.getSelectedItem());
         }
     }//GEN-LAST:event_productSortItemStateChanged
 
     private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
         Timer timer = new Timer(500, (ActionEvent e) -> {
-            String keyword = searchTextField.getText();
-            if (keyword.trim().isEmpty()) {
-                // Nếu textField rỗng, hiển thị toàn bộ danh sách
-                displayProduct((String) productSort.getSelectedItem());
-            } else {
-                // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
-                searchProduct(keyword);
-            }
+            displayProduct();
         });
         timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
 
@@ -580,15 +568,13 @@ public class Product extends javax.swing.JPanel {
     }//GEN-LAST:event_searchTextFieldKeyTyped
 
     private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
-        displayProductTable("""
-                            select Product_ID, Product_Name, Category.Category_Name, Entry_Date
-                            from Product inner join Category on Product.Category_ID = Category.Category_ID""");
         searchTextField.setText("");
         productSort.setSelectedIndex(0);
         searchCb.setSelectedIndex(0);
         showMetrics();
+        displayProduct();
     }//GEN-LAST:event_refreshMouseClicked
-   
+
     private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed
         if (verifyAccess.authorizationNVBH(userRole)) {
             if (ap == null) {
@@ -599,7 +585,7 @@ public class Product extends javax.swing.JPanel {
                     public void windowClosed(WindowEvent e) {
                         if (ap.isDataAdded()) {
                             // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
-                            displayProduct((String) productSort.getSelectedItem());
+                            displayProduct();
                             searchTextField.setText("");
                             showMetrics();
                         }
@@ -621,16 +607,16 @@ public class Product extends javax.swing.JPanel {
                 }
                 ProductModel product = new ProductModel(key);
                 ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
-                    int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa sản phẩm này?", "Alert",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (response == JOptionPane.YES_OPTION) {
-                        boolean success = tmp.delete(product);
-                        if (success) {
-                            JOptionPane.showMessageDialog(null, "Đã xóa sản phẩm");
-                            displayProduct((String) productSort.getSelectedItem());
-                            showMetrics();
-                        }
+                int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa sản phẩm này?", "Alert",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    boolean success = tmp.delete(product);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Đã xóa sản phẩm");
+                        displayProduct();
+                        showMetrics();
                     }
+                }
             }
         }
     }//GEN-LAST:event_deleteProductActionPerformed
@@ -648,7 +634,7 @@ public class Product extends javax.swing.JPanel {
                             if (pd.isDataChanged()) {
                                 // Gọi phương thức cập nhật từ JFrame gốc khi JFrame mới đóng
                                 showMetrics();
-                                displayProduct((String) productSort.getSelectedItem());
+                                displayProduct();
                             }
                             pd = null; //Đặt lại thành null khi đóng
                         }

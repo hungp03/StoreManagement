@@ -7,7 +7,11 @@ package app.storemanagement.controller;
 import app.storemanagement.model.CustomerModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 public class CustomerCtrl implements BaseController<CustomerModel> {
@@ -83,29 +87,43 @@ public class CustomerCtrl implements BaseController<CustomerModel> {
         }
     }
 
-    public String generateQuery(String sortMethod, String keyword, String searchMethod) {
+    public List<CustomerModel> searchAndSort(String keyword, String searchMethod, String sortMethod) {
+        List<CustomerModel> customers = new ArrayList<>();
+        String searchQuery = generateSearchQuery(keyword, searchMethod);
+        String sql = generateSortQuery(sortMethod, searchQuery);
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                // Tạo một đối tượng CustomerModel từ ResultSet
+                CustomerModel customer = new CustomerModel(rs.getInt("Customer_ID"), rs.getString("Full_Name"), rs.getString("Address"), rs.getString("Phone"));
+                customers.add(customer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return customers;
+    }
+
+    private String generateSearchQuery(String keyword, String searchMethod) {
         String tmp = "";
-        if (keyword.trim().isEmpty() == false) {
+        if (!keyword.trim().isEmpty()) {
             switch (searchMethod) {
-                case "Mã KH" ->
-                    tmp = " WHERE Customer_ID LIKE N'%" + keyword.trim() + "%' ";
-                case "Tên KH" ->
-                    tmp = " WHERE Full_Name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
-                case "Số điện thoại" ->
-                    tmp = " WHERE Phone LIKE N'%" + keyword.trim() + "%' ";
+                case "Mã KH" -> tmp = " WHERE Customer_ID LIKE N'%" + keyword.trim() + "%' ";
+                case "Tên KH" -> tmp = " WHERE Full_Name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                case "Số điện thoại" -> tmp = " WHERE Phone LIKE N'%" + keyword.trim() + "%' ";
                 default -> {
                 }
             }
         }
-        String query = "select * from Customer" + tmp;
-        switch (sortMethod) {
-            case "Mã KH" ->
-                query += " ORDER BY Customer_ID";
-            case "Tên KH" ->
-                query += " ORDER BY Full_Name";
-            default -> {
-            }
-        }
-        return query;
+        return "SELECT * FROM Customer" + tmp;
+    }
+
+    private String generateSortQuery(String sortMethod, String searchQuery) {
+        return switch (sortMethod) {
+            case "Mã KH" -> searchQuery + " ORDER BY Customer_ID";
+            case "Tên KH" -> searchQuery + " ORDER BY Full_Name";
+            default -> searchQuery;
+        };
     }
 }

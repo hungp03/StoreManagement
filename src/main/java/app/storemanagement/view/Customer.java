@@ -2,16 +2,13 @@ package app.storemanagement.view;
 
 import app.storemanagement.controller.CustomerCtrl;
 import app.storemanagement.model.Connection.DBConnection;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import app.storemanagement.model.CustomerModel;
 import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.util.List;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -31,7 +28,7 @@ public class Customer extends javax.swing.JPanel {
      */
     public Customer() {
         initComponents();
-        displayCustomerTable("select * from Customer");
+        displayCustomer();
     }
 
     /**
@@ -261,13 +258,10 @@ public class Customer extends javax.swing.JPanel {
         ((AbstractDocument) address.getDocument()).setDocumentFilter(new LimitDocumentFilter(100));
         ((AbstractDocument) phone.getDocument()).setDocumentFilter(new LimitDocumentFilter(15));
     }// </editor-fold>//GEN-END:initComponents
-    private void displayCustomer(String sortMethod) {
-        displayCustomerTable(cus.generateQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
+    private void displayCustomer() {
+        displayCustomerTable((String) customerSortCb.getSelectedItem(), searchTextField.getText(), (String) searchCb.getSelectedItem());
     }
 
-    private void searchCustomer(String keyword) {
-        displayCustomerTable(cus.generateQuery((String) customerSortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
-    }
     private void customerTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_customerTableMouseClicked
         DefaultTableModel model = (DefaultTableModel) customerTable.getModel();
         int my_idx = customerTable.getSelectedRow();
@@ -282,8 +276,10 @@ public class Customer extends javax.swing.JPanel {
 
     private void customerSortCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_customerSortCbItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
-            displayCustomer(selectedMethod); // Gọi hàm display với phương thức sắp xếp được chọn
+            // Lấy phương thức sắp xếp được chọn
+            String selectedMethod = (String) evt.getItem();
+            // Gọi hàm display với phương thức sắp xếp được chọn
+            displayCustomerTable(selectedMethod, searchTextField.getText(), (String) searchCb.getSelectedItem());
         }
     }//GEN-LAST:event_customerSortCbItemStateChanged
 
@@ -303,7 +299,7 @@ public class Customer extends javax.swing.JPanel {
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Đã thêm khách hàng!");
                         clearTextField();
-                        displayCustomer((String) customerSortCb.getSelectedItem());
+                        displayCustomer();
                     }
                 }
             }
@@ -315,14 +311,7 @@ public class Customer extends javax.swing.JPanel {
     private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
         // TODO add your handling code here:
         Timer timer = new Timer(500, (ActionEvent e) -> {
-            String keyword = searchTextField.getText();
-            if (keyword.trim().isEmpty()) {
-                // Nếu textField rỗng, hiển thị toàn bộ danh sách
-                displayCustomer((String) customerSortCb.getSelectedItem());
-            } else {
-                // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
-                searchCustomer(keyword);
-            }
+            displayCustomer();
         });
         timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
 
@@ -354,11 +343,11 @@ public class Customer extends javax.swing.JPanel {
     }//GEN-LAST:event_searchTextFieldKeyTyped
 
     private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
-        displayCustomerTable("SELECT * FROM Customer");
         searchTextField.setText("");
         searchCb.setSelectedIndex(0);
         customerSortCb.setSelectedIndex(0);
         clearTextField();
+        displayCustomer();
     }//GEN-LAST:event_refreshMouseClicked
 
     private void deleteButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton1ActionPerformed
@@ -374,10 +363,11 @@ public class Customer extends javax.swing.JPanel {
                 if (success) {
                     JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
                     clearTextField();
+                    displayCustomer();
                 }
             }
         }
-        displayCustomer((String) customerSortCb.getSelectedItem());
+
     }//GEN-LAST:event_deleteButton1ActionPerformed
 
     private void searchCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_searchCbItemStateChanged
@@ -401,7 +391,7 @@ public class Customer extends javax.swing.JPanel {
                         if (success) {
                             JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
                             clearTextField();
-                            displayCustomer((String) customerSortCb.getSelectedItem());
+                            displayCustomer();
                         }
                     }
 
@@ -414,37 +404,30 @@ public class Customer extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_editButton1ActionPerformed
 
-    private void displayCustomerTable(String sql) {
-        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
-            DefaultTableModel tableModel = new DefaultTableModel() {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-            int columnCount = Rs.getMetaData().getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
-            }
+    private void displayCustomerTable(String sortMethod, String keyword, String searchMethod) {
+        CustomerCtrl customer = new CustomerCtrl(DBConnection.getConnection());
+        List<CustomerModel> customers = customer.searchAndSort(keyword, searchMethod, sortMethod);
 
-            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
-            while (Rs.next()) {
-                Object[] row = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    row[i - 1] = Rs.getObject(i);
-                }
-                tableModel.addRow(row);
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
-            String[] columnNames = {"Mã KH", "Tên KH", "Địa chỉ", "Số điện thoại"};
-            tableModel.setColumnIdentifiers(columnNames);
+        };
 
-            customerTable.setModel(tableModel);
-            Rs.close();
-            St.close();
-            conn.close();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
+        String[] columnNames = {"Mã KH", "Tên KH", "Địa chỉ", "Số điện thoại"};
+        tableModel.setColumnIdentifiers(columnNames);
+
+        for (CustomerModel cust : customers) {
+            Object[] row = new Object[4];
+            row[0] = cust.getId();
+            row[1] = cust.getFullName();
+            row[2] = cust.getAddress();
+            row[3] = cust.getPhone();
+            tableModel.addRow(row);
         }
+
+        customerTable.setModel(tableModel);
     }
 
     private void clearTextField() {

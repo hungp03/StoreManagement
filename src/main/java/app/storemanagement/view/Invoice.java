@@ -2,6 +2,7 @@ package app.storemanagement.view;
 
 import app.storemanagement.controller.InvoiceCtrl;
 import app.storemanagement.model.Connection.DBConnection;
+import app.storemanagement.model.InvoiceModel;
 import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -16,6 +17,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 import java.io.File;
+import java.util.List;
 
 /**
  *
@@ -30,11 +32,11 @@ public class Invoice extends javax.swing.JPanel {
      */
     public Invoice() {
         initComponents();
-        displayInvoice((String) sortCb.getSelectedItem());
+        displayInvoice();
     }
 
     public void refreshData() {
-        displayInvoice((String) sortCb.getSelectedItem());
+        displayInvoice();
     }
 
     /**
@@ -374,7 +376,9 @@ public class Invoice extends javax.swing.JPanel {
                 .addContainerGap(36, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
+    private void displayInvoice(){
+        displayInvoiceTable((String) sortCb.getSelectedItem(), searchInvoiceTxt.getText(), (String) searchCb.getSelectedItem());
+    }
     private void InvoiceTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InvoiceTableMouseClicked
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) InvoiceTable.getModel();
@@ -391,21 +395,14 @@ public class Invoice extends javax.swing.JPanel {
         // TODO add your handling code here:
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
-            displayInvoice(selectedMethod); // Gọi hàm display với phương thức sắp xếp được chọn
+            displayInvoiceTable(selectedMethod, searchInvoiceTxt.getText(), (String) searchCb.getSelectedItem());
         }
     }//GEN-LAST:event_sortCbItemStateChanged
 
     private void searchInvoiceTxtKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchInvoiceTxtKeyTyped
         // TODO add your handling code here:
         Timer timer = new Timer(500, (ActionEvent e) -> {
-            String keyword = searchInvoiceTxt.getText();
-            if (keyword.trim().isEmpty()) {
-                // Nếu textField rỗng, hiển thị toàn bộ danh sách
-                displayInvoice((String) sortCb.getSelectedItem());
-            } else {
-                // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
-                searchInvoice(keyword);
-            }
+           displayInvoice();
         });
         timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
 
@@ -464,42 +461,30 @@ public class Invoice extends javax.swing.JPanel {
         }
     }
 
-    private void searchInvoice(String keyword) {
-        displayInvoiceTable(invc.generateQuery((String) sortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
-    }
+    private void displayInvoiceTable(String sortMethod, String keyword, String searchMethod) {
+        InvoiceCtrl invoice = new InvoiceCtrl(DBConnection.getConnection());
+        List<InvoiceModel> invoices = invoice.searchAndSort(keyword, searchMethod, sortMethod);
 
-    private void displayInvoice(String sortMethod) {
-        displayInvoiceTable(invc.generateQuery(sortMethod, searchInvoiceTxt.getText(), (String) searchCb.getSelectedItem()));
-    }
-
-    private void displayInvoiceTable(String sql) {
-        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
-            DefaultTableModel tableModel = new DefaultTableModel() {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-            int columnCount = Rs.getMetaData().getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
+        };
 
-            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
-            while (Rs.next()) {
-                Object[] row = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    row[i - 1] = Rs.getObject(i);
-                }
-                tableModel.addRow(row);
-            }
+        String[] columnNames = {"Mã hóa đơn", "Tên khách hàng", "Thanh toán", "Ngày"};
+        tableModel.setColumnIdentifiers(columnNames);
 
-            String[] columnNames = {"Mã hóa đơn", "Tên khách hàng", "Thanh toán", "Ngày"};
-            tableModel.setColumnIdentifiers(columnNames);
-            InvoiceTable.setModel(tableModel);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
+        for (InvoiceModel inv : invoices) {
+            Object[] row = new Object[4];
+            row[0] = inv.getId();
+            row[1] = inv.getCustomerName();
+            row[2] = inv.getPaymentMethod();
+            row[3] = inv.getDate();
+            tableModel.addRow(row);
         }
+
+        InvoiceTable.setModel(tableModel);
     }
 
     private void displayDetailProductTable(String sql) {

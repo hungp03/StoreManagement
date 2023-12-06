@@ -7,7 +7,11 @@ package app.storemanagement.controller;
 import app.storemanagement.model.SupplierModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 public class SupplierCtrl implements BaseController<SupplierModel> {
@@ -88,9 +92,26 @@ public class SupplierCtrl implements BaseController<SupplierModel> {
         }
     }
 
-    public String generateQuery(String sortMethod, String keyword, String searchMethod) {
+    public List<SupplierModel> searchAndSort(String keyword, String searchMethod, String sortMethod) {
+        List<SupplierModel> suppliers = new ArrayList<>();
+        String searchQuery = generateSearchQuery(keyword, searchMethod);
+        String sql = generateSortQuery(sortMethod, searchQuery);
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                // Tạo một đối tượng SupplierModel từ ResultSet
+                SupplierModel supplier = new SupplierModel(rs.getInt("Supplier_ID"), rs.getString("Supplier_Name"), rs.getString("Address"), rs.getString("Phone"), rs.getString("Email"));
+                suppliers.add(supplier);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return suppliers;
+    }
+
+    private String generateSearchQuery(String keyword, String searchMethod) {
         String tmp = "";
-        if (keyword.trim().isEmpty() == false) {
+        if (!keyword.trim().isEmpty()) {
             switch (searchMethod) {
                 case "Mã NCC" ->
                     tmp = " WHERE Supplier_ID LIKE N'%" + keyword.trim() + "%' ";
@@ -102,15 +123,14 @@ public class SupplierCtrl implements BaseController<SupplierModel> {
                 }
             }
         }
-        String query = "select * from Supplier" + tmp;
-        switch (sortMethod) {
-            case "Mã NCC" ->
-                query += " ORDER BY Supplier_ID";
-            case "Tên NCC" ->
-                query += " ORDER BY Supplier_Name";
-            default -> {
-            }
-        }
-        return query;
+        return "SELECT * FROM Supplier" + tmp;
     }
+
+    private String generateSortQuery(String sortMethod, String searchQuery) {
+        return switch (sortMethod) {
+            case "Mã NCC" -> searchQuery + " ORDER BY Supplier_ID";
+            case "Tên NCC" -> searchQuery + " ORDER BY Supplier_Name";
+            default -> searchQuery;
+        };
+}
 }

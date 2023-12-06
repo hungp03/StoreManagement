@@ -9,14 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Locale;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
@@ -31,13 +28,13 @@ import javax.swing.text.AbstractDocument;
 public class Employee extends javax.swing.JPanel {
 
     private int key = 0;
-    private EmployeeCtrl emp = new EmployeeCtrl();
+
     /**
      * Creates new form Employee
      */
     public Employee() {
         initComponents();
-        displayEmployee((String) sortCb.getSelectedItem());
+        displayEmployee();
     }
 
     /**
@@ -347,16 +344,11 @@ public class Employee extends javax.swing.JPanel {
             dob.setDate((Date) model.getValueAt(my_idx, 3));
             String slr = model.getValueAt(my_idx, 4).toString();
             slr = slr.replace("đ", "").trim();
-            
-            @SuppressWarnings("deprecation")
-            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
             try {
-                Number number = currencyFormat.parse(slr);
-                salaryText.setText(String.valueOf(number.intValue()));
-            } catch (ParseException e) {
-                System.out.print(e.getMessage());
+                salaryText.setText(Util.vndConvertToNumber(slr));
+            } catch (ParseException ex) {
+                Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
             genderCb.setSelectedItem(model.getValueAt(my_idx, 5).toString());
             roleCb.setSelectedItem(model.getValueAt(my_idx, 6).toString());
         }
@@ -364,21 +356,16 @@ public class Employee extends javax.swing.JPanel {
 
     private void sortCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_sortCbItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
-            displayEmployee(selectedMethod); // Gọi hàm display với phương thức sắp xếp được chọn
+            // Lấy phương thức sắp xếp được chọn
+            String selectedMethod = (String) evt.getItem();
+            // Gọi hàm display với phương thức sắp xếp được chọn
+            displayEmployeeTable(selectedMethod, searchTextField.getText(), (String) searchCb.getSelectedItem());
         }
     }//GEN-LAST:event_sortCbItemStateChanged
 
     private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
         Timer timer = new Timer(500, (ActionEvent e) -> {
-            String keyword = searchTextField.getText();
-            if (keyword.trim().isEmpty()) {
-                // Nếu textField rỗng, hiển thị toàn bộ danh sách
-                displayEmployee((String) sortCb.getSelectedItem());
-            } else {
-                // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
-                searchEmployee(keyword);
-            }
+            displayEmployee();
         });
         timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
 
@@ -429,7 +416,7 @@ public class Employee extends javax.swing.JPanel {
                         if (success) {
                             JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
                             clearTextField();
-                            displayEmployee((String) sortCb.getSelectedItem());
+                            displayEmployee();
                         }
                     }
                 }
@@ -461,7 +448,7 @@ public class Employee extends javax.swing.JPanel {
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");
                         clearTextField();
-                        displayEmployee((String) sortCb.getSelectedItem());
+                        displayEmployee();
                     }
                 }
             }
@@ -483,65 +470,55 @@ public class Employee extends javax.swing.JPanel {
                 if (success) {
                     JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
                     clearTextField();
+                    displayEmployee();
                 }
             }
-            displayEmployee((String) sortCb.getSelectedItem());
         }
     }//GEN-LAST:event_deleteButton2ActionPerformed
 
     private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
-        displayEmployeeTable("select Employee_ID, Username, Full_Name, Date_of_Birth, Salary, Gender, Role from Employee");
         searchTextField.setText("");
         searchCb.setSelectedIndex(0);
         sortCb.setSelectedIndex(0);
         clearTextField();
+        displayEmployee();
     }//GEN-LAST:event_refreshMouseClicked
 
     private void searchCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_searchCbItemStateChanged
         searchTextField.setText("");
     }//GEN-LAST:event_searchCbItemStateChanged
 
-    private void displayEmployee(String sortMethod) {
-        displayEmployeeTable(emp.generateQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
+    private void displayEmployee() {
+        displayEmployeeTable((String) sortCb.getSelectedItem(), searchTextField.getText(), (String) searchCb.getSelectedItem());
     }
 
-    private void searchEmployee(String keyword) {
-        displayEmployeeTable(emp.generateQuery((String) sortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
-    }
+    private void displayEmployeeTable(String sortMethod, String keyword, String searchMethod) {
+        EmployeeCtrl employee = new EmployeeCtrl(DBConnection.getConnection());
+        List<EmployeeModel> employees = employee.searchAndSort(keyword, searchMethod, sortMethod);
 
-    private void displayEmployeeTable(String sql) {
-        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
-            DefaultTableModel tableModel = new DefaultTableModel() {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-            int columnCount = Rs.getMetaData().getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
+        };
 
-            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
-            while (Rs.next()) {
-                Object[] row = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    if (i == 5) { // Giả sử cột 5 là cột lương
-                        double salary = Rs.getDouble(i);
-                        row[i - 1] = Util.convertToVND(salary);
-                    } else {
-                        row[i - 1] = Rs.getObject(i);
-                    }
-                }
-                tableModel.addRow(row);
-            }
-            String[] columnNames = {"Mã NV", "Username", "Tên NV", "Ngày sinh", "Lương (VND)", "Giới tính", "Vai trò"};
-            tableModel.setColumnIdentifiers(columnNames);
+        String[] columnNames = {"Mã NV", "Tên đăng nhập", "Tên NV", "Ngày sinh", "Lương", "Giới tính", "Vai trò"};
+        tableModel.setColumnIdentifiers(columnNames);
 
-            employeeTable.setModel(tableModel);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
+        for (EmployeeModel e : employees) {
+            Object[] row = new Object[7];
+            row[0] = e.getId();
+            row[1] = e.getUsername();
+            row[2] = e.getFullname();
+            row[3] = e.getDateOfBirth();
+            row[4] = Util.convertToVND(e.getSalary());
+            row[5] = e.getGender();
+            row[6] = e.getRole();
+            tableModel.addRow(row);
         }
+
+        employeeTable.setModel(tableModel);
     }
 
     private void clearTextField() {

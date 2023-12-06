@@ -3,6 +3,7 @@ package app.storemanagement.view;
 import app.storemanagement.controller.SellCtrl;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.Cart;
+import app.storemanagement.model.ProductTableModel;
 import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -35,7 +36,7 @@ import javax.swing.text.DocumentFilter;
  */
 public class Sell extends javax.swing.JPanel {
 
-    private List<Cart> cart = new ArrayList<>();
+    private List<ProductTableModel> cart = new ArrayList<>();
     private int uid;
 
     public void setUid(int uid) {
@@ -53,7 +54,7 @@ public class Sell extends javax.swing.JPanel {
      */
     public Sell() {
         initComponents();
-        displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
+        displayProduct();
         initInvoicePage();
     }
 
@@ -329,11 +330,11 @@ public class Sell extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Mã SP", "Tên SP", "Đơn giá", "Số lượng"
+                "Mã SP", "Tên SP", "Phân loại", "Đơn giá", "Số lượng"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -411,11 +412,11 @@ public class Sell extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Mã SP", "Tên SP", "Đơn giá", "Số lượng"
+                "Mã SP", "Tên SP", "Phân loại", "Số lượng", "Số lượng"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -513,6 +514,10 @@ public class Sell extends javax.swing.JPanel {
         invoiceID.setText(String.valueOf(iid));
     }
 
+    private void displayProduct() {
+        displayProductTable(searchBox.getText(), (String) jComboBox1.getSelectedItem());
+    }
+
     private void clearCustomerInfo() {
         customerName.setText("");
         customerID.setText("");
@@ -529,20 +534,13 @@ public class Sell extends javax.swing.JPanel {
     public void clearCart() {
         for (int i = 0; i < cart.size(); i++) {
             int id = Integer.parseInt(cartTb.getValueAt(i, 0).toString());
-            int pqty = Integer.parseInt(cartTb.getValueAt(i, 3).toString());
+            int pqty = Integer.parseInt(cartTb.getValueAt(i, 4).toString());
             sell.updateProductQuantity(id, pqty, "increase");
         }
         cart.clear();
         displayCartTable();
     }
 
-    private double totalAmount() {
-        double total_amount = 0;
-        for (Cart product : cart) {
-            total_amount += product.getUnitPrice() * product.getQty();
-        }
-        return total_amount;
-    }
 
     private void deleteAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteAllActionPerformed
         if (!cancelBtn.isEnabled() || !confirmBtn.isEnabled()) {
@@ -551,23 +549,24 @@ public class Sell extends javax.swing.JPanel {
         }
         clearCart();
         totalTxt.setText("");
-        displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
+        displayProduct();
         calculatePaidMoney(cusMoney.getText());
     }//GEN-LAST:event_deleteAllActionPerformed
 
     // Phương thức lấy sản phẩm được chọn từ bảng productTb
-    private Cart getSelectedProduct() {
+    private ProductTableModel getSelectedProduct() {
         int selectedRow = productTb.getSelectedRow();
         int id = Integer.parseInt(productTb.getValueAt(selectedRow, 0).toString());
         String name = productTb.getValueAt(selectedRow, 1).toString();
+        String categoryName = productTb.getValueAt(selectedRow, 2).toString();
         double unitPrice = 0;
         try {
-            unitPrice = Double.parseDouble(Util.vndConvertToNumber(productTb.getValueAt(selectedRow, 2).toString()));
+            unitPrice = Double.parseDouble(Util.vndConvertToNumber(productTb.getValueAt(selectedRow, 3).toString()));
         } catch (ParseException ex) {
             Logger.getLogger(Sell.class.getName()).log(Level.SEVERE, null, ex);
         }
-        int qtyInStock = Integer.parseInt(productTb.getValueAt(selectedRow, 3).toString());
-        return new Cart(id, name, unitPrice, qtyInStock);
+        int qtyInStock = Integer.parseInt(productTb.getValueAt(selectedRow, 4).toString());
+        return new ProductTableModel(id, name, categoryName, unitPrice, qtyInStock);
     }
 
     private void addToCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToCartActionPerformed
@@ -576,7 +575,7 @@ public class Sell extends javax.swing.JPanel {
             return;
         }
         if (productTb.getSelectedRow() >= 0) {
-            Cart selectedProduct = getSelectedProduct();
+            ProductTableModel selectedProduct = getSelectedProduct();
             // Đổi tên biến value thành quantityInput
             String quantityInput = JOptionPane.showInputDialog(null, "Nhập số lượng sản phẩm");
             if (Objects.isNull(quantityInput) || quantityInput.trim().isEmpty()) {
@@ -603,19 +602,19 @@ public class Sell extends javax.swing.JPanel {
                             });
                 } else {
                     // Thêm sản phẩm mới vào danh sách
-                    cart.add(new Cart(selectedProduct.getId(), selectedProduct.getpName(), selectedProduct.getUnitPrice(), quantity));
+                    cart.add(new ProductTableModel(selectedProduct.getId(), selectedProduct.getName(), selectedProduct.getCategoryName(), selectedProduct.getUnitprice(), quantity));
                     sell.updateProductQuantity(selectedProduct.getId(), quantity, "reduce");
                 }
                 // Hiển thị bảng giỏ hàng và bảng sản phẩm
                 displayCartTable();
-                displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
-                totalTxt.setText(Util.convertToVND(totalAmount()));
+                displayProduct();
+                totalTxt.setText(Util.convertToVND(sell.totalAmount(cart)));
             }
         } else {
             JOptionPane.showMessageDialog(null, "Chưa chọn sản phẩm", "Warning", JOptionPane.WARNING_MESSAGE);
         }
         calculatePaidMoney(cusMoney.getText());
-        if(paidMoney.getText().isBlank()){
+        if (paidMoney.getText().isBlank()) {
             cusMoney.setText("");
         }
     }//GEN-LAST:event_addToCartActionPerformed
@@ -668,16 +667,16 @@ public class Sell extends javax.swing.JPanel {
         int idx = cartTb.getSelectedRow();
         if (idx >= 0) {
             int id = Integer.parseInt(cartTb.getValueAt(idx, 0).toString());
-            int pqty = Integer.parseInt(cartTb.getValueAt(idx, 3).toString());
+            int pqty = Integer.parseInt(cartTb.getValueAt(idx, 4).toString());
             cart.remove(idx);
             displayCartTable();
             if (cart.isEmpty()) {
                 totalTxt.setText("");
             } else {
-                totalTxt.setText(Util.convertToVND(totalAmount()));
+                totalTxt.setText(Util.convertToVND(sell.totalAmount(cart)));
             }
             sell.updateProductQuantity(id, pqty, "increase");
-            displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
+            displayProduct();
         } else {
             JOptionPane.showMessageDialog(null, "Chưa chọn sản phẩm để xóa", "Alert", JOptionPane.WARNING_MESSAGE);
         }
@@ -689,7 +688,7 @@ public class Sell extends javax.swing.JPanel {
         totalTxt.setText("");
         cusMoney.setText("");
         paidMoney.setText("");
-        displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
+        displayProduct();
         clearCustomerInfo();
     }//GEN-LAST:event_cancelBtnActionPerformed
 
@@ -705,7 +704,7 @@ public class Sell extends javax.swing.JPanel {
 
     private void searchBoxKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchBoxKeyTyped
         Timer timer = new Timer(500, (ActionEvent e) -> {
-            displayProductTable(sell.generateQuery(searchBox.getText(), (String) jComboBox1.getSelectedItem()));
+            displayProduct();
         });
         timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
 
@@ -741,47 +740,25 @@ public class Sell extends javax.swing.JPanel {
     }//GEN-LAST:event_jComboBox1ItemStateChanged
 
     private void addInvoice(int invoiceId, int customerId, double amount, double customerCash, double paid, String payment_Method) {
-        // Thực hiện thêm hóa đơn
-        try (Connection conn = DBConnection.getConnection()) {
-            // Bắt đầu một giao dịch
-            conn.setAutoCommit(false);
-            // Thêm một hóa đơn mới vào bảng Invoice
-            String sql = "INSERT INTO Invoice (Invoice_ID, Date, Total_Amount, Customer_Cash, Return_Money , Payment_Method, Employee_ID, Customer_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                stmt.setInt(1, invoiceId);
-                stmt.setDate(2, new java.sql.Date(System.currentTimeMillis())); // Ngày hiện tại
-                stmt.setDouble(3, amount); // Tổng tiền
-                stmt.setDouble(4, customerCash); // Tổng tiền
-                stmt.setDouble(5, paid); // Tổng tiền
-                stmt.setString(6, payment_Method); // Phương thức thanh toán
-                stmt.setInt(7, uid); // ID nhân viên
-                stmt.setInt(8, customerId); // ID khách hàng
-                stmt.executeUpdate();
-                // Thêm từng sản phẩm trong giỏ hàng vào bảng Contain
-                sql = "INSERT INTO Contain (Invoice_ID, Product_ID, Quantity) VALUES (?, ?, ?)";
-                try (PreparedStatement stmt2 = conn.prepareStatement(sql)) {
-                    for (Cart product : cart) {
-                        stmt2.setInt(1, invoiceId);
-                        stmt2.setInt(2, product.getId());
-                        stmt2.setInt(3, product.getQty());
-                        stmt2.executeUpdate();
-                    }
-                }
-                // Kết thúc giao dịch
-                conn.commit();
-                // Hiển thị thông báo thành công
-                JOptionPane.showMessageDialog(null, "Thêm hóa đơn thành công!", "Notification", JOptionPane.INFORMATION_MESSAGE);
-                //Xóa giỏ hàng
-                cart.clear();
-                displayCartTable();
-                handleButton(false);
-                createTime.setText("Thời gian tạo: " + Util.getCurrentDateTime());
-            } catch (SQLException e) {
-                // Xử lý lỗi
-                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Sell.class.getName()).log(Level.SEVERE, null, ex);
+        boolean success = sell.addInvoice(invoiceId, customerId, uid, amount, customerCash, paid, payment_Method, cart);
+        if (success) {
+            handleSuccess();
+        }
+    }
+
+    private void handleSuccess() {
+        JOptionPane.showMessageDialog(null, "Thêm hóa đơn thành công!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+        cart.clear();
+        displayCartTable();
+        handleButton(false);
+        createTime.setText("Thời gian tạo: " + Util.getCurrentDateTime());
+    }
+
+    private void confirmAndAddInvoice(int invoiceId, int customerId, double amount, double customerCash, String payment_Method) {
+        int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm hóa đơn không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Sử dụng phương thức addInvoice
+            addInvoice(invoiceId, customerId, amount, customerCash, customerCash - amount, payment_Method);
         }
     }
 
@@ -800,26 +777,29 @@ public class Sell extends javax.swing.JPanel {
             double amount = Double.parseDouble(Util.vndConvertToNumber(totalTxt.getText()));
             String payment_Method = (String) paymentMethod.getSelectedItem();
 
-            double customerCash = 0;
-            if (payment_Method.equals("Chuyen khoan") || payment_Method.equals("The")) {
-                customerCash = amount;
-            } else {
-                if (cusMoney.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Chưa nhập tiền khách gửi", "Notification", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                customerCash = Double.parseDouble(cusMoney.getText());
-
+            double customerCash = calculateCustomerCash(amount, payment_Method);
+            if (customerCash == -1) {
+                return;
             }
-            int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm hóa đơn không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                // Sử dụng phương thức addInvoice
-                addInvoice(invoiceId, customerId, amount, customerCash, customerCash - amount, payment_Method);
-            }
+            confirmAndAddInvoice(invoiceId, customerId, amount, customerCash, payment_Method);
         } catch (ParseException ex) {
             Logger.getLogger(Sell.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_confirmBtnActionPerformed
+
+    private double calculateCustomerCash(double amount, String payment_Method) {
+        double customerCash = 0;
+        if (payment_Method.equals("Chuyen khoan") || payment_Method.equals("The")) {
+            customerCash = amount;
+        } else {
+            if (cusMoney.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Chưa nhập tiền khách gửi", "Notification", JOptionPane.WARNING_MESSAGE);
+                return -1;
+            }
+            customerCash = Double.parseDouble(cusMoney.getText());
+        }
+        return customerCash;
+    }
 
     private void paymentMethodItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_paymentMethodItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -837,7 +817,6 @@ public class Sell extends javax.swing.JPanel {
 
     private void printBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBtnActionPerformed
         PrintInvoice pi = new PrintInvoice(Integer.parseInt(invoiceID.getText()));
-//        pi.setVisible(true);
     }//GEN-LAST:event_printBtnActionPerformed
 
     private void cusMoneyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cusMoneyActionPerformed
@@ -863,13 +842,13 @@ public class Sell extends javax.swing.JPanel {
     }//GEN-LAST:event_cusMoneyKeyPressed
 
     private void cusMoneyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cusMoneyKeyTyped
-        if (cusMoney.getText().length() > 8 ||!(evt.getKeyChar() >= '0' && evt.getKeyChar() <= '9')) {
+        if (cusMoney.getText().length() > 8 || !(evt.getKeyChar() >= '0' && evt.getKeyChar() <= '9')) {
             evt.consume();
         }
     }//GEN-LAST:event_cusMoneyKeyTyped
 
     private void cusMoneyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cusMoneyKeyReleased
-            calculatePaidMoney(cusMoney.getText());
+        calculatePaidMoney(cusMoney.getText());
     }//GEN-LAST:event_cusMoneyKeyReleased
 
     private void calculatePaidMoney(String string_cus_money) {
@@ -883,7 +862,7 @@ public class Sell extends javax.swing.JPanel {
                 if (cus_money - totalMoney >= 0) {
                     int paid_money = cus_money - totalMoney;
                     paidMoney.setText(Util.convertToVND(Double.parseDouble(String.valueOf(paid_money))));
-                }else{
+                } else {
                     paidMoney.setText("");
                 }
             } else if (totalTxt.getText().isBlank() && !cusMoney.getText().isBlank()) {
@@ -903,51 +882,43 @@ public class Sell extends javax.swing.JPanel {
             }
         };
         // Thêm các cột vào model
-        String[] columnNames = {"Mã SP", "Tên SP", "Đơn giá", "Số lượng"};
+        String[] columnNames = {"Mã SP", "Tên SP", "Phân loại", "Đơn giá", "Số lượng"};
         model.setColumnIdentifiers(columnNames);
         // Thêm dữ liệu vào model
-        for (Cart pic : cart) {
-            String vnd = Util.convertToVND(pic.getUnitPrice());
-            Object[] row = new Object[]{pic.getId(), pic.getpName(), vnd, pic.getQty()};
+        for (ProductTableModel p : cart) {
+            String vnd = Util.convertToVND(p.getUnitprice());
+            Object[] row = new Object[]{p.getId(), p.getCategoryName(), p.getName(), vnd, p.getQty()};
             model.addRow(row);
         }
         // Đặt model cho cartTable
         cartTb.setModel(model);
     }
 
-    private void displayProductTable(String sql) {
-        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
-            DefaultTableModel tableModel = new DefaultTableModel() {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-            int columnCount = Rs.getMetaData().getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
-            }
+    private void displayProductTable(String keyword, String searchMethod) {
+        SellCtrl sellctrl = new SellCtrl(DBConnection.getConnection());
+        List<ProductTableModel> products = sellctrl.displayAndSearch(keyword, searchMethod);
 
-            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
-            while (Rs.next()) {
-                Object[] row = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    if (i == 3) { // Giả sử cột 3 là giá
-                        double price = Rs.getDouble(i);
-                        row[i - 1] = Util.convertToVND(price);
-                    } else {
-                        row[i - 1] = Rs.getObject(i);
-                    }
-                }
-                tableModel.addRow(row);
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
-            // Đặt tên cột theo thiết kế
-            String[] columnNames = {"Mã SP", "Tên SP", "Đơn giá", "Số lượng"};
-            tableModel.setColumnIdentifiers(columnNames);
-            productTb.setModel(tableModel);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+        };
+
+        String[] columnNames = {"Mã SP", "Tên SP", "Tên phân loại", "Đơn giá", "Số lượng"};
+        tableModel.setColumnIdentifiers(columnNames);
+
+        for (ProductTableModel p : products) {
+            Object[] row = new Object[5];
+            row[0] = p.getId();
+            row[1] = p.getName();
+            row[2] = p.getCategoryName();
+            row[3] = Util.convertToVND(p.getUnitprice());
+            row[4] = p.getQty();
+            tableModel.addRow(row);
         }
+
+        productTb.setModel(tableModel);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

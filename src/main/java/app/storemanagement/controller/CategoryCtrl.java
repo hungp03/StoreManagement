@@ -3,7 +3,11 @@ package app.storemanagement.controller;
 import app.storemanagement.model.CategoryModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -81,18 +85,38 @@ public class CategoryCtrl implements BaseController<CategoryModel> {
         }
     }
 
-    public String generateQuery(String sortMethod, String keyword) {
+    public List<CategoryModel> searchAndSort(String keyword, String sortMethod) {
+        List<CategoryModel> categories = new ArrayList<>();
+        String searchQuery = generateSearchQuery(keyword);
+        String sql = generateSortQuery(sortMethod, searchQuery);
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                // Tạo một đối tượng CategoryModel từ ResultSet
+                CategoryModel category = new CategoryModel(rs.getInt("Category_ID"), rs.getString("Category_Name"));
+                categories.add(category);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return categories;
+    }
+
+    private String generateSearchQuery(String keyword) {
         String tmp = "";
-        if (keyword.trim().isEmpty() == false) {
-            tmp = "where Category_Name like N'%" + keyword.trim() + "%' COLLATE SQL_Latin1_General_CP1253_CI_AI ";
+        if (!keyword.trim().isEmpty()) {
+            tmp = " WHERE Category_Name LIKE N'%" + keyword.trim() + "%' COLLATE SQL_Latin1_General_CP1253_CI_AI ";
         }
-        String query = "select * from Category " + tmp;
-        if (sortMethod.equals("Mã phân loại")) {
-            query += " ORDER BY Category_ID";
-        } else if (sortMethod.equals("Tên phân loại")) {
-            query += " ORDER BY Category_Name";
-        }
-        return query;
+        return "SELECT * FROM Category" + tmp;
+    }
+
+    private String generateSortQuery(String sortMethod, String searchQuery) {
+        return switch (sortMethod) {
+            case "Mã phân loại" -> searchQuery + " ORDER BY Category_ID";
+            case "Tên phân loại" -> searchQuery + " ORDER BY Category_Name";
+            default -> searchQuery;
+        };
     }
 
 }

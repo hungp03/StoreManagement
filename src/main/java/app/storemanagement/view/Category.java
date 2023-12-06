@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
@@ -30,16 +31,16 @@ public class Category extends javax.swing.JPanel {
     public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
-    
+
     private CategoryCtrl ctg = new CategoryCtrl();
     private VerifyAccess verifyAccess = new VerifyAccess();
-    
+
     /**
      * Creates new form Category
      */
     public Category() {
         initComponents();
-        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị dữ liệu với phương thức sắp xếp được chọn
+        displayCategory();
     }
 
     private void clearTextField() {
@@ -224,43 +225,33 @@ public class Category extends javax.swing.JPanel {
 
         ((AbstractDocument) categoryName.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));
     }// </editor-fold>//GEN-END:initComponents
-    private void displayCategory(String sortMethod) {
-        displayCategoryTable(ctg.generateQuery(sortMethod, searchTextField.getText()));
+    private void displayCategory() {
+        displayCategoryTable((String)categorySort.getSelectedItem() , searchTextField.getText());
     }
 
-    private void searchCategory(String keyword) {
-        displayCategoryTable(ctg.generateQuery((String) categorySort.getSelectedItem(), keyword));
-    }
 
-    private void displayCategoryTable(String sql) {
-        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
-            DefaultTableModel tableModel = new DefaultTableModel() {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-            int columnCount = Rs.getMetaData().getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
+    private void displayCategoryTable(String sortMethod, String keyword) {
+        CategoryCtrl category = new CategoryCtrl(DBConnection.getConnection());
+        List<CategoryModel> categories = category.searchAndSort(keyword, sortMethod);
+
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
+        };
 
-            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
-            while (Rs.next()) {
-                Object[] row = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    row[i - 1] = Rs.getObject(i);
-                }
-                tableModel.addRow(row);
-            }
-            // Đặt tên cột theo thiết kế
-            String[] columnNames = {"Mã phân loại", "Tên phân loại"};
-            tableModel.setColumnIdentifiers(columnNames);
+        String[] columnNames = {"Mã phân loại", "Tên phân loại"};
+        tableModel.setColumnIdentifiers(columnNames);
 
-            categoryTable.setModel(tableModel);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
+        for (CategoryModel cate: categories) {
+            Object[] row = new Object[2];
+            row[0] = cate.getId();
+            row[1] = cate.getCategoryName();
+            tableModel.addRow(row);
         }
+
+        categoryTable.setModel(tableModel);
     }
 
 
@@ -278,20 +269,14 @@ public class Category extends javax.swing.JPanel {
         clearTextField();
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
-            displayCategory(selectedMethod); // Gọi hàm displayCategory với phương thức sắp xếp được chọn
+            // Gọi hàm displayCategoryTable với phương thức sắp xếp được chọn
+            displayCategoryTable(selectedMethod, searchTextField.getText()); 
         }
     }//GEN-LAST:event_categorySortItemStateChanged
 
     private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
         Timer timer = new Timer(500, (ActionEvent e) -> {
-            String keyword = searchTextField.getText();
-            if (keyword.trim().isEmpty()) {
-                // Nếu textField rỗng, hiển thị toàn bộ danh sách
-                displayCategory((String) categorySort.getSelectedItem());
-            } else {
-                // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
-                searchCategory(keyword);
-            }
+            displayCategory();
         });
         timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
 
@@ -323,10 +308,10 @@ public class Category extends javax.swing.JPanel {
     }//GEN-LAST:event_searchTextFieldKeyTyped
 
     private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
-        displayCategoryTable("Select * from Category order by Category_ID");
         categorySort.setSelectedIndex(0);
         clearTextField();
         searchTextField.setText("");
+        displayCategory();
     }//GEN-LAST:event_refreshMouseClicked
 
     private boolean verifyInput() {
@@ -352,7 +337,7 @@ public class Category extends javax.swing.JPanel {
                         if (success) {
                             JOptionPane.showMessageDialog(null, "Đã cập nhật danh mục");
                             clearTextField();
-                            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
+                            displayCategory();
                         }
                     }
                 }
@@ -378,7 +363,7 @@ public class Category extends javax.swing.JPanel {
                         JOptionPane.showMessageDialog(null, "Đã thêm danh mục");
                         clearTextField();
                         searchTextField.setText("");
-                        displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
+                        displayCategory();
                     }
                 }
             }
@@ -401,7 +386,7 @@ public class Category extends javax.swing.JPanel {
                     }
                 }
             }
-            displayCategory((String) categorySort.getSelectedItem()); // Hiển thị lại dữ liệu với phương thức sắp xếp được chọn
+            displayCategory();
             clearTextField();
         }
     }//GEN-LAST:event_deleteButtonActionPerformed

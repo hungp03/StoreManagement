@@ -1,14 +1,16 @@
 package app.storemanagement.controller;
 
 import app.storemanagement.model.CategoryModel;
-import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
+import app.storemanagement.model.ProductTableModel;
 import app.storemanagement.model.SupplierCbx;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -88,7 +90,30 @@ public class ProductCtrl implements BaseController<ProductModel> {
         }
     }
 
-    public String generateQuery(String sortMethod, String keyword, String searchMethod) {
+    public List<ProductTableModel> searchAndSort(String keyword, String searchMethod, String sortMethod) {
+        List<ProductTableModel> products = new ArrayList<>();
+        String searchQuery = generateSearchQuery(keyword, searchMethod);
+        String sql = generateSortQuery(sortMethod, searchQuery);
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                // Tạo một đối tượng ProductDisplayModel từ ResultSet
+                ProductTableModel product = new ProductTableModel(
+                        rs.getInt("Product_ID"),
+                        rs.getString("Product_Name"),
+                        rs.getString("Category_Name"),
+                        rs.getDouble("Unit_Price"),
+                        rs.getInt("Quantity_In_Stock"));
+                products.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return products;
+    }
+
+    private String generateSearchQuery(String keyword, String searchMethod) {
         String tmp = "";
         if (!keyword.trim().isEmpty()) {
             switch (searchMethod) {
@@ -100,24 +125,22 @@ public class ProductCtrl implements BaseController<ProductModel> {
                 }
             }
         }
-        String query = """
-                       select Product_ID, Product_Name, Category.Category_Name, Entry_Date 
-                        from Product inner join Category on Product.Category_ID = Category.Category_ID
-                       inner join Supplier on Product.Supplier_ID = Supplier.Supplier_ID"""
-                + tmp;
-        switch (sortMethod) {
-            case "Mã SP" ->
-                query += " ORDER BY Product_ID";
-            case "Tên SP" ->
-                query += " ORDER BY Product_Name";
-            case "Ngày nhập hàng" ->
-                query += " ORDER BY Entry_Date";
-            default -> {
-            }
-        }
-        return query;
+        return "SELECT Product_ID, Product_Name, Category.Category_Name, Unit_Price, Quantity_In_Stock FROM Product INNER JOIN Category ON Product.Category_ID = Category.Category_ID INNER JOIN Supplier ON Product.Supplier_ID = Supplier.Supplier_ID" + tmp;
     }
-    
+
+    private String generateSortQuery(String sortMethod, String searchQuery) {
+        return switch (sortMethod) {
+            case "Mã SP" ->
+                searchQuery + " ORDER BY Product_ID";
+            case "Tên SP" ->
+                searchQuery + " ORDER BY Product_Name";
+            case "Ngày nhập hàng" ->
+                searchQuery + " ORDER BY Entry_Date";
+            default ->
+                searchQuery;
+        };
+    }
+
     public void getCategories(JComboBox<CategoryModel> cateCb) {
         try (Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery("SELECT * FROM Category")) {
 

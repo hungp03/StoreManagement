@@ -12,7 +12,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.sql.ResultSetMetaData;
 import java.util.HashMap;
 import java.util.Map;
-
+import app.storemanagement.model.InvoiceModel;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 /**
  *
  * @author AnTran
@@ -85,7 +88,7 @@ public class InvoiceCtrl {
                 Row row = sheet.createRow(rowNum++);
                 for (int i = 1; i <= columnCount; i++) {
                     Cell cell = row.createCell(i - 1);
-                    String columnName = metaData.getColumnName(i);
+//                    String columnName = metaData.getColumnName(i);
                     cell.setCellValue(resultSet.getString(i));
                 }
             }
@@ -123,31 +126,43 @@ public class InvoiceCtrl {
         return query;
     }
 
-    public String generateQuery(String sortMethod, String keyword, String searchMethod) {
+    public List<InvoiceModel> searchAndSort(String keyword, String searchMethod, String sortMethod) {
+        List<InvoiceModel> invoices = new ArrayList<>();
+        String searchQuery = generateSearchQuery(keyword, searchMethod);
+        String sql = generateSortQuery(sortMethod, searchQuery);
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                // Tạo một đối tượng InvoiceModel từ ResultSet
+                InvoiceModel invoice = new InvoiceModel(rs.getInt("Invoice_ID"), rs.getString("Full_name"), rs.getString("Payment_Method"), rs.getDate("Date"));
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return invoices;
+    }
+
+    private String generateSearchQuery(String keyword, String searchMethod) {
         String tmp = "";
-        if (keyword.trim().isEmpty() == false) {
+        if (!keyword.trim().isEmpty()) {
             switch (searchMethod) {
-                case "Mã hóa đơn" ->
-                    tmp = " WHERE i.Invoice_ID LIKE N'%" + keyword.trim() + "%'";
-                case "Ngày" ->
-                    tmp = " WHERE CONVERT(VARCHAR, i.Date, 23) LIKE N'%" + keyword.trim() + "%'";
-                case "Khách hàng" ->
-                    tmp = " WHERE c.Full_name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI";
+                case "Mã hóa đơn" -> tmp = " WHERE i.Invoice_ID LIKE N'%" + keyword.trim() + "%'";
+                case "Ngày" -> tmp = " WHERE CONVERT(VARCHAR, i.Date, 23) LIKE N'%" + keyword.trim() + "%'";
+                case "Khách hàng" -> tmp = " WHERE c.Full_name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI";
                 default -> {
                 }
             }
         }
-        String query = "select i.Invoice_ID, c.Full_name, i.Payment_Method, i.Date"
-                + " from Invoice as i join Customer as c "
-                + "on i.Customer_ID=c.Customer_ID" + tmp;
-        switch (sortMethod) {
-            case "Mã hóa đơn" ->
-                query += " ORDER BY Invoice_ID";
-            case "Ngày" ->
-                query += " ORDER BY Date";
-            default -> {
-            }
-        }
-        return query;
+        return "SELECT i.Invoice_ID, c.Full_name, i.Payment_Method, i.Date FROM Invoice as i JOIN Customer as c ON i.Customer_ID=c.Customer_ID" + tmp;
+    }
+
+    private String generateSortQuery(String sortMethod, String searchQuery) {
+        return switch (sortMethod) {
+            case "Mã hóa đơn" -> searchQuery + " ORDER BY Invoice_ID";
+            case "Ngày" -> searchQuery + " ORDER BY Date";
+            default -> searchQuery;
+        };
     }
 }

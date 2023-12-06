@@ -4,7 +4,11 @@ import app.storemanagement.middleware.VerifyAccess;
 import app.storemanagement.model.EmployeeModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -92,31 +96,59 @@ public class EmployeeCtrl implements BaseController<EmployeeModel> {
         }
     }
 
-    public String generateQuery(String sortMethod, String keyword, String searchMethod) {
+    public List<EmployeeModel> searchAndSort(String keyword, String searchMethod, String sortMethod) {
+        List<EmployeeModel> employees = new ArrayList<>();
+        String searchQuery = generateSearchQuery(keyword, searchMethod);
+        String sql = generateSortQuery(sortMethod, searchQuery);
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                // Tạo một đối tượng EmployeeModel từ ResultSet
+                EmployeeModel employee = new EmployeeModel(
+                        rs.getInt("Employee_ID"),
+                        rs.getString("Username"),
+                        "",
+                        rs.getString("Full_Name"),
+                        rs.getString("Gender"),
+                        rs.getString("Role"),
+                        rs.getDate("Date_of_Birth"),
+                        rs.getInt("Salary"));
+                employees.add(employee);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return employees;
+    }
+
+    private String generateSearchQuery(String keyword, String searchMethod) {
         String tmp = "";
-        if (keyword.trim().isEmpty() == false) {
+        if (!keyword.trim().isEmpty()) {
             switch (searchMethod) {
                 case "Mã NV" ->
                     tmp = " WHERE Employee_ID LIKE N'%" + keyword.trim() + "%' ";
                 case "Tên NV" ->
-                    tmp = " WHERE Full_Name LIKE N'%" + keyword + "%' COLLATE SQL_Latin1_General_CP1253_CI_AI ";
+                    tmp = " WHERE Full_Name LIKE N'%" + keyword.trim() + "%' COLLATE SQL_Latin1_General_CP1253_CI_AI ";
                 default -> {
                 }
             }
         }
-        String query = "select Employee_ID, Username, Full_Name, Date_of_Birth, Salary, Gender, Role from Employee" + tmp;
-        switch (sortMethod) {
+        return "SELECT Employee_ID, Username, Full_Name, Date_of_Birth, Salary, Gender, Role FROM Employee" + tmp;
+    }
+
+    private String generateSortQuery(String sortMethod, String searchQuery) {
+        return switch (sortMethod) {
             case "Mã NV" ->
-                query += " ORDER BY Employee_ID";
+                searchQuery + " ORDER BY Employee_ID";
             case "Tên NV" ->
-                query += " ORDER BY Full_Name";
+                searchQuery + " ORDER BY Full_Name";
             case "Ngày sinh" ->
-                query += " ORDER BY Date_of_Birth";
+                searchQuery + " ORDER BY Date_of_Birth";
             case "Lương" ->
-                query += " ORDER BY Salary";
-            default -> {
-            }
-        }
-        return query;
+                searchQuery + " ORDER BY Salary";
+            default ->
+                searchQuery;
+        };
     }
 }

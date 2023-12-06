@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package app.storemanagement.model;
 
 import java.util.Date;
@@ -10,70 +6,35 @@ import java.util.Date;
  *
  * @author AnTran
  */
-public class InvoiceModel extends BaseEntity{
-    private int invoiceId;
-    private Date Date;
-    private double totalAmount;
-    private double customerCash;
-    private double returnMoney;
+public class InvoiceModel {
+    private int id;
+    private String customerName;
     private String paymentMethod;
-    private int employeeId;
-    private int customerId;
-    
-    public InvoiceModel(int id) {
-        super(id);
-    }
+    private Date date;
 
-    public InvoiceModel(int invoiceId, Date Date, double totalAmount, double customerCash, double returnMoney, String paymentMethod, int employeeId, int customerId, int id) {
-        super(id);
-        this.invoiceId = invoiceId;
-        this.Date = Date;
-        this.totalAmount = totalAmount;
-        this.customerCash = customerCash;
-        this.returnMoney = returnMoney;
+    public InvoiceModel(int id, String customerName, String paymentMethod, Date date) {
+        this.id = id;
+        this.customerName = customerName;
         this.paymentMethod = paymentMethod;
-        this.employeeId = employeeId;
-        this.customerId = customerId;
+        this.date = date;
     }
 
-    public int getInvoiceId() {
-        return invoiceId;
+    // getters and setters
+
+    public int getId() {
+        return id;
     }
 
-    public void setInvoiceId(int invoiceId) {
-        this.invoiceId = invoiceId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public Date getDate() {
-        return Date;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setDate(Date Date) {
-        this.Date = Date;
-    }
-
-    public double getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public double getCustomerCash() {
-        return customerCash;
-    }
-
-    public void setCustomerCash(double customerCash) {
-        this.customerCash = customerCash;
-    }
-
-    public double getReturnMoney() {
-        return returnMoney;
-    }
-
-    public void setReturnMoney(double returnMoney) {
-        this.returnMoney = returnMoney;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public String getPaymentMethod() {
@@ -84,20 +45,11 @@ public class InvoiceModel extends BaseEntity{
         this.paymentMethod = paymentMethod;
     }
 
-    public int getEmployeeId() {
-        return employeeId;
+    public Date getDate() {
+        return date;
     }
 
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
+    public void setDate(Date date) {
+        this.date = date;
     }
-
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
-    
 }

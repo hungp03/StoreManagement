@@ -1,20 +1,15 @@
 package app.storemanagement.view;
 
-import app.storemanagement.controller.CustomerCtrl;
 import app.storemanagement.controller.SupplierCtrl;
 import app.storemanagement.model.Connection.DBConnection;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import app.storemanagement.model.CustomerModel;
 import app.storemanagement.model.SupplierModel;
 import app.storemanagement.utils.Util;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.util.List;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -33,9 +28,8 @@ public class Supplier extends javax.swing.JPanel {
      */
     public Supplier() {
         initComponents();
-        displaySupplierTable("select * from Supplier");
+        displaySupplier();
     }
-    private final SupplierCtrl sup = new SupplierCtrl();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -244,10 +238,10 @@ public class Supplier extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(fullName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(address, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(phone, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(phone, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -272,13 +266,10 @@ public class Supplier extends javax.swing.JPanel {
         ((AbstractDocument) phone.getDocument()).setDocumentFilter(new LimitDocumentFilter(15));
         ((AbstractDocument) phone.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));
     }// </editor-fold>//GEN-END:initComponents
-     private void displaySupplier(String sortMethod) {
-        displaySupplierTable(sup.generateQuery(sortMethod, searchTextField.getText(), (String) searchCb.getSelectedItem()));
+     private void displaySupplier() {
+        displaySupplierTable((String) supplierSortCb.getSelectedItem(), searchTextField.getText(), (String) searchCb.getSelectedItem());
     }
 
-    private void searchSupplier(String keyword) {
-        displaySupplierTable(sup.generateQuery((String) supplierSortCb.getSelectedItem(), keyword, (String) searchCb.getSelectedItem()));
-    }
 
     private void deleteButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton1ActionPerformed
         if (supplierTable.getSelectedRow() < 0) {
@@ -293,7 +284,7 @@ public class Supplier extends javax.swing.JPanel {
                 if (success) {
                     JOptionPane.showMessageDialog(null, "Đã xóa thành công!");
                     clearTextField();
-                    displaySupplier((String) supplierSortCb.getSelectedItem());
+                    displaySupplier();
                 }
             }
         }
@@ -307,7 +298,7 @@ public class Supplier extends javax.swing.JPanel {
             if (success) {
                 JOptionPane.showMessageDialog(null, "Đã thêm nhà cung cấp!");
                 clearTextField();
-                displaySupplier((String) supplierSortCb.getSelectedItem());
+                displaySupplier();
             }
         }
     }
@@ -330,8 +321,10 @@ public class Supplier extends javax.swing.JPanel {
 
     private void supplierSortCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_supplierSortCbItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            String selectedMethod = (String) evt.getItem(); // Lấy phương thức sắp xếp được chọn
-            displaySupplier(selectedMethod); // Gọi hàm display với phương thức sắp xếp được chọn
+            // Lấy phương thức sắp xếp được chọn
+            String selectedMethod = (String) evt.getItem(); 
+            // Gọi hàm display với phương thức sắp xếp được chọn
+            displaySupplierTable(selectedMethod, searchTextField.getText(), (String) searchCb.getSelectedItem());
         }
     }//GEN-LAST:event_supplierSortCbItemStateChanged
 
@@ -344,7 +337,7 @@ public class Supplier extends javax.swing.JPanel {
             if (success) {
                 JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
                 clearTextField();
-                displaySupplier((String) supplierSortCb.getSelectedItem());
+                displaySupplier();
             }
         }
     }
@@ -368,11 +361,11 @@ public class Supplier extends javax.swing.JPanel {
     }//GEN-LAST:event_editButton1ActionPerformed
 
     private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
-        displaySupplierTable("SELECT * FROM Supplier");
         searchTextField.setText("");
         searchCb.setSelectedIndex(0);
         supplierSortCb.setSelectedIndex(0);
         clearTextField();
+        displaySupplier();
     }//GEN-LAST:event_refreshMouseClicked
 
     private void searchCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_searchCbItemStateChanged
@@ -382,14 +375,7 @@ public class Supplier extends javax.swing.JPanel {
     private void searchTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyTyped
         // TODO add your handling code here:
         Timer timer = new Timer(500, (ActionEvent e) -> {
-            String keyword = searchTextField.getText();
-            if (keyword.trim().isEmpty()) {
-                // Nếu textField rỗng, hiển thị toàn bộ danh sách
-                displaySupplier((String) supplierSortCb.getSelectedItem());
-            } else {
-                // Nếu không, thực hiện tìm kiếm dựa trên từ khóa
-                searchSupplier(keyword);
-            }
+            displaySupplier();
         });
         timer.setRepeats(false); // Đảm bảo rằng Timer chỉ thực hiện một lần
 
@@ -433,34 +419,30 @@ public class Supplier extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_supplierTableMouseClicked
 
-    private void displaySupplierTable(String sql) {
-        try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
-            DefaultTableModel tableModel = new DefaultTableModel() {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-            int columnCount = Rs.getMetaData().getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
-            }
+    private void displaySupplierTable(String sortMethod, String keyword, String searchMethod) {
+        SupplierCtrl supplier = new SupplierCtrl(DBConnection.getConnection());
+        List<SupplierModel> suppliers = supplier.searchAndSort(keyword, searchMethod, sortMethod);
 
-            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
-            while (Rs.next()) {
-                Object[] row = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    row[i - 1] = Rs.getObject(i);
-                }
-                tableModel.addRow(row);
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
-            String[] columnNames = {"Mã NCC", "Tên NCC", "Địa chỉ", "Số điện thoại", "Email"};
-            tableModel.setColumnIdentifiers(columnNames);
+        };
 
-            supplierTable.setModel(tableModel);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
+        String[] columnNames = {"Mã NCC", "Tên NCC", "Địa chỉ", "Số điện thoại", "Email"};
+        tableModel.setColumnIdentifiers(columnNames);
+
+        for (SupplierModel supp : suppliers) {
+            Object[] row = new Object[5];
+            row[0] = supp.getId();
+            row[1] = supp.getFullName();
+            row[2] = supp.getAddress();
+            row[3] = supp.getPhone();
+            row[4] = supp.getEmail();
+            tableModel.addRow(row);
         }
+        supplierTable.setModel(tableModel);
     }
 
     private void clearTextField() {
