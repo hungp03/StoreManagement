@@ -31,7 +31,7 @@ public class Product extends javax.swing.JPanel {
     public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
-    private final ProductCtrl productCtrl = new ProductCtrl();
+    private ProductCtrl productCtrl = new ProductCtrl();
     private final VerifyAccess verifyAccess = new VerifyAccess();
     private AddProduct ap = null;
     private ProductDetail pd = null;
@@ -620,9 +620,7 @@ public class Product extends javax.swing.JPanel {
                     return;
                 }
                 ProductModel product = new ProductModel(key);
-                ProductCtrl tmp = null;
-                try {
-                    tmp = new ProductCtrl();
+                ProductCtrl tmp = new ProductCtrl(DBConnection.getConnection());
                     int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa sản phẩm này?", "Alert",
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (response == JOptionPane.YES_OPTION) {
@@ -633,11 +631,6 @@ public class Product extends javax.swing.JPanel {
                             showMetrics();
                         }
                     }
-                } finally {
-                    if (tmp != null) {
-                        tmp.close();
-                    }
-                }
             }
         }
     }//GEN-LAST:event_deleteProductActionPerformed

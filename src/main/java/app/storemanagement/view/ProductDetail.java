@@ -43,8 +43,6 @@ public class ProductDetail extends javax.swing.JFrame {
         return dataChanged;
     }
 
-    private ProductCtrl pc = null;
-
     /**
      * Creates new form ProductDetail
      *
@@ -53,15 +51,9 @@ public class ProductDetail extends javax.swing.JFrame {
     public ProductDetail(int id) {
         this.id = id;
         initComponents();
-        try {
-            pc = new ProductCtrl();
-            pc.getCategories(cateCb);
-            pc.getSuppliers(supplierCb);
-        } finally {
-            if (pc != null) {
-                pc.close();
-            }
-        }
+        ProductCtrl pc = new ProductCtrl(DBConnection.getConnection());
+        pc.getCategories(cateCb);
+        pc.getSuppliers(supplierCb);
         productID.setText(String.valueOf(id));
         initPage();
     }
@@ -502,26 +494,20 @@ public class ProductDetail extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_cancelBtnActionPerformed
     private void updateProduct(ProductModel product) {
-        try {
-            pc = new ProductCtrl();
-            int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật sản phẩm này?", "Alert",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                boolean success = pc.update(product);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đã cập nhật sản phẩm");
-                    setProperties("Thông tin sản phẩm", false, "#F2F2F2");
-                    checkHSD(product.getExpiryDate(), product.getQuantityInStock());
-                    jLabel2.setText("Cập nhật lần cuối: " + Util.getCurrentDateTime());
-                    double unit_Tmp = Double.parseDouble(unitPrice.getText());
-                    unitPrice.setText(Util.convertToVND(unit_Tmp));
-                    preventChangeProductName();
-                    dataChanged = true;
-                }
-            }
-        } finally {
-            if (pc != null) {
-                pc.close();
+        ProductCtrl pc = new ProductCtrl(DBConnection.getConnection());
+        int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn cập nhật sản phẩm này?", "Alert",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (response == JOptionPane.YES_OPTION) {
+            boolean success = pc.update(product);
+            if (success) {
+                JOptionPane.showMessageDialog(null, "Đã cập nhật sản phẩm");
+                setProperties("Thông tin sản phẩm", false, "#F2F2F2");
+                checkHSD(product.getExpiryDate(), product.getQuantityInStock());
+                jLabel2.setText("Cập nhật lần cuối: " + Util.getCurrentDateTime());
+                double unit_Tmp = Double.parseDouble(unitPrice.getText());
+                unitPrice.setText(Util.convertToVND(unit_Tmp));
+                preventChangeProductName();
+                dataChanged = true;
             }
         }
     }

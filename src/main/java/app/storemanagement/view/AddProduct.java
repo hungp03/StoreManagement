@@ -2,6 +2,7 @@ package app.storemanagement.view;
 
 import app.storemanagement.controller.ProductCtrl;
 import app.storemanagement.model.CategoryModel;
+import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.model.ProductModel;
 import app.storemanagement.model.SupplierCbx;
 import app.storemanagement.utils.Util;
@@ -24,22 +25,15 @@ public class AddProduct extends javax.swing.JFrame {
     public boolean isDataAdded() {
         return dataAdded;
     }
-    private ProductCtrl pc = null;
 
     /**
      * Creates new form ProductDetail
      */
     public AddProduct() {
         initComponents();
-        try {
-            pc = new ProductCtrl();
-            pc.getCategories(cateCb);
-            pc.getSuppliers(supplierCb);
-        } finally {
-            if (pc != null) {
-                pc.close();
-            }
-        }
+        ProductCtrl pc = new ProductCtrl(DBConnection.getConnection());
+        pc.getCategories(cateCb);
+        pc.getSuppliers(supplierCb);
         productID.setText(String.valueOf(Util.getNextID("Product_ID", "Product")));
     }
 
@@ -324,8 +318,7 @@ public class AddProduct extends javax.swing.JFrame {
     }
 
     private void addProduct(ProductModel product) {
-        try {
-            pc = new ProductCtrl();
+            ProductCtrl pc  = new ProductCtrl(DBConnection.getConnection());
             int response = JOptionPane.showConfirmDialog(null, "Bạn có muốn thêm sản phẩm này?", "Alert",
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (response == JOptionPane.YES_OPTION) {
@@ -337,13 +330,8 @@ public class AddProduct extends javax.swing.JFrame {
                     clearTextField();
                 }
             }
-        } finally {
-            if (pc != null) {
-                pc.close();
-            }
-        }
     }
-    
+
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         int id = Integer.parseInt(productID.getText());
         String name = productName.getText().trim();

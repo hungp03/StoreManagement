@@ -22,17 +22,10 @@ public class ProductCtrl implements BaseController<ProductModel> {
     private Connection conn;
 
     public ProductCtrl() {
-        this.conn = DBConnection.getConnection();
     }
 
-    public void close() {
-        if (this.conn != null) {
-            try {
-                this.conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+    public ProductCtrl(Connection conn) {
+        this.conn = conn;
     }
 
     @Override
