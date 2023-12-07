@@ -17,7 +17,10 @@ import javax.swing.event.DocumentListener;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *

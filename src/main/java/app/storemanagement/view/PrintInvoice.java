@@ -3,15 +3,19 @@ package app.storemanagement.view;
 import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.utils.Util;
 import java.awt.Color;
-import java.awt.Desktop;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -23,9 +27,67 @@ import javax.swing.table.TableColumnModel;
  *
  * @author Hung Pham
  */
-public class PrintInvoice extends javax.swing.JFrame {
+public class PrintInvoice extends javax.swing.JFrame implements Printable {
 
     private int id;
+
+    public boolean isFileOpen(String filePath) {
+        try {
+            RandomAccessFile file = new RandomAccessFile(filePath, "rw");
+            file.close();
+        } catch (IOException e) {
+            // Nếu không thể mở file, đồng nghĩa rằng file đang được sử dụng bởi ứng dụng khác
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
+        if (pageIndex > 0) {
+            return Printable.NO_SUCH_PAGE;
+        }
+
+        Graphics2D g2d = (Graphics2D) graphics;
+        g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+
+        // In nội dung của JPanel
+        jPanel1.paint(g2d);
+
+        return Printable.PAGE_EXISTS;
+    }
+
+    private void printPanel() {
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(this);
+
+        // Lấy PageFormat mặc định
+        PageFormat pageFormat = job.defaultPage();
+
+        // Tạo Paper với kích thước tùy chỉnh (ví dụ: 5.625x8.5 inches)
+        Paper paper = new Paper();
+        double paperWidth = 5.625 * 72; // 1 inch = 72 points
+        double paperHeight = 8.5 * 72;
+        paper.setSize(paperWidth, paperHeight);
+        paper.setImageableArea(0, 0, paperWidth, paperHeight);
+        
+        // Đặt Paper mới cho PageFormat
+        pageFormat.setPaper(paper);
+        
+        // Đặt lại PageFormat cho PrinterJob
+        job.setPrintable(this, pageFormat);
+
+        if (job.printDialog()) {
+            try {
+                job.print();
+                JOptionPane.showMessageDialog(null, "In thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            } catch (PrinterException ex) {
+                JOptionPane.showMessageDialog(null, "Không thể in: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Người dùng đã hủy thao tác.", "Thông báo", JOptionPane.WARNING_MESSAGE);
+        }
+    }
 
     /**
      * Creates new form PrintInvoice
@@ -38,6 +100,7 @@ public class PrintInvoice extends javax.swing.JFrame {
         getInvoiceInfo();
         formatTable();
         displayInvoiceTable();
+        printPanel();
     }
 
     /**
@@ -238,7 +301,7 @@ public class PrintInvoice extends javax.swing.JFrame {
                                 .addComponent(jLabel2))
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -288,17 +351,17 @@ public class PrintInvoice extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 400, 610));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 410, 610));
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
     private void getInvoiceInfo() {
         String sql = """
-                     SELECT e.Full_Name AS Employee_Name, c.Full_Name AS Customer_Name, 
+                     SELECT isnull(e.Full_Name, ' ') AS Employee_Name, c.Full_Name AS Customer_Name, 
                      i.Total_Amount, i.Customer_Cash, i.Return_Money,
                      FORMAT(Created_At, 'HH:mm dd/MM/yyyy') as Created_Time
-                     FROM Invoice i JOIN Employee e ON i.Employee_ID = e.Employee_ID
+                     FROM Invoice i LEFT JOIN Employee e ON i.Employee_ID = e.Employee_ID
                      JOIN Customer c ON i.Customer_ID = c.Customer_ID
                      WHERE Invoice_ID = """ + id;
         try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
@@ -329,66 +392,54 @@ public class PrintInvoice extends javax.swing.JFrame {
 
     private void displayInvoiceTable() {
         String sql = """
-                 select p.Product_Name, p.Unit_Price, c.Quantity
-                 from Invoice i inner join Contain c on i.Invoice_ID = c.Invoice_ID
-                 inner join Product p on p.Product_ID = c.Product_ID where i.Invoice_ID = """ + id;
+             select p.Product_Name, p.Unit_Price, c.Quantity
+             from Invoice i inner join Contain c on i.Invoice_ID = c.Invoice_ID
+             inner join Product p on p.Product_ID = c.Product_ID where i.Invoice_ID = """ + id;
         try (Connection conn = DBConnection.getConnection(); Statement St = conn.createStatement(); ResultSet Rs = St.executeQuery(sql)) {
-            // Lưu kích thước cột hiện tại
-            int oldColumn0Width = invoiceTable.getColumnModel().getColumn(0).getWidth();
-            int oldColumn1Width = invoiceTable.getColumnModel().getColumn(1).getWidth();
-            int oldColumn2Width = invoiceTable.getColumnModel().getColumn(2).getWidth();
-
             DefaultTableModel tableModel = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
                 }
             };
-            int columnCount = Rs.getMetaData().getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                tableModel.addColumn(Rs.getMetaData().getColumnName(i));
-            }
+            // Lưu kích thước cột hiện tại
+            int oldColumn0Width = invoiceTable.getColumnModel().getColumn(0).getWidth();
+            int oldColumn1Width = invoiceTable.getColumnModel().getColumn(1).getWidth();
+            int oldColumn2Width = invoiceTable.getColumnModel().getColumn(2).getWidth();
 
-            // Đổ dữ liệu từ ResultSet vào DefaultTableModel
-            while (Rs.next()) {
-                Object[] row = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    if (i == 2) { // Giả sử cột 2 là giá
-                        double price = Rs.getDouble(i);
-                        row[i - 1] = Util.convertToVND(price);
-                    } else {
-                        row[i - 1] = Rs.getObject(i);
-                    }
-                }
-                tableModel.addRow(row);
-            }
             // Đặt tên cột theo thiết kế
             String[] columnNames = {"Sản phẩm", "Đơn giá", "Số lượng"};
             tableModel.setColumnIdentifiers(columnNames);
-            invoiceTable.setModel(tableModel);
 
+            int rowCount = 0;
+            while (Rs.next()) {
+                if (rowCount < 7) { // Hiển thị 7 sản phẩm đầu tiên
+                    Object[] row = new Object[3];
+                    row[0] = Rs.getString("Product_Name");
+                    double price = Rs.getDouble("Unit_Price");
+                    row[1] = Util.convertToVND(price);
+                    row[2] = Rs.getInt("Quantity");
+                    tableModel.addRow(row);
+                } else if (rowCount == 7) { // Hiển thị dấu 3 chấm (...) trong hàng thứ 8
+                    Object[] row = {"...", "...", "..."};
+                    tableModel.addRow(row);
+                } else {
+                    break; // Không cần xử lý thêm hàng nào
+                }
+                rowCount++;
+            }
+
+            invoiceTable.setModel(tableModel);
             // Khôi phục kích thước cột
             invoiceTable.getColumnModel().getColumn(0).setPreferredWidth(oldColumn0Width);
             invoiceTable.getColumnModel().getColumn(1).setPreferredWidth(oldColumn1Width);
             invoiceTable.getColumnModel().getColumn(2).setPreferredWidth(oldColumn2Width);
             this.revalidate();
-            printInv();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
-    
-    private void printInv(){
-        try{
-            BufferedImage img = new BufferedImage(jPanel1.getWidth(), jPanel1.getHeight(), BufferedImage.TYPE_INT_RGB);
-            jPanel1.paint(img.getGraphics());
-            ImageIO.write(img, "jpg", new File("D:\\invoice.jpg"));
-            Desktop.getDesktop().print(new File("D:\\invoice.jpg"));
-        }
-        catch(IOException e){
-            JOptionPane.showMessageDialog(null, e.getMessage());
-        }
-    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel cusMoney;
