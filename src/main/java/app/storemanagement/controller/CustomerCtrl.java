@@ -110,24 +110,31 @@ public class CustomerCtrl implements BaseController<CustomerModel> {
         String tmp = "";
         if (!keyword.trim().isEmpty()) {
             switch (searchMethod) {
-                case "Mã KH" -> tmp = " WHERE Customer_ID LIKE N'%" + keyword.trim() + "%' ";
-                case "Tên KH" -> tmp = " WHERE Full_Name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
-                case "Số điện thoại" -> tmp = " WHERE Phone LIKE N'%" + keyword.trim() + "%' ";
+                case "Mã KH" ->
+                    tmp = " WHERE Customer.Customer_ID LIKE N'%" + keyword.trim() + "%' ";
+                case "Tên KH" ->
+                    tmp = " WHERE Customer.Full_Name LIKE N'%" + keyword.trim() + "%' COLLATE Vietnamese_CI_AI ";
+                case "Số điện thoại" ->
+                    tmp = " WHERE Customer.Phone LIKE N'%" + keyword.trim() + "%' ";
                 default -> {
                 }
             }
         }
         return """
                select Customer.*, count(Invoice_ID) as Sodonhang from
-               Customer left join Invoice on Customer.Customer_ID = Invoice.Customer_ID
-               group by Customer.Customer_ID, Customer.Address, Customer.Full_Name, Customer.Phone""" + tmp;
+               Customer left join Invoice on Customer.Customer_ID = Invoice.Customer_ID """
+                + tmp
+                + " group by Customer.Customer_ID, Customer.Address, Customer.Full_Name, Customer.Phone";
     }
 
     private String generateSortQuery(String sortMethod, String searchQuery) {
         return switch (sortMethod) {
-            case "Mã KH" -> searchQuery + " ORDER BY Customer_ID";
-            case "Tên KH" -> searchQuery + " ORDER BY Full_Name";
-            default -> searchQuery;
+            case "Mã KH" ->
+                searchQuery + " ORDER BY Customer_ID";
+            case "Tên KH" ->
+                searchQuery + " ORDER BY Full_Name";
+            default ->
+                searchQuery;
         };
     }
 }

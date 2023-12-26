@@ -115,11 +115,11 @@ public class SupplierCtrl implements BaseController<SupplierModel> {
         if (!keyword.trim().isEmpty()) {
             switch (searchMethod) {
                 case "Mã NCC" ->
-                    tmp = " WHERE Supplier_ID LIKE N'%" + keyword.trim() + "%' ";
+                    tmp = " WHERE Supplier.Supplier_ID LIKE N'%" + keyword.trim() + "%' ";
                 case "Tên NCC" ->
-                    tmp = " WHERE Supplier_Name LIKE N'%" + keyword.trim() + "%' COLLATE SQL_Latin1_General_CP1253_CI_AI ";
+                    tmp = " WHERE Supplier.Supplier_Name LIKE N'%" + keyword.trim() + "%' COLLATE SQL_Latin1_General_CP1253_CI_AI ";
                 case "Số điện thoại" ->
-                    tmp = " WHERE Phone LIKE N'%" + keyword.trim() + "%' ";
+                    tmp = " WHERE Supplier.Phone LIKE N'%" + keyword.trim() + "%' ";
                 default -> {
                 }
             }
@@ -127,14 +127,18 @@ public class SupplierCtrl implements BaseController<SupplierModel> {
         return """
                select Supplier.*, count(Product_ID) as Sosanpham from
                Supplier left join Product on Product.Supplier_ID = Supplier.Supplier_ID
-               group by Supplier.Supplier_ID,Supplier.Supplier_Name, Supplier.Address, Supplier.Email, Supplier.Phone""" + tmp;
+               """ + tmp
+                + "group by Supplier.Supplier_ID,Supplier.Supplier_Name, Supplier.Address, Supplier.Email, Supplier.Phone";
     }
 
     private String generateSortQuery(String sortMethod, String searchQuery) {
         return switch (sortMethod) {
-            case "Mã NCC" -> searchQuery + " ORDER BY Supplier_ID";
-            case "Tên NCC" -> searchQuery + " ORDER BY Supplier_Name";
-            default -> searchQuery;
+            case "Mã NCC" ->
+                searchQuery + " ORDER BY Supplier_ID";
+            case "Tên NCC" ->
+                searchQuery + " ORDER BY Supplier_Name";
+            default ->
+                searchQuery;
         };
-}
+    }
 }

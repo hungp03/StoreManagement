@@ -111,8 +111,8 @@ public class CategoryCtrl implements BaseController<CategoryModel> {
         }
         return """
                select Category.*, count(Product_ID) as Sosanpham from
-               Category left join Product on Product.Category_ID = Category.Category_ID
-               group by Category.Category_ID, Category_Name""" + tmp;
+               Category left join Product on Product.Category_ID = Category.Category_ID"""
+                + tmp + " group by Category.Category_ID, Category_Name";
     }
 
     private String generateSortQuery(String sortMethod, String searchQuery) {
