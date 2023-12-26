@@ -6,6 +6,7 @@ import app.storemanagement.model.UserModel;
 import app.storemanagement.utils.Util;
 import com.toedter.calendar.JTextFieldDateEditor;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
@@ -20,6 +21,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
+import javax.swing.text.Caret;
+import javax.swing.text.DefaultCaret;
 
 /**
  *
@@ -34,10 +37,10 @@ public class UserInfo extends javax.swing.JFrame {
     public boolean isInfoChanged() {
         return InfoChanged;
     }
-    
 
     /**
      * Creates new form UserInfo
+     *
      * @param id
      * @param role
      */
@@ -132,11 +135,13 @@ public class UserInfo extends javax.swing.JFrame {
 
         userName.setEditable(false);
         userName.setBackground(new java.awt.Color(255, 255, 255));
+        userName.setCaretColor(new java.awt.Color(255, 255, 255));
         jPanel1.add(userName, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 94, 230, -1));
         ((AbstractDocument) userName.getDocument()).setDocumentFilter(new LimitDocumentFilter(20));
 
         fullName.setEditable(false);
         fullName.setBackground(new java.awt.Color(255, 255, 255));
+        fullName.setCaretColor(new java.awt.Color(255, 255, 255));
         fullName.setMaximumSize(new java.awt.Dimension(230, 22));
         jPanel1.add(fullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 128, 230, -1));
         ((AbstractDocument) fullName.getDocument()).setDocumentFilter(new LimitDocumentFilter(50));
@@ -259,7 +264,7 @@ public class UserInfo extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-    
+
     private void getUserInfo() {
         String query = "";
         if (userRole.equals("admin")) {
@@ -313,7 +318,7 @@ public class UserInfo extends javax.swing.JFrame {
 
     private void changePwLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_changePwLabelMouseClicked
         if (updateBtn.isEnabled() || cancelBtn.isEnabled()) {
-            JOptionPane.showMessageDialog(null, "Vui lòng hoàn thành hoặc hủy cập nhật thông tin trước", "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng hoàn thành việc cập nhật thông tin", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
         cardLayout.show(container, "changepassword");
@@ -330,12 +335,22 @@ public class UserInfo extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelPwActionPerformed
 
     private void handleInput(boolean b) {
+        if (b){
+            userName.setCaretColor(Color.BLACK);
+            fullName.setCaretColor(Color.BLACK);
+        }
+        else{
+            userName.setCaretColor(Color.WHITE);
+            fullName.setCaretColor(Color.WHITE);
+        }
+        // Thiết lập trạng thái editable và enable/disable buttons dựa trên giá trị boolean b
         userName.setEditable(b);
         fullName.setEditable(b);
         updateBtn.setEnabled(b);
         cancelBtn.setEnabled(b);
         birthday.getCalendarButton().setEnabled(b);
     }
+
     private void updateInfoLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateInfoLabelMouseClicked
         handleInput(true);
     }//GEN-LAST:event_updateInfoLabelMouseClicked
@@ -383,8 +398,8 @@ public class UserInfo extends javax.swing.JFrame {
             retypePw.setEchoChar('\u2022');
         }
     }//GEN-LAST:event_showPwItemStateChanged
-    
-    public String getNewUserName(){
+
+    public String getNewUserName() {
         return fullName.getText();
     }
 

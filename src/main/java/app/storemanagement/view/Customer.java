@@ -415,15 +415,16 @@ public class Customer extends javax.swing.JPanel {
             }
         };
 
-        String[] columnNames = {"Mã KH", "Tên KH", "Địa chỉ", "Số điện thoại"};
+        String[] columnNames = {"Mã KH", "Tên KH", "Địa chỉ", "Số điện thoại", "Số đơn hàng đã mua"};
         tableModel.setColumnIdentifiers(columnNames);
 
         for (CustomerModel cust : customers) {
-            Object[] row = new Object[4];
+            Object[] row = new Object[5];
             row[0] = cust.getId();
             row[1] = cust.getFullName();
             row[2] = cust.getAddress();
             row[3] = cust.getPhone();
+            row[4] = cust.getInvoiceQty();
             tableModel.addRow(row);
         }
 

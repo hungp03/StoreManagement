@@ -239,13 +239,13 @@ public class Login extends javax.swing.JFrame {
             String query;
             if (adminRd.isSelected()) {
                 role = "admin";
-                query = "select Admin_ID, Username, Password, Full_Name from Admin where Username = ?";
+                query = "select Admin_ID, Username, Password, Full_Name from Admin where Username COLLATE Latin1_General_CS_AS = ?";
             } else if (nvbhRd.isSelected()) {
                 role = "banhang";
-                query = "select Employee_ID, Username, Password, Full_Name from Employee where (Username = ? and Role = 'Bán hàng')";
+                query = "select Employee_ID, Username, Password, Full_Name from Employee where (Username COLLATE Latin1_General_CS_AS = ? and Role = 'Bán hàng')";
             } else if (nvkRd.isSelected()) {
                 role = "kho";
-                query = "select Employee_ID, Username, Password, Full_Name from Employee where (Username = ? and Role = 'Kho')";
+                query = "select Employee_ID, Username, Password, Full_Name from Employee where (Username COLLATE Latin1_General_CS_AS = ? and Role = 'Kho')";
             } else {
                 JOptionPane.showMessageDialog(this, "Chọn chức vụ của bạn", "Missing information", JOptionPane.WARNING_MESSAGE);
                 return;

@@ -421,7 +421,7 @@ public class Supplier extends javax.swing.JPanel {
 
     private void displaySupplierTable(String sortMethod, String keyword, String searchMethod) {
         SupplierCtrl supplier = new SupplierCtrl(DBConnection.getConnection());
-        List<SupplierModel> suppliers = supplier.searchAndSort(keyword, searchMethod, sortMethod);
+        List<SupplierModel> suppliers = supplier.getSuppliers(keyword, searchMethod, sortMethod);
 
         DefaultTableModel tableModel = new DefaultTableModel() {
             @Override
@@ -430,16 +430,17 @@ public class Supplier extends javax.swing.JPanel {
             }
         };
 
-        String[] columnNames = {"Mã NCC", "Tên NCC", "Địa chỉ", "Số điện thoại", "Email"};
+        String[] columnNames = {"Mã NCC", "Tên NCC", "Địa chỉ", "Số điện thoại", "Email", "Số sản phẩm"};
         tableModel.setColumnIdentifiers(columnNames);
 
         for (SupplierModel supp : suppliers) {
-            Object[] row = new Object[5];
+            Object[] row = new Object[6];
             row[0] = supp.getId();
             row[1] = supp.getFullName();
             row[2] = supp.getAddress();
             row[3] = supp.getPhone();
             row[4] = supp.getEmail();
+            row[5] = supp.getProductQty();
             tableModel.addRow(row);
         }
         supplierTable.setModel(tableModel);

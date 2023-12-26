@@ -136,9 +136,6 @@ public class Dashboard extends javax.swing.JFrame {
             public void windowClosing(WindowEvent e) {
                 int confirmed = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn thoát chứ?", "Xác nhận thoát", JOptionPane.YES_NO_OPTION);
                 if (confirmed == JOptionPane.YES_OPTION) {
-                    if (sellPanel != null && !sellPanel.isCartEmpty()) {
-                        sellPanel.clearCart();
-                    }
                     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 } else {
                     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -222,6 +219,7 @@ public class Dashboard extends javax.swing.JFrame {
         overviewBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/statistics.png"))); // NOI18N
         overviewBtn.setText("   Tổng quan");
         overviewBtn.setBorder(null);
+        overviewBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         overviewBtn.setFocusable(false);
         overviewBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -235,6 +233,7 @@ public class Dashboard extends javax.swing.JFrame {
         employeeBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/employees.png"))); // NOI18N
         employeeBtn.setText("   Nhân viên");
         employeeBtn.setBorder(null);
+        employeeBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         employeeBtn.setFocusable(false);
         employeeBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -248,6 +247,7 @@ public class Dashboard extends javax.swing.JFrame {
         categoryBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/categories.png"))); // NOI18N
         categoryBtn.setText("   Phân loại");
         categoryBtn.setBorder(null);
+        categoryBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         categoryBtn.setFocusable(false);
         categoryBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -261,6 +261,7 @@ public class Dashboard extends javax.swing.JFrame {
         productBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/products.png"))); // NOI18N
         productBtn.setText("   Sản phẩm");
         productBtn.setBorder(null);
+        productBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         productBtn.setFocusable(false);
         productBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -274,6 +275,7 @@ public class Dashboard extends javax.swing.JFrame {
         customerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/customer.png"))); // NOI18N
         customerBtn.setText("   Khách hàng");
         customerBtn.setBorder(null);
+        customerBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         customerBtn.setFocusable(false);
         customerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -287,6 +289,7 @@ public class Dashboard extends javax.swing.JFrame {
         sellBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cross-selling.png"))); // NOI18N
         sellBtn.setText("   Bán hàng");
         sellBtn.setBorder(null);
+        sellBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         sellBtn.setFocusable(false);
         sellBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -300,6 +303,7 @@ public class Dashboard extends javax.swing.JFrame {
         invoiceBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/invoice.png"))); // NOI18N
         invoiceBtn.setText("   Hóa đơn");
         invoiceBtn.setBorder(null);
+        invoiceBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         invoiceBtn.setFocusable(false);
         invoiceBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -313,6 +317,7 @@ public class Dashboard extends javax.swing.JFrame {
         supplierBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/supplier.png"))); // NOI18N
         supplierBtn.setText("   Nhà cung cấp");
         supplierBtn.setBorder(null);
+        supplierBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         supplierBtn.setFocusable(false);
         supplierBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -359,6 +364,7 @@ public class Dashboard extends javax.swing.JFrame {
         );
 
         userImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/user.png"))); // NOI18N
+        userImg.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         userImg.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 userImgMouseClicked(evt);
@@ -504,9 +510,6 @@ public class Dashboard extends javax.swing.JFrame {
     private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
         int confirmed = JOptionPane.showConfirmDialog(null, "Xác nhận đăng xuất?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
-            if (sellPanel != null && !sellPanel.isCartEmpty()) {
-                sellPanel.clearCart();
-            }
             this.dispose();
             new Login().setVisible(true);
         }

@@ -96,6 +96,7 @@ public class CustomerCtrl implements BaseController<CustomerModel> {
             while (rs.next()) {
                 // Tạo một đối tượng CustomerModel từ ResultSet
                 CustomerModel customer = new CustomerModel(rs.getInt("Customer_ID"), rs.getString("Full_Name"), rs.getString("Address"), rs.getString("Phone"));
+                customer.setInvoiceQty(rs.getInt("Sodonhang"));
                 customers.add(customer);
             }
         } catch (SQLException e) {
@@ -116,7 +117,10 @@ public class CustomerCtrl implements BaseController<CustomerModel> {
                 }
             }
         }
-        return "SELECT * FROM Customer" + tmp;
+        return """
+               select Customer.*, count(Invoice_ID) as Sodonhang from
+               Customer left join Invoice on Customer.Customer_ID = Invoice.Customer_ID
+               group by Customer.Customer_ID, Customer.Address, Customer.Full_Name, Customer.Phone""" + tmp;
     }
 
     private String generateSortQuery(String sortMethod, String searchQuery) {

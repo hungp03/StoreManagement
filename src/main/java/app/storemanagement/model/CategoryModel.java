@@ -9,7 +9,8 @@ import java.util.Objects;
 public class CategoryModel extends BaseEntity {
 
     private String categoryName;
-
+    private int productQty;
+    
     public CategoryModel(int id) {
         super(id);
     }
@@ -27,6 +28,15 @@ public class CategoryModel extends BaseEntity {
         this.categoryName = categoryName;
     }
 
+    public int getProductQty() {
+        return productQty;
+    }
+
+    public void setProductQty(int productQty) {
+        this.productQty = productQty;
+    }
+    
+    
     @Override
     public int getId() {
         return id;

@@ -7,6 +7,7 @@ public class CustomerModel extends BaseEntity {
     private String fullName;
     private String address;
     private String phone;
+    private int invoiceQty;
     
     public CustomerModel(int id) {
         super(id);
@@ -19,6 +20,14 @@ public class CustomerModel extends BaseEntity {
         this.phone = phone;
     }
 
+    public int getInvoiceQty() {
+        return invoiceQty;
+    }
+
+    public void setInvoiceQty(int invoiceQty) {
+        this.invoiceQty = invoiceQty;
+    }
+    
     public String getFullName() {
         return fullName;
     }

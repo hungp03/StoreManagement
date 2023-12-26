@@ -2,18 +2,15 @@ package app.storemanagement.view;
 
 import app.storemanagement.controller.SellCtrl;
 import app.storemanagement.model.Connection.DBConnection;
-import app.storemanagement.model.Cart;
 import app.storemanagement.model.ProductTableModel;
 import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -533,11 +530,6 @@ public class Sell extends javax.swing.JPanel {
     }
 
     public void clearCart() {
-        for (int i = 0; i < cart.size(); i++) {
-            int id = Integer.parseInt(cartTb.getValueAt(i, 0).toString());
-            int pqty = Integer.parseInt(cartTb.getValueAt(i, 4).toString());
-            sell.updateProductQuantity(id, pqty, "increase");
-        }
         cart.clear();
         displayCartTable();
     }
@@ -550,7 +542,6 @@ public class Sell extends javax.swing.JPanel {
         }
         clearCart();
         totalTxt.setText("");
-        displayProduct();
         calculatePaidMoney(cusMoney.getText());
     }//GEN-LAST:event_deleteAllActionPerformed
 
@@ -599,12 +590,10 @@ public class Sell extends javax.swing.JPanel {
                     cart.stream().filter(product -> product.getId() == selectedProduct.getId())
                             .forEach(product -> {
                                 product.setQty(product.getQty() + quantity);
-                                sell.updateProductQuantity(product.getId(), quantity, "reduce");
                             });
                 } else {
                     // Thêm sản phẩm mới vào danh sách
                     cart.add(new ProductTableModel(selectedProduct.getId(), selectedProduct.getName(), selectedProduct.getCategoryName(), selectedProduct.getUnitprice(), quantity));
-                    sell.updateProductQuantity(selectedProduct.getId(), quantity, "reduce");
                 }
                 // Hiển thị bảng giỏ hàng và bảng sản phẩm
                 displayCartTable();
@@ -676,8 +665,6 @@ public class Sell extends javax.swing.JPanel {
             } else {
                 totalTxt.setText(Util.convertToVND(sell.totalAmount(cart)));
             }
-            sell.updateProductQuantity(id, pqty, "increase");
-            displayProduct();
         } else {
             JOptionPane.showMessageDialog(null, "Chưa chọn sản phẩm để xóa", "Alert", JOptionPane.WARNING_MESSAGE);
         }
@@ -689,7 +676,6 @@ public class Sell extends javax.swing.JPanel {
         totalTxt.setText("");
         cusMoney.setText("");
         paidMoney.setText("");
-        displayProduct();
         clearCustomerInfo();
     }//GEN-LAST:event_cancelBtnActionPerformed
 
@@ -783,6 +769,7 @@ public class Sell extends javax.swing.JPanel {
                 return;
             }
             confirmAndAddInvoice(invoiceId, customerId, amount, customerCash, payment_Method);
+            displayProduct();
         } catch (ParseException ex) {
             Logger.getLogger(Sell.class.getName()).log(Level.SEVERE, null, ex);
         }

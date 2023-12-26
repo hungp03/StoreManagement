@@ -92,7 +92,7 @@ public class SupplierCtrl implements BaseController<SupplierModel> {
         }
     }
 
-    public List<SupplierModel> searchAndSort(String keyword, String searchMethod, String sortMethod) {
+    public List<SupplierModel> getSuppliers(String keyword, String searchMethod, String sortMethod) {
         List<SupplierModel> suppliers = new ArrayList<>();
         String searchQuery = generateSearchQuery(keyword, searchMethod);
         String sql = generateSortQuery(sortMethod, searchQuery);
@@ -101,6 +101,7 @@ public class SupplierCtrl implements BaseController<SupplierModel> {
             while (rs.next()) {
                 // Tạo một đối tượng SupplierModel từ ResultSet
                 SupplierModel supplier = new SupplierModel(rs.getInt("Supplier_ID"), rs.getString("Supplier_Name"), rs.getString("Address"), rs.getString("Phone"), rs.getString("Email"));
+                supplier.setProductQty(rs.getInt("Sosanpham"));
                 suppliers.add(supplier);
             }
         } catch (SQLException e) {
@@ -123,7 +124,10 @@ public class SupplierCtrl implements BaseController<SupplierModel> {
                 }
             }
         }
-        return "SELECT * FROM Supplier" + tmp;
+        return """
+               select Supplier.*, count(Product_ID) as Sosanpham from
+               Supplier left join Product on Product.Supplier_ID = Supplier.Supplier_ID
+               group by Supplier.Supplier_ID,Supplier.Supplier_Name, Supplier.Address, Supplier.Email, Supplier.Phone""" + tmp;
     }
 
     private String generateSortQuery(String sortMethod, String searchQuery) {

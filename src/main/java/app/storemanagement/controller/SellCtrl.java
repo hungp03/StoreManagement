@@ -139,6 +139,7 @@ public class SellCtrl {
                 stmt2.setInt(2, product.getId());
                 stmt2.setInt(3, product.getQty());
                 stmt2.executeUpdate();
+                updateProductQuantity(product.getId(), product.getQty(), "reduce");
             }
         }
     }

@@ -7,10 +7,6 @@ import app.storemanagement.model.Connection.DBConnection;
 import app.storemanagement.utils.Util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -232,7 +228,7 @@ public class Category extends javax.swing.JPanel {
 
     private void displayCategoryTable(String sortMethod, String keyword) {
         CategoryCtrl category = new CategoryCtrl(DBConnection.getConnection());
-        List<CategoryModel> categories = category.searchAndSort(keyword, sortMethod);
+        List<CategoryModel> categories = category.getCategories(keyword, sortMethod);
 
         DefaultTableModel tableModel = new DefaultTableModel() {
             @Override
@@ -241,13 +237,14 @@ public class Category extends javax.swing.JPanel {
             }
         };
 
-        String[] columnNames = {"Mã phân loại", "Tên phân loại"};
+        String[] columnNames = {"Mã phân loại", "Tên phân loại", "Số sản phẩm"};
         tableModel.setColumnIdentifiers(columnNames);
 
         for (CategoryModel cate: categories) {
-            Object[] row = new Object[2];
+            Object[] row = new Object[3];
             row[0] = cate.getId();
             row[1] = cate.getCategoryName();
+            row[2] = cate.getProductQty();
             tableModel.addRow(row);
         }
 

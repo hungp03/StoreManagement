@@ -85,7 +85,7 @@ public class CategoryCtrl implements BaseController<CategoryModel> {
         }
     }
 
-    public List<CategoryModel> searchAndSort(String keyword, String sortMethod) {
+    public List<CategoryModel> getCategories(String keyword, String sortMethod) {
         List<CategoryModel> categories = new ArrayList<>();
         String searchQuery = generateSearchQuery(keyword);
         String sql = generateSortQuery(sortMethod, searchQuery);
@@ -94,6 +94,7 @@ public class CategoryCtrl implements BaseController<CategoryModel> {
             while (rs.next()) {
                 // Tạo một đối tượng CategoryModel từ ResultSet
                 CategoryModel category = new CategoryModel(rs.getInt("Category_ID"), rs.getString("Category_Name"));
+                category.setProductQty(rs.getInt("Sosanpham"));
                 categories.add(category);
             }
         } catch (SQLException e) {
@@ -108,14 +109,20 @@ public class CategoryCtrl implements BaseController<CategoryModel> {
         if (!keyword.trim().isEmpty()) {
             tmp = " WHERE Category_Name LIKE N'%" + keyword.trim() + "%' COLLATE SQL_Latin1_General_CP1253_CI_AI ";
         }
-        return "SELECT * FROM Category" + tmp;
+        return """
+               select Category.*, count(Product_ID) as Sosanpham from
+               Category left join Product on Product.Category_ID = Category.Category_ID
+               group by Category.Category_ID, Category_Name""" + tmp;
     }
 
     private String generateSortQuery(String sortMethod, String searchQuery) {
         return switch (sortMethod) {
-            case "Mã phân loại" -> searchQuery + " ORDER BY Category_ID";
-            case "Tên phân loại" -> searchQuery + " ORDER BY Category_Name";
-            default -> searchQuery;
+            case "Mã phân loại" ->
+                searchQuery + " ORDER BY Category_ID";
+            case "Tên phân loại" ->
+                searchQuery + " ORDER BY Category_Name";
+            default ->
+                searchQuery;
         };
     }
 
